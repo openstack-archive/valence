@@ -11,8 +11,8 @@
 #    under the License.
 
 import logging
-import six
 from oslo_utils import strutils
+import six
 from valence.common import exceptions as exception
 
 LOG = logging.getLogger(__name__)
