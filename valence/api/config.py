@@ -12,8 +12,8 @@
 
 from oslo_config import cfg
 from oslo_log import log as logging
-from valence.common import rpc
 import sys
+from valence.common import rpc
 
 LOG = logging.getLogger(__name__)
 

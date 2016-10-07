@@ -12,9 +12,9 @@ class Tree(object):
 
     def add_node(self, identifier, data={}, parent=None):
         if identifier in self.nodes:
-            node = self[identifier] 
+            node = self[identifier]
         else:
-            node = TreeNode(identifier,data)
+            node = TreeNode(identifier, data)
             self[identifier] = node
 
         if parent is not None:
@@ -53,7 +53,7 @@ class Tree(object):
             self.processHTML(fileref, child, depth)  # recursive call
         fileref.write("</ul>")
 
-    def writeHTML(self, rootnodeid,  filename="chassisTree.html"):
+    def writeHTML(self, rootnodeid, filename="chassisTree.html"):
         htmlfile = open(filename, 'w+')
         htmlfile.write("<html><body><h1>Tree</h1>")
         self.processHTML(htmlfile, rootnodeid)

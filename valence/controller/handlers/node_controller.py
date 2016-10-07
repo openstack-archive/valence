@@ -12,11 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 from oslo_log import log as logging
-from valence.common import osinterface as osapi
 from valence.common.redfish import api as rfsapi
-import requests
 
 LOG = logging.getLogger(__name__)
 
@@ -47,11 +44,7 @@ class Handler(object):
 
     def compose_nodes(self, context, criteria):
         """Chassis details could also be fetched and inserted"""
-
-        # no of nodes to compose
-        nodes_to_compose = int(criteria["nodes"]) if "nodes" in criteria else 1
         node_criteria = criteria["filter"] if "filter" in criteria else {}
-        #no of node is not currently implemented
         return rfsapi.compose_node(node_criteria)
 
     def list_node_storages(self, context, data):
