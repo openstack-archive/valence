@@ -26,7 +26,7 @@ cfg.CONF.import_group('podm', 'valence.common.redfish.config')
 
 def get_rfs_url(serviceext):
     REDFISH_BASE_EXT = "/redfish/v1/"
-    INDEX = '' 
+    INDEX = ''
     # '/index.json'
     if REDFISH_BASE_EXT in serviceext:
         return cfg.CONF.podm.url + serviceext + INDEX
@@ -34,14 +34,16 @@ def get_rfs_url(serviceext):
         return cfg.CONF.podm.url + REDFISH_BASE_EXT + serviceext + INDEX
 
 
-def send_request(resource, method="GET",**kwargs):
+def send_request(resource, method="GET", **kwargs):
     # The verify=false param in the request should be removed eventually
     url = get_rfs_url(resource)
     httpuser = cfg.CONF.podm.user
     httppwd = cfg.CONF.podm.password
-    resp = None 
+    resp = None
     try:
-        resp = requests.request(method, url, verify=False, auth=HTTPBasicAuth(httpuser, httppwd), **kwargs)    
+        resp = requests.request(method, url, verify=False,
+                                auth=HTTPBasicAuth(httpuser, httppwd),
+                                **kwargs)
     except requests.exceptions.RequestException as e:
         LOG.error(e)
     return resp
@@ -52,7 +54,6 @@ def filter_chassis(jsonContent, filterCondition):
     returnMembers = []
     parsed = json.loads(jsonContent)
     members = parsed['Members']
-    # count = parsed['Members@odata.count']
     for member in members:
         resource = member['@odata.id']
         resp = send_request(resource)
@@ -67,7 +68,6 @@ def filter_chassis(jsonContent, filterCondition):
 
 def generic_filter(jsonContent, filterConditions):
     # returns boolean based on filters..its generic filter
-    # returnMembers = []
     is_filter_passed = False
     for fc in filterConditions:
         if fc in jsonContent:
@@ -93,7 +93,6 @@ def generic_filter(jsonContent, filterConditions):
 
 
 def get_details(source):
-    # count = source['Members@odata.count']
     returnJSONObj = []
     members = source['Members']
     for member in members:
@@ -192,7 +191,6 @@ def node_ram_details(nodeurl):
     resp = send_request(nodeurl)
     respjson = resp.json()
     ram = extract_val(respjson, "MemorySummary/TotalSystemMemoryGiB")
-    #LOG.debug(" Total Ram for node %s : %d " % (nodeurl, ram))
     return str(ram) if ram else "0"
 
 
@@ -229,7 +227,6 @@ def systems_list(count=None, filters={}):
     lst_systems = []
     systemurllist = urls2list("Systems")
     podmtree = build_hierarchy_tree()
-    #podmtree.writeHTML("0","/tmp/a.html")
 
     for lnk in systemurllist[:count]:
         filterPassed = True
@@ -337,28 +334,27 @@ def build_hierarchy_tree():
             podmtree.add_node(system, {"name": sysname}, d["ChassisID"])
     return podmtree
 
+
 def compose_node(criteria={}):
-    #node comosition
-    composeurl = "Nodes/Actions/Allocate" 
-    reqbody = None if not criteria else criteria
+    composeurl = "Nodes/Actions/Allocate"
     headers = {'Content-type': 'application/json'}
     if not criteria:
-        resp = send_request(composeurl, "POST", headers = headers) 
+        resp = send_request(composeurl, "POST", headers=headers)
     else:
-        resp = send_request(composeurl, "POST", json=criteria, headers = headers)
+        resp = send_request(composeurl, "POST", json=criteria, headers=headers)
     LOG.info(resp.headers)
     LOG.info(resp.text)
     LOG.info(resp.status_code)
     composednode = resp.headers['Location']
 
-    return { "node" : composednode }
+    return {"node": composednode}
 
 
 def delete_composednode(nodeid):
-    #delete composed node
     deleteurl = "Nodes/" + str(nodeid)
     resp = send_request(deleteurl, "DELETE")
     return resp
+
 
 def nodes_list(count=None, filters={}):
     # comment the count value which is set to 2 now..
@@ -366,14 +362,14 @@ def nodes_list(count=None, filters={}):
     # count = 2
     lst_nodes = []
     nodeurllist = urls2list("Nodes")
-    #podmtree = build_hierarchy_tree()
-    #podmtree.writeHTML("0","/tmp/a.html")
+    # podmtree = build_hierarchy_tree()
+    # podmtree.writeHTML("0","/tmp/a.html")
 
     for lnk in nodeurllist:
         filterPassed = True
         resp = send_request(lnk)
         if resp.status_code != 200:
-            Log.info("Error in fetching Node details " + lnk)
+            LOG.info("Error in fetching Node details " + lnk)
         else:
             node = resp.json()
 
@@ -387,16 +383,16 @@ def nodes_list(count=None, filters={}):
             nodeid = lnk.split("/")[-1]
             nodeuuid = node['UUID']
             nodelocation = node['AssetTag']
-            #podmtree.getPath(lnk) commented as location should be computed using
-            #other logic.consult Chester
+            # podmtree.getPath(lnk) commented as location should be computed using
+            # other logic.consult Chester
             nodesystemurl = node["Links"]["ComputerSystem"]["@odata.id"]
             cpu = {}
             ram = 0
             nw = 0
             localstorage = node_storage_details(nodesystemurl)
             if "Processors" in node:
-                cpu = { "count" : node["Processors"]["Count"],
-                        "model" : node["Processors"]["Model"]}
+                cpu = {"count": node["Processors"]["Count"],
+                       "model": node["Processors"]["Model"]}
 
             if "Memory" in node:
                 ram = node["Memory"]["TotalSystemMemoryGiB"]
@@ -404,14 +400,13 @@ def nodes_list(count=None, filters={}):
             if "EthernetInterfaces" in node["Links"]:
                 nw = len(node["Links"]["EthernetInterfaces"])
 
-            storage = 0
-            bmcip = "127.0.0.1" #system['Oem']['Dell_G5MC']['BmcIp']
-            bmcmac = "00:00:00:00:00" #system['Oem']['Dell_G5MC']['BmcMac']
+            bmcip = "127.0.0.1"  # system['Oem']['Dell_G5MC']['BmcIp']
+            bmcmac = "00:00:00:00:00"  # system['Oem']['Dell_G5MC']['BmcMac']
             node = {"nodeid": nodeid, "cpu": cpu,
                     "ram": ram, "storage": localstorage,
                     "nw": nw, "location": nodelocation,
                     "uuid": nodeuuid, "bmcip": bmcip, "bmcmac": bmcmac}
             if filterPassed:
-               lst_nodes.append(node)
-               # LOG.info(str(node))
+                lst_nodes.append(node)
+                # LOG.info(str(node))
         return lst_nodes
