@@ -20,13 +20,12 @@ import os
 from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_service import service
+import sys
+import uuid
 from valence.common import rpc_service
 from valence.controller import config as controller_config
 from valence.controller.handlers import flavor_controller
 from valence.controller.handlers import node_controller
-# from valence import version
-import sys
-import uuid
 
 LOG = logging.getLogger(__name__)
 
@@ -36,10 +35,6 @@ def main():
     controller_config.setup_logging()
     LOG.info(('Starting valence-controller in PID %s'), os.getpid())
     LOG.debug("Configuration:")
-#   cfg.CONF.import_opt('topic',
-#                       'valence.controller.config',
-#                        group='controller')
-
     controller_id = uuid.uuid4()
     endpoints = [
         flavor_controller.Handler(),
