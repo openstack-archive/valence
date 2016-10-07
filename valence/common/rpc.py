@@ -105,7 +105,6 @@ class RequestContextSerializer(messaging.Serializer):
             return context.to_dict()
 
     def deserialize_context(self, context):
-#        return valence.common.context.Context.from_dict(context)
         return valence_ctx.Context.from_dict(context)
 
 
