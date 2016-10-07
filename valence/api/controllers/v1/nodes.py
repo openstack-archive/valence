@@ -17,7 +17,6 @@ from oslo_log import log as logging
 import pecan
 from pecan import expose
 from pecan import request
-from pecan import response
 from pecan.rest import RestController
 from valence.controller import api as controller_api
 
@@ -25,7 +24,6 @@ CONF = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 
-#class NodeDetailController(object):
 class NodeDetailController(RestController):
     def __init__(self, nodeid):
         self.nodeid = nodeid
@@ -37,7 +35,7 @@ class NodeDetailController(RestController):
         rpcapi = controller_api.API(context=request.context)
         res = rpcapi.delete_composednode(nodeid=self.nodeid)
         LOG.info(str(res))
-        return res 
+        return res
 
     @expose()
     def storages(self):
@@ -58,7 +56,6 @@ class NodesController(RestController):
         return res
 
     # HTTP GET /nodes/
-#    @index.when(method='POST', template='json')
     @expose(template='json')
     def post(self, **kwargs):
         LOG.debug("POST /nodes")

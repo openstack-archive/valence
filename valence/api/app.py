@@ -11,12 +11,11 @@
 #    limitations under the License.
 
 from oslo_config import cfg
-from oslo_middleware import request_id
 from oslo_service import service
 from pecan import configuration
 from pecan import make_app
 from valence.api import hooks
-from valence.common import exceptions as p_excp
+
 
 def setup_app(*args, **kwargs):
     config = {
@@ -40,7 +39,7 @@ def setup_app(*args, **kwargs):
     app = make_app(
         pecan_config.app.root,
         hooks=app_hooks,
-        force_canonical = False,
+        force_canonical=False,
         logging=getattr(config, 'logging', {})
     )
     return app
