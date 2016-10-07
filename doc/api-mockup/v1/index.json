@@ -1,0 +1,50 @@
+{
+   "id" : "v1",
+   "links" : [
+      {
+         "href" : "http://openstack.example.com:8881/v1/",
+         "rel" : "self"
+      },
+      {
+         "rel" : "describedby",
+         "type" : "text/html",
+         "href" : "http://docs.openstack.org/developer/plasma/dev/api-spec-v1.html"
+      }
+   ],
+   "nodes" : [
+      {
+         "rel" : "self",
+         "href" : "http://openstack.example.com:8881/v1/nodes/"
+      },
+      {
+         "rel" : "bookmark",
+         "href" : "http://openstack.example.com:8881/nodes/"
+      }
+   ],
+   "storages" : [
+      {
+         "href" : "http://openstack.example.com:8881/v1/storages/",
+         "rel" : "self"
+      },
+      {
+         "rel" : "bookmark",
+         "href" : "http://openstack.example.com:8881/storages/"
+      }
+   ],
+   "flavors" : [
+      {
+         "href" : "http://openstack.example.com:8881/v1/flavors/",
+         "rel" : "self"
+      },
+      {
+         "rel" : "bookmark",
+         "href" : "http://openstack.example.com:8881/flavors/"
+      }
+   ],
+   "media_types" : [
+      {
+         "type" : "application/vnd.openstack.plasma.v1+json",
+         "base" : "application/json"
+      }
+   ]
+}

@@ -1,0 +1,11 @@
+{
+    "storage_device" : 
+       {
+           "deviceId" : "4c16a45b-b029-49c4-af84-1abcf458a062",
+	   "pooling_group_id" : "11z23344-0099-7766-5544-33225511",
+           "health_status" : "critical",
+           "capacity_mb" : "1000",
+           "property_foo1" : "value_bar1",
+           "property_foo2" : "value_bar2"
+       }
+}

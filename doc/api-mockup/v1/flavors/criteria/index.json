@@ -1,0 +1,33 @@
+{
+    "criteria" : [
+        {
+            "id": "8f70656e-7374-6163-6b20-342065766222",
+            "links" : [
+                { 
+                    "href": "http://openstack.example.com/v1/criteria/8f70656e-7374-6163-6b20-342065766222",
+                    "rel" : "self"
+                },
+                {
+                    "href" : "http://openstack.example.com/criteria/8f70656e-7374-6163-6b20-342065766222",
+                    "rel" : "bookmakr"
+                }
+            ],
+            "name" : "criteria 1"
+        },
+	{
+			
+            "id": "8170656e-7374-6163-6b20-342065766112",
+            "links" : [
+                { 
+                    "href": "http://openstack.example.com/v1/criteria/8170656e-7374-6163-6b20-342065766112",
+                    "rel" : "self"
+                },
+                {
+                    "href" : "http://openstack.example.com/criteria/8170656e-7374-6163-6b20-342065766112",
+                    "rel" : "bookmakr"
+                }
+            ],
+            "name" : "criteria 2"
+	}
+    ]
+}

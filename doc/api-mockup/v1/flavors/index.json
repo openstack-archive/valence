@@ -1,0 +1,39 @@
+{
+    "flavors": [
+        {
+            "id": "67730a1e-42b3-4813-8940-b961dcd0293c",
+            "links": [
+                {
+                    "href": "http://openstack.example.com/v1/flavors/67730a1e-42b3-4813-8940-b961dcd0293c",
+                    "rel": "self"
+                },
+                {
+                    "href": "http://openstack.example.com/flavors/67730a1e-42b3-4813-8940-b961dcd0293c",
+                    "rel": "bookmark"
+                }
+            ],
+            "name": "flavor1",
+            "criteria" : [     
+		{"id" : "8f70656e-7374-6163-6b20-342065766222"}
+	    ]
+        },
+        {
+            "id": "30abc156-d673-4e7c-bf2a-0a5098e14878",
+            "links": [
+                {
+                    "href": "http://openstack.example.com/v1/flavors/30abc156-d673-4e7c-bf2a-0a5098e14878",
+                    "rel": "self"
+                },
+                {
+                    "href": "http://openstack.example.com/flavors/30abc156-d673-4e7c-bf2a-0a5098e14878",
+                    "rel": "bookmark"
+                }
+            ],
+            "name": "flavor2",
+            "criteria" : [     
+		{"id" : "8f70656e-7374-6163-6b20-342065766222"},
+		{"id" : "8170656e-7374-6163-6b20-342065766211"}
+	    ]
+        }
+    ]
+}

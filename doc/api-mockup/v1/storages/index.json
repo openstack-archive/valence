@@ -1,0 +1,34 @@
+{
+    "storges" : [
+       {
+           "deviceId" : "bbfddf09-4d7e-40d5-88a9-8acfb2f88c21",
+	   "pooling_group_id" : "11z23344-0099-7766-5544-33225511",
+	   "allocate_status" : "allocated",
+           "links" : [
+             {
+             	"ref" : "self",
+               	"href" : "https://openstack.example.com/v1/storages/bbfddf09-4d7e-40d5-88a9-8acfb2f88c21"
+             },
+             {
+               	"ref" : "bookmark",
+               	"href" : "https://openstack.example.com/storages/bbfddf09-4d7e-40d5-88a9-8acfb2f88c21"
+             }
+           ]
+       },
+       {
+           "deviceId" : "4c16a45b-b029-49c4-af84-1abcf458a062",
+           "pooling_group_id" : "22zz3344-0099-7766-5544-33225512",
+	   "allocate_status" : "available",
+           "links" : [
+             {
+                "ref" : "self",
+                "href" : "https://openstack.example.com/v1/storages/4c16a45b-b029-49c4-af84-1abcf458a062"
+             },
+             {
+                "ref" : "bookmark",
+                "href" : "https://openstack.example.com/storages/4c16a45b-b029-49c4-af84-1abcf458a062"
+             }
+           ]
+        }
+    ]
+}
