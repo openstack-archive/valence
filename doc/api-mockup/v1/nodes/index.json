@@ -1,0 +1,34 @@
+{
+  "nodes" : [
+    {
+        "id" : "ee1ecc3c-d3dd-f4ff-a6aa-uu7uk9k0",
+        "name" : "Server 1" ,
+        "nodestate" : "PoweredOn" ,
+        "links": [
+          { 
+              "rel" : "self",
+	          "href" : "https://openstack.example.com/v1/nodes/ee1ecc3c-d3dd-f4ff-a6aa-uu7uk9k0"
+          },
+          {
+              "href" : "https://openstack.example.com/nodes/ee1ecc3c-d3dd-f4ff-a6aa-uu7uk9k0",
+              "rel" : "bookmark"
+          }
+        ]
+    },
+    {
+	    "id" : "4d8c3732-a248-40ed-bebc-539a6ffd25c0" ,
+        "name" : "Server 2",
+	    "nodestate" : "PoweredOff" ,
+        "links" : [
+	      {
+	          "ref" : "self",
+	            "href" : "https://openstack.example.com/v1/nodes/4d8c3732-a248-40ed-bebc-539a6ffd25c0"
+	      },
+          {
+               "ref" : "bookmark",
+               "href" : "https://openstack.example.com/nodes/4d8c3732-a248-40ed-bebc-539a6ffd25c0"
+          }
+         ]
+     }
+  ]
+}

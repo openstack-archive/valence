@@ -1,0 +1,27 @@
+.header {
+	margin-top: 40px;
+	width: 100%;
+	background-color: rgb(51, 102, 255);
+	color: rgb(0, 0, 0);
+	height: 40px;
+	padding-left: 10px;
+	padding-top: 20px;
+}
+
+.header:hover {
+	background-color: rgb(204, 204, 255);
+}
+
+.item {
+	width: 100%;
+	background-color: rgb(153, 179, 255);
+	color: rgb(0, 0, 0);
+	height: 40px;
+	padding-left: 30px;
+	padding-top: 2px;
+	border-bottom: solid 1px rgb(51, 102, 255);
+}
+
+.item:hover {
+	background-color: rgb(204, 204, 255);
+}

@@ -1,0 +1,30 @@
+{
+   "name" : "OpenStack Plasma API",
+   "description" : "Plasma is an OpenStack project which aims to provide node composition based on redfish API.",
+   "default_version" : {
+      "status" : "CURRENT",
+      "version" : "1.1",
+      "links" : [
+         {
+            "rel" : "self",
+            "href" : "http://openstack.example.com:8881/v1/"
+         }
+      ],
+      "id" : "v1",
+      "min_version" : "1.0"
+   },
+   "versions" : [
+      {
+         "status" : "CURRENT",
+         "links" : [
+            {
+               "href" : "http://openstack.example.com:8881/v1/",
+               "rel" : "self"
+            }
+         ],
+         "id" : "v1",
+         "version" : "1.1",
+         "min_version" : "1.0"
+      }
+   ]
+}
