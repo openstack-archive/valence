@@ -1,0 +1,8 @@
+Code-Review+2: Lin Yang <lin.a.yang@intel.com>
+Workflow+1: Ananth Narayan S <ananth.narayan@gmail.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Mon, 10 Oct 2016 06:26:19 +0000
+Reviewed-on: https://review.openstack.org/383944
+Project: openstack/rsc
+Branch: refs/heads/master
