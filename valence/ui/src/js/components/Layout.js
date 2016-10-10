@@ -3,6 +3,8 @@ import ComposeDisplay from "./home/ComposeDisplay";
 import DetailDisplay from "./home/DetailDisplay";
 import Home from "./home/Home";
 
+var util = require('../util.js');
+
 const Layout = React.createClass({
 
   getInitialState: function() {
@@ -17,6 +19,14 @@ const Layout = React.createClass({
       storage: [],
       nodes: []
     };
+  },
+
+  componentWillMount: function() {
+    this.getPods();
+    this.getRacks();
+    this.getSystems();
+    this.getStorage();
+    this.getNodes();
   },
 
   displayHome: function() {
@@ -46,23 +56,43 @@ const Layout = React.createClass({
     });
   },
 
-  updatePods: function(pods) {
+  getPods: function() {
+    util.getPods(this.setPods);
+  },
+
+  setPods: function(pods) {
     this.setState({pods: pods});
   },
 
-  updateRacks: function(racks) {
+  getRacks: function() {
+    util.getRacks(this.setRacks);
+  },
+
+  setRacks: function(racks) {
     this.setState({racks: racks});
   },
 
-  updateSystems: function(systems) {
+  getSystems: function() {
+    util.getSystems(this.setSystems);
+  },
+
+  setSystems: function(systems) {
     this.setState({systems: systems});
   },
 
-  updateStorage: function(storage) {
+  getStorage: function() {
+    util.getStorage(this.setStorage);
+  },
+
+  setStorage: function(storage) {
     this.setState({storage: storage});
   },
 
-  updateNodes: function(nodes) {
+  getNodes: function() {
+    util.getNodes(this.setNodes);
+  },
+
+  setNodes: function(nodes) {
     this.setState({nodes: nodes});
   },
 
@@ -114,11 +144,11 @@ const Layout = React.createClass({
           nodeList={this.state.nodes}
           onShowDetail={this.displayDetail}
           onShowCompose={this.displayCompose}
-          onUpdatePods={this.updatePods}
-          onUpdateRacks={this.updateRacks}
-          onUpdateSystems={this.updateSystems}
-          onUpdateStorage={this.updateStorage}
-          onUpdateNodes={this.updateNodes}
+          onUpdatePods={this.getPods}
+          onUpdateRacks={this.getRacks}
+          onUpdateSystems={this.getSystems}
+          onUpdateStorage={this.getStorage}
+          onUpdateNodes={this.getNodes}
         />
         <DetailDisplay
           display={this.state.detailDisplay}
@@ -129,6 +159,7 @@ const Layout = React.createClass({
           display={this.state.composeDisplay}
           systemList={this.state.systems}
           onHideCompose={this.displayHome}
+          onUpdateNodes={this.getNodes}
         />
 
         <footer class="footer navbar-fixed-bottom">

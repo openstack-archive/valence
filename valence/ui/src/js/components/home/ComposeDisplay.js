@@ -27,12 +27,15 @@ const ComposeDisplay = React.createClass({
       },  
       data: data,
       dataType: 'text',
+      success: function(resp) {
+        this.clearInputs();
+        this.props.onUpdateNodes();
+        this.props.onHideCompose();
+      }.bind(this),
       error: function(xhr, status, err) {
         console.error(url, status, err.toString());
       }.bind(this)
     });
-    this.clearInputs()
-    this.props.onHideCompose();
   },
 
   getProcessors: function() {
