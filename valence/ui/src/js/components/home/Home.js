@@ -24,60 +24,12 @@ const Home = React.createClass({
       data: JSON.stringify(config.nodeConfig),
       dataType: 'text',
       success: function(resp) {
-        this.getNodes();
+        this.props.onUpdateNodes();
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(url, status, err.toString());
       }.bind(this)
     });
-  },
-
-  componentWillMount: function() {
-    this.getPods();
-    this.getRacks();
-    this.getSystems();
-    this.getStorage();
-    this.getNodes();
-  },
-
-  getPods: function() {
-    util.getPods(this.setPods);
-  },
-
-  getRacks: function() {
-    util.getRacks(this.setRacks);
-  },
-
-  getSystems: function() {
-    util.getSystems(this.setSystems);
-  },
-
-  getStorage: function() {
-    util.getStorage(this.setStorage);
-  },
-
-  getNodes: function() {
-    util.getNodes(this.setNodes);
-  },
-
-  setPods: function(pods) {
-    this.props.onUpdatePods(pods);
-  },
-
-  setRacks: function(racks) {
-    this.props.onUpdateRacks(racks);
-  },
-
-  setSystems: function(systems) {
-    this.props.onUpdateSystems(systems);
-  },
-
-  setStorage: function(storage) {
-    this.props.onUpdateStorage(storage);
-  },
-
-  setNodes: function(nodes) {
-    this.props.onUpdateNodes(nodes);
   },
 
   render: function() {
@@ -96,11 +48,11 @@ const Home = React.createClass({
           <div class="row">
             <div class="col-sm-3 col-md-2 sidebar">
               <ul class="nav nav-sidebar">
-                <li class="active"><a href="#pods" data-toggle="tab" onClick={() => this.getPods()}>PODS</a></li>
-                <li><a href="#racks" data-toggle="tab" onClick={() => this.getRacks()}>RACKS</a></li>
-                <li><a href="#systems" data-toggle="tab" onClick={() => this.getSystems()}>SYSTEMS</a></li>
-                <li><a href="#storage" data-toggle="tab" onClick={() => this.getStorage()}>STORAGE</a></li>
-                <li><a href="#composednodes" data-toggle="tab" onClick={() => this.getNodes()}>COMPOSED NODES</a></li>
+                <li class="active"><a href="#pods" data-toggle="tab" onClick={() => this.props.onUpdatePods()}>PODS</a></li>
+                <li><a href="#racks" data-toggle="tab" onClick={() => this.props.onUpdateRacks()}>RACKS</a></li>
+                <li><a href="#systems" data-toggle="tab" onClick={() => this.props.onUpdateSystems()}>SYSTEMS</a></li>
+                <li><a href="#storage" data-toggle="tab" onClick={() => this.props.onUpdateStorage()}>STORAGE</a></li>
+                <li><a href="#composednodes" data-toggle="tab" onClick={() => this.props.onUpdateNodes()}>COMPOSED NODES</a></li>
               </ul>
             </div>
             <div class="col-sm-9 col-md-10 main">
@@ -136,7 +88,7 @@ const Home = React.createClass({
                 <div role="tabpanel" class="tab-pane" id="composednodes">
                   <NodeList
                     onShowDetail={this.props.onShowDetail}
-                    onUpdateNodes={this.getNodes}
+                    onUpdateNodes={this.props.onUpdateNodes}
                     nodes={this.props.nodeList}
                     header="COMPOSED NODES"
                   />
