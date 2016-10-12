@@ -17,6 +17,7 @@ const Layout = React.createClass({
       racks: [],
       systems: [],
       storage: [],
+      processors: [],
       nodes: []
     };
   },
@@ -25,6 +26,7 @@ const Layout = React.createClass({
     this.getPods();
     this.getRacks();
     this.getSystems();
+    this.getProcessors();
     this.getStorage();
     this.getNodes();
   },
@@ -48,12 +50,52 @@ const Layout = React.createClass({
   },
 
   displayCompose: function() {
+    this.getProcessors();
+    this.getStorage();
+    this.fillComposeForms();
     this.setState({
       homeDisplay: "none",
       detailDisplay: "none",
       composeDisplay: "inline-block",
       detailData: ""
     });
+  },
+
+  fillDropdownMenu: function(menu, itemNames, itemValues) {
+    var sel = document.getElementById(menu);
+    sel.innerHTML = '';
+    var opt = document.createElement('option');
+    opt.innerHTML = 'None';
+    opt.value = null;
+    sel.appendChild(opt);
+    for (var i = 0; i < itemNames.length; i++) {
+      opt = document.createElement('option');
+      opt.innerHTML = itemNames[i];
+      opt.value = itemValues[i];
+      sel.appendChild(opt);
+    }
+  },
+
+  fillComposeForms: function() {
+    // Fill processor dropdown menu
+    var processorNames = []
+    for (var i = 0; i < this.state.processors.length; i++) {
+      if (this.state.processors[i]['Model'] &&
+          processorNames.indexOf(this.state.processors[i]['Model']) >= 0) {
+            processorsNames.push(this.state.processors[i]['Model']);
+      }
+    }
+    this.fillDropdownMenu('procModels', processorNames, processorNames);
+    // Fill storage dropdown menu
+    var driveNames = [];
+    var driveValues = []
+    for (var i = 0; i < this.state.storage.length; i++) {
+      if (this.state.storage[i]['Mode'] == 'LV') {
+        driveNames.push(this.state.storage[i]['Name']);
+        driveValues.push(this.state.storage[i]['@odata.id']);
+      }
+    }
+    this.fillDropdownMenu('remoteDrives', driveNames, driveValues);
   },
 
   getPods: function() {
@@ -78,6 +120,14 @@ const Layout = React.createClass({
 
   setSystems: function(systems) {
     this.setState({systems: systems});
+  },
+
+  getProcessors: function() {
+    util.getProcessors(this.state.systems, this.setProcessors);
+  },
+
+  setProcessors: function(processors) {
+    this.setState({processors: processors});
   },
 
   getStorage: function() {
