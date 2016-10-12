@@ -5,16 +5,6 @@ var util = require('../../util.js');
 
 const ComposeDisplay = React.createClass({
 
-  getInitialState: function() {
-    return {
-      processors: []
-    };
-  },
-
-  componentDidMount() {
-    this.getProcessors();
-  },
-
   compose: function() {
     var data = this.prepareRequest();
     var url = config.url + '/redfish/v1/Nodes/Actions/Allocate';
@@ -38,45 +28,35 @@ const ComposeDisplay = React.createClass({
     });
   },
 
-  getProcessors: function() {
-    util.getProcessors(this.props.systemList, this.setProcessors);
-  },
-
-  setProcessors: function(processors) {
-    this.setState({processors: processors});
-    this.fillForms();
-  },
-
-  fillForms: function() {
-    var sel = document.getElementById('procModels');
-    sel.innerHTML = "";
-    for (var i = 0; i < this.state.processors.length; i++) {
-      if (this.state.processors[i]['Model']) {
-        var opt = document.createElement('option');
-        opt.innerHTML = this.state.processors[i]['Model'];
-        opt.value = this.state.processors[i]['Model'];
-        sel.appendChild(opt);
-      }
-    }
-  },
-
   prepareRequest: function() {
     var name = document.getElementById('name').value;
     var description = document.getElementById('description').value;
     var totalMem = document.getElementById('totalMem').value;
+    var storageCapacity = document.getElementById('storageCapacity').value;
+    var iqn = document.getElementById('iqn').value;
+    var masterDrive = document.getElementById('remoteDrives').value;
     var procModel = document.getElementById('procModels').value;
-    if (procModel == "") {
-      procModel = null;
-    }
     var data = {
       "Name": name,
       "Description": description,
       "Memory": [{
         "CapacityMiB": totalMem * 1000
-      }],
-      "Processors": [{
-        "Model": procModel
       }]
+    }
+    if (procModel != 'null') {
+      data["Processors"] = [{"Model": procModel}];
+    }
+    if (iqn != 'null' && masterDrive != 'null') {
+      data["RemoteDrives"] = [{
+        "CapacityGiB": storageCapacity,
+        "iSCSIAddress": iqn,
+        "Master": {
+          "Type": "Snapshot",
+          "Resource": {
+            "@odata.id": masterDrive
+          }
+        }
+      }];
     }
     return JSON.stringify(data);
   },
@@ -102,6 +82,18 @@ const ComposeDisplay = React.createClass({
                 <tr>
                   <td align="right">System Memory GB:</td>
                   <td align="left"><input type="number" min="0" id="totalMem" /></td>
+                </tr>
+                <tr>
+                  <td align="right">Remote Storage Capacity GB:</td>
+                  <td align="left"><input type="number" min="0" id="storageCapacity" /></td>
+                </tr>
+                <tr>
+                  <td align="right">Remote storage IQN:</td>
+                  <td align="left"><input type="text" id="iqn" /></td>
+                </tr>
+                <tr>
+                  <td align="right">Remote storage master drive:</td>
+                  <td align="left"><select id="remoteDrives" /></td>
                 </tr>
                 <tr>
                   <td align="right">Processor Model:</td>

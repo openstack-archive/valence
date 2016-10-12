@@ -17,6 +17,7 @@ const Layout = React.createClass({
       racks: [],
       systems: [],
       storage: [],
+      processors: [],
       nodes: []
     };
   },
@@ -25,6 +26,7 @@ const Layout = React.createClass({
     this.getPods();
     this.getRacks();
     this.getSystems();
+    this.getProcessors();
     this.getStorage();
     this.getNodes();
   },
@@ -48,12 +50,46 @@ const Layout = React.createClass({
   },
 
   displayCompose: function() {
+    this.getProcessors();
+    this.getStorage();
+    this.fillComposeForms();
     this.setState({
       homeDisplay: "none",
       detailDisplay: "none",
       composeDisplay: "inline-block",
       detailData: ""
     });
+  },
+
+  fillComposeForms: function() {
+    var sel = document.getElementById('procModels');
+    sel.innerHTML = "";
+    var opt = document.createElement('option');
+    opt.innerHTML = 'None';
+    opt.value = null;
+    sel.appendChild(opt);
+    for (var i = 0; i < this.state.processors.length; i++) {
+      if (this.state.processors[i]['Model']) {
+        opt = document.createElement('option');
+        opt.innerHTML = this.state.processors[i]['Model'];
+        opt.value = this.state.processors[i]['Model'];
+        sel.appendChild(opt);
+      }
+    }
+    sel = document.getElementById('remoteDrives');
+    sel.innerHTML = "";
+    opt = document.createElement('option');
+    opt.innerHTML = 'None';
+    opt.value = null;
+    sel.appendChild(opt);
+    for (var i = 0; i < this.state.storage.length; i++) {
+      if (this.state.storage[i]['Mode'] == 'LV') {
+        opt = document.createElement('option');
+        opt.innerHTML = this.state.storage[i]['Name'];
+        opt.value = this.state.storage[i]['@odata.id'];
+        sel.appendChild(opt);
+      }
+    }
   },
 
   getPods: function() {
@@ -78,6 +114,14 @@ const Layout = React.createClass({
 
   setSystems: function(systems) {
     this.setState({systems: systems});
+  },
+
+  getProcessors: function() {
+    util.getProcessors(this.state.systems, this.setProcessors);
+  },
+
+  setProcessors: function(processors) {
+    this.setState({processors: processors});
   },
 
   getStorage: function() {
@@ -147,6 +191,7 @@ const Layout = React.createClass({
           onUpdatePods={this.getPods}
           onUpdateRacks={this.getRacks}
           onUpdateSystems={this.getSystems}
+          onUpdateProcessors={this.getProcessors}
           onUpdateStorage={this.getStorage}
           onUpdateNodes={this.getNodes}
         />
@@ -158,6 +203,8 @@ const Layout = React.createClass({
         <ComposeDisplay
           display={this.state.composeDisplay}
           systemList={this.state.systems}
+          storageList={this.state.storage}
+          onFillForms={this.fillForms}
           onHideCompose={this.displayHome}
           onUpdateNodes={this.getNodes}
         />
