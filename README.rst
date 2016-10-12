@@ -14,7 +14,7 @@ Valence is a service for lifecycle management of pooled bare-metal hardware infr
 Download and Installation
 ===========================
 
-The following steps capture how to install valence. All installation steps require super user permissions.
+The following steps capture how to install Valence. All installation steps require super user permissions.
 
 ********************
 Valence installation
