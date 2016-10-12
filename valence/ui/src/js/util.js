@@ -72,20 +72,34 @@ exports.getNodes = function(callback) {
 };
 
 exports.getStorage = function(callback) {
-  var url = config.url + '/redfish/v1/Services/1/LogicalDrives';
+  var url = config.url + '/redfish/v1/Services';
   $.ajax({
     url: url,
     type: 'GET',
     dataType: 'json',
     cache: false,
     success: function(resp) {
-      var drives = this.listItems(resp['Members']);
-      callback(drives);
+      var services = this.listItems(resp['Members']);
+      util.getLogicalDrives(services, callback);
     }.bind(this),
     error: function(xhr, status, err) {
       console.error(url, status, err.toString());
     }.bind(this)
   });
+};
+
+exports.getLogicalDrives = function(services, callback) {
+  var logicalDrives = [];
+  var logicalDrivesId;
+  var serviceLogicalDrives;
+  for (var i = 0; i < services.length; i++) {
+    logicalDrivesId = util.readAndReturn(services[i]['LogicalDrives']['@odata.id']);
+    serviceLogicalDrives = util.listItems(JSON.parse(logicalDrivesId)['Members']);
+    for (var j = 0; j < serviceLogicalDrives.length; j++) {
+      logicalDrives.push(serviceLogicalDrives[j]);
+    }
+  }
+  callback(logicalDrives);
 };
 
 exports.getProcessors = function(systems, callback) {
