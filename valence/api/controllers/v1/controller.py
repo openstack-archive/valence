@@ -18,9 +18,6 @@ from pecan import route
 from valence.api.controllers import base
 from valence.api.controllers import link
 from valence.api.controllers import types
-from valence.api.controllers.v1 import flavor as v1flavor
-from valence.api.controllers.v1 import nodes as v1nodes
-from valence.api.controllers.v1 import systems as v1systems
 from valence.common.redfish import api as rfsapi
 
 class MediaType(base.APIBase):
@@ -96,6 +93,3 @@ class V1Controller(object):
         else:
             abort(404)
 
-route(V1Controller, 'flavor', v1flavor.FlavorController())
-route(V1Controller, 'nodes', v1nodes.NodesController())
-route(V1Controller, 'systems', v1systems.SystemsController())

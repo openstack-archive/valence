@@ -49,33 +49,45 @@ def send_request(resource, method="GET", **kwargs):
     return resp
 
 
-def filter_chassis(jsonContent, filterCondition):
-    returnJSONObj = {}
-    returnMembers = []
-    parsed = json.loads(jsonContent)
-    members = parsed['Members']
-    for member in members:
-        resource = member['@odata.id']
-        resp = send_request(resource)
-        memberJsonObj = json.loads(resp.json())
-        chassisType = memberJsonObj['ChassisType']
-        if chassisType == filterCondition:
-            returnMembers.append(member)
-        returnJSONObj["Members"] = returnMembers
-        returnJSONObj["Members@odata.count"] = len(returnMembers)
-    return returnJSONObj
+def filter_chassis(filterCondition):
+    # Fetch all types of chassis based on filtercondition
+    lst_chassis = []
+    chassisurllist = urls2list("Chassis")
+
+    for lnk in chassisurllist:
+        resp = send_request(lnk)
+        LOG.debug("Chassis" + lnk)
+        if resp.status_code != 200:
+            LOG.info("Error in fetching Node details " + lnk)
+        else:
+            chassis = resp.json()
+            filterPassed = True
+            # this below code need to be changed when proper query mechanism
+            # is implemented
+            if any(filterCondition):
+                filterPassed = generic_filter(chassis, filterCondition)
+    
+            if not filterPassed:
+                continue
+            else:
+                chassis = {"id": chassis['Id'], "name": chassis['Name'],
+                           "chassistype": chassis['ChassisType']} 
+                lst_chassis.append(chassis)
+    return lst_chassis
 
 
 def generic_filter(jsonContent, filterConditions):
     # returns boolean based on filters..its generic filter
     is_filter_passed = False
+    LOG.info(filterConditions)
     for fc in filterConditions:
+        LOG.info(fc)
         if fc in jsonContent:
             if jsonContent[fc].lower() == filterConditions[fc].lower():
                 is_filter_passed = True
             else:
                 is_filter_passed = False
-            break
+                break
         elif "/" in fc:
             querylst = fc.split("/")
             tmp = jsonContent
@@ -85,10 +97,10 @@ def generic_filter(jsonContent, filterConditions):
                 is_filter_passed = True
             else:
                 is_filter_passed = False
-            break
+                break
         else:
             LOG.warn(" Filter string mismatch ")
-    LOG.info(" JSON CONTENT " + str(is_filter_passed))
+    LOG.info(" Filter Passed? " + str(is_filter_passed))
     return is_filter_passed
 
 
@@ -104,29 +116,20 @@ def get_details(source):
     return returnJSONObj
 
 
-def systemdetails():
+def podsdetails():
+    jsonContent = send_request('Chassis')
+    pods = filter_chassis(jsonContent, 'Pod')
+
+def get_details(source):
     returnJSONObj = []
-    parsed = send_request('Systems')
-    members = parsed['Members']
+    members = source['Members']
     for member in members:
         resource = member['@odata.id']
         resp = send_request(resource)
-        memberJsonContent = resp.json()
-        memberJSONObj = json.loads(memberJsonContent)
-        returnJSONObj[resource] = memberJSONObj
-    return(json.dumps(returnJSONObj))
-
-
-def nodedetails():
-    returnJSONObj = []
-    parsed = send_request('Nodes')
-    members = parsed['Members']
-    for member in members:
-        resource = member['@odata.id']
-        resp = send_request(resource)
-        memberJSONObj = resp.json()
-        returnJSONObj[resource] = memberJSONObj
-    return(json.dumps(returnJSONObj))
+        memberJson = resp.json()
+        memberJsonObj = json.loads(memberJson)
+        returnJSONObj[resource] = memberJsonObj
+    return returnJSONObj
 
 
 def podsdetails():
@@ -143,16 +146,15 @@ def racksdetails():
     return json.dumps(racksDetails)
 
 
-def racks():
-    jsonContent = send_request('Chassis')
-    racks = filter_chassis(jsonContent, 'Rack')
-    return json.dumps(racks)
+def list_racks(filterconditions = {}):
+    filterconditions = dict(filterconditions.items() + [('ChassisType','Sled')])
+    LOG.info(filterconditions)
+    return filter_chassis(filterconditions)
 
-
-def pods():
-    jsonContent = send_request('Chassis')
-    pods = filter_chassis(jsonContent, 'Pod')
-    return json.dumps(pods)
+def list_pods(filterconditions = {}):
+    filterconditions = dict(filterconditions.items() + [('ChassisType','Pod')])
+    LOG.info(filterconditions)
+    return filter_chassis(filterconditions)
 
 
 def urls2list(url):
@@ -349,7 +351,6 @@ def systems_list(count=None, filters={}):
                lst_systems.append(system)
                # LOG.info(str(node))
     return lst_systems
-
 
 
 def nodes_list(count=None, filters={}):
