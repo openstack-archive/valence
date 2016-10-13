@@ -7,7 +7,9 @@ const ComposeDisplay = React.createClass({
 
   getInitialState: function() {
     return {
-      processors: []
+      processors: [],
+      errorTitle: '',
+      errorMsg: ''
     };
   },
 
@@ -32,8 +34,17 @@ const ComposeDisplay = React.createClass({
         this.props.onUpdateNodes();
         this.props.onHideCompose();
       }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(url, status, err.toString());
+      error: function (xhr, status, error) {
+        var response = JSON.parse(xhr.responseText)['error'];
+        var errorDetail = '';
+        for (var i = 0; i < response['@Message.ExtendedInfo'].length; i++)
+        {
+          errorDetail += response['@Message.ExtendedInfo'][i]['Message'] + ' ';
+        }
+        this.setState({errorTitle: response['message']});
+        this.setState({errorMsg: errorDetail});
+
+        $("#composeError").modal('show');
       }.bind(this)
     });
   },
@@ -116,6 +127,23 @@ const ComposeDisplay = React.createClass({
           <input type="button"
            class="detail-button"
            onClick={() => this.props.onHideCompose()} value="Return" />
+
+          <div class="modal fade" id="composeError" role="dialog">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Compose Node Error: {this.state.errorTitle}</h4>
+                </div>
+                <div class="modal-body">
+                  <p>{this.state.errorMsg}</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
     );
   }
