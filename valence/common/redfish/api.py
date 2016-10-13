@@ -219,63 +219,6 @@ def node_storage_details(nodeurl):
     # to convert Bytes in to GB. Divide by 1073741824
     return str(storagecnt / 1073741824).split(".")[0]
 
-
-def systems_list(count=None, filters={}):
-    # comment the count value which is set to 2 now..
-    # list of nodes with hardware details needed for flavor creation
-    # count = 2
-    lst_systems = []
-    systemurllist = urls2list("Systems")
-    podmtree = build_hierarchy_tree()
-
-    for lnk in systemurllist[:count]:
-        filterPassed = True
-        resp = send_request(lnk)
-        system = resp.json()
-
-        # this below code need to be changed when proper query mechanism
-        # is implemented
-        if any(filters):
-            filterPassed = generic_filter(system, filters)
-        if not filterPassed:
-            continue
-
-        systemid = lnk.split("/")[-1]
-        systemuuid = system['UUID']
-        systemlocation = podmtree.getPath(lnk)
-        cpu = node_cpu_details(lnk)
-        ram = node_ram_details(lnk)
-        nw = node_nw_details(lnk)
-        storage = node_storage_details(lnk)
-        node = {"nodeid": systemid, "cpu": cpu,
-                "ram": ram, "storage": storage,
-                "nw": nw, "location": systemlocation,
-                "uuid": systemuuid}
-
-        # filter based on RAM, CPU, NETWORK..etc
-        if 'ram' in filters:
-            filterPassed = (True
-                            if int(ram) >= int(filters['ram'])
-                            else False)
-
-        # filter based on RAM, CPU, NETWORK..etc
-        if 'nw' in filters:
-            filterPassed = (True
-                            if int(nw) >= int(filters['nw'])
-                            else False)
-
-        # filter based on RAM, CPU, NETWORK..etc
-        if 'storage' in filters:
-            filterPassed = (True
-                            if int(storage) >= int(filters['storage'])
-                            else False)
-
-        if filterPassed:
-            lst_systems.append(node)
-        # LOG.info(str(node))
-    return lst_systems
-
-
 def get_chassis_list():
     chassis_lnk_lst = urls2list("Chassis")
     lst_chassis = []
@@ -355,6 +298,59 @@ def delete_composednode(nodeid):
     resp = send_request(deleteurl, "DELETE")
     return resp
 
+def systems_list(count=None, filters={}):
+    # comment the count value which is set to 2 now..
+    # list of nodes with hardware details needed for flavor creation
+    # count = 2
+    lst_systems = []
+    systemsurllist = urls2list("Systems")
+
+    for lnk in systemsurllist:
+        filterPassed = True
+        resp = send_request(lnk)
+        LOG.debug("Systems" + lnk)
+        if resp.status_code != 200:
+            LOG.info("Error in fetching Node details " + lnk)
+        else:
+            system = resp.json()
+
+            # this below code need to be changed when proper query mechanism
+            # is implemented
+            if any(filters):
+                filterPassed = generic_filter(node, filters)
+            if not filterPassed:
+                continue
+
+            systemid = lnk.split("/")[-1]
+            systemuuid = system['UUID']
+            systemlocation = system['AssetTag']
+            #podmtree.getPath(lnk) commented as location should be computed using
+            #another logic.consult Chester
+            cpu = {}
+            ram = 0
+            nw = 0
+            localstorage = node_storage_details(lnk)
+            nw = node_nw_details(lnk)
+
+            if "ProcessorSummary" in system:
+                cpu = { "count" : system["ProcessorSummary"]["Count"],
+                        "model" : system["ProcessorSummary"]["Model"]}
+
+            if "MemorySummary" in system:
+                ram = system["MemorySummary"]["TotalSystemMemoryGiB"]
+
+            bmcip = "127.0.0.1" #system['Oem']['Dell_G5MC']['BmcIp']
+            bmcmac = "00:00:00:00:00" #system['Oem']['Dell_G5MC']['BmcMac']
+            system = {"nodeid": systemid, "cpu": cpu,
+                    "ram": ram, "storage": localstorage,
+                    "nw": nw, "location": systemlocation,
+                    "uuid": systemuuid, "bmcip": bmcip, "bmcmac": bmcmac}
+            if filterPassed:
+               lst_systems.append(system)
+               # LOG.info(str(node))
+    return lst_systems
+
+
 
 def nodes_list(count=None, filters={}):
     # comment the count value which is set to 2 now..
@@ -384,7 +380,7 @@ def nodes_list(count=None, filters={}):
             nodeuuid = node['UUID']
             nodelocation = node['AssetTag']
             # podmtree.getPath(lnk) commented as location should be
-            # computed using other logic.consult Chester
+            # computed using another logic.consult Chester
             nodesystemurl = node["Links"]["ComputerSystem"]["@odata.id"]
             cpu = {}
             ram = 0
@@ -409,4 +405,4 @@ def nodes_list(count=None, filters={}):
             if filterPassed:
                 lst_nodes.append(node)
                 # LOG.info(str(node))
-        return lst_nodes
+    return lst_nodes

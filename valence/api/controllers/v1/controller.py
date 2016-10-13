@@ -20,7 +20,8 @@ from valence.api.controllers import link
 from valence.api.controllers import types
 from valence.api.controllers.v1 import flavor as v1flavor
 from valence.api.controllers.v1 import nodes as v1nodes
-
+from valence.api.controllers.v1 import systems as v1systems
+from valence.common.redfish import api as rfsapi
 
 class MediaType(base.APIBase):
     """A media type representation."""
@@ -80,5 +81,21 @@ class V1Controller(object):
     def index(self):
         return V1.convert()
 
+    @expose('json')
+    def _default(self, *args):
+        """ this function just acts as a passthrough proxy
+         This is a temperory function and will be removed subsequently
+        """
+        ext = args[0]
+        filterext = ["Chassis","Services","Managers","Systems",
+                     "EventService","Nodes","EthernetSwitches"]
+        if ext in filterext:
+            urlext = '/'.join(args)
+            resp = rfsapi.send_request(urlext)
+            return resp.json()
+        else:
+            abort(404)
+
 route(V1Controller, 'flavor', v1flavor.FlavorController())
 route(V1Controller, 'nodes', v1nodes.NodesController())
+route(V1Controller, 'systems', v1systems.SystemsController())

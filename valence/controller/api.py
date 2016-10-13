@@ -41,6 +41,13 @@ class API(rpc_service.API):
     def flavor_generate(self, criteria):
         return self._call('flavor_generate', criteria=criteria)
 
+    # System(s) operations
+    def list_systems(self, filters):
+        return self._call('list_systems', filters=filters)
+
+    def get_systembyid(self, systemid):
+        return self._call('get_systembyid', systemid=systemid)
+
     # Node(s) Operations
     def list_nodes(self, filters):
         return self._call('list_nodes', filters=filters)
