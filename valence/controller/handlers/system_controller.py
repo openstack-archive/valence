@@ -12,10 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 from oslo_log import log as logging
-import requests
-from valence.common import osinterface as osapi
 from valence.common.redfish import api as rfsapi
 
 LOG = logging.getLogger(__name__)

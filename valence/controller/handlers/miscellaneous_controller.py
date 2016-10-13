@@ -34,12 +34,11 @@ class Handler(object):
         return rfsapi.list_pods(filters)
 
     def get_podbyid(self, context, podid):
-        return rfsapi.list_pods({'Id':podid})
+        return rfsapi.list_pods({'Id': podid})
 
     # Rack(s) related operations
     def list_racks(self, context, filters):
         return rfsapi.list_racks(filters)
 
     def get_rackbyid(self, context, rackid):
-        return rfsapi.list_racks({'Id':rackid})
-
+        return rfsapi.list_racks({'Id': rackid})

@@ -17,7 +17,6 @@ from oslo_log import log as logging
 import pecan
 from pecan import expose
 from pecan import request
-from pecan import response
 from pecan.rest import RestController
 from valence.controller import api as controller_api
 

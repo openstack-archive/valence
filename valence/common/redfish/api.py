@@ -66,12 +66,12 @@ def filter_chassis(filterCondition):
             # is implemented
             if any(filterCondition):
                 filterPassed = generic_filter(chassis, filterCondition)
-    
+
             if not filterPassed:
                 continue
             else:
                 chassis = {"id": chassis['Id'], "name": chassis['Name'],
-                           "chassistype": chassis['ChassisType']} 
+                           "chassistype": chassis['ChassisType']}
                 lst_chassis.append(chassis)
     return lst_chassis
 
@@ -119,22 +119,6 @@ def get_details(source):
 def podsdetails():
     jsonContent = send_request('Chassis')
     pods = filter_chassis(jsonContent, 'Pod')
-
-def get_details(source):
-    returnJSONObj = []
-    members = source['Members']
-    for member in members:
-        resource = member['@odata.id']
-        resp = send_request(resource)
-        memberJson = resp.json()
-        memberJsonObj = json.loads(memberJson)
-        returnJSONObj[resource] = memberJsonObj
-    return returnJSONObj
-
-
-def podsdetails():
-    jsonContent = send_request('Chassis')
-    pods = filter_chassis(jsonContent, 'Pod')
     podsDetails = get_details(pods)
     return json.dumps(podsDetails)
 
@@ -146,15 +130,14 @@ def racksdetails():
     return json.dumps(racksDetails)
 
 
-def list_racks(filterconditions = {}):
-    filterconditions = dict(filterconditions.items() + [('ChassisType','Sled')])
-    LOG.info(filterconditions)
-    return filter_chassis(filterconditions)
+def list_racks(filterconditions={}):
+    filterdict = dict(filterconditions.items() + [('ChassisType', 'Sled')])
+    return filter_chassis(filterdict)
 
-def list_pods(filterconditions = {}):
-    filterconditions = dict(filterconditions.items() + [('ChassisType','Pod')])
-    LOG.info(filterconditions)
-    return filter_chassis(filterconditions)
+
+def list_pods(filterconditions={}):
+    filterdict = dict(filterconditions.items() + [('ChassisType', 'Pod')])
+    return filter_chassis(filterdict)
 
 
 def urls2list(url):
@@ -220,6 +203,7 @@ def node_storage_details(nodeurl):
     LOG.debug("Total storage for node %s : %d " % (nodeurl, storagecnt))
     # to convert Bytes in to GB. Divide by 1073741824
     return str(storagecnt / 1073741824).split(".")[0]
+
 
 def get_chassis_list():
     chassis_lnk_lst = urls2list("Chassis")
@@ -300,6 +284,7 @@ def delete_composednode(nodeid):
     resp = send_request(deleteurl, "DELETE")
     return resp
 
+
 def systems_list(count=None, filters={}):
     # comment the count value which is set to 2 now..
     # list of nodes with hardware details needed for flavor creation
@@ -319,15 +304,15 @@ def systems_list(count=None, filters={}):
             # this below code need to be changed when proper query mechanism
             # is implemented
             if any(filters):
-                filterPassed = generic_filter(node, filters)
+                filterPassed = generic_filter(system, filters)
             if not filterPassed:
                 continue
 
             systemid = lnk.split("/")[-1]
             systemuuid = system['UUID']
             systemlocation = system['AssetTag']
-            #podmtree.getPath(lnk) commented as location should be computed using
-            #another logic.consult Chester
+            # podmtree.getPath(lnk) commented as location should be
+            # computed using different logic.ref: Chester
             cpu = {}
             ram = 0
             nw = 0
@@ -335,21 +320,21 @@ def systems_list(count=None, filters={}):
             nw = node_nw_details(lnk)
 
             if "ProcessorSummary" in system:
-                cpu = { "count" : system["ProcessorSummary"]["Count"],
-                        "model" : system["ProcessorSummary"]["Model"]}
+                cpu = {"count": system["ProcessorSummary"]["Count"],
+                       "model": system["ProcessorSummary"]["Model"]}
 
             if "MemorySummary" in system:
                 ram = system["MemorySummary"]["TotalSystemMemoryGiB"]
 
-            bmcip = "127.0.0.1" #system['Oem']['Dell_G5MC']['BmcIp']
-            bmcmac = "00:00:00:00:00" #system['Oem']['Dell_G5MC']['BmcMac']
+            bmcip = "127.0.0.1"  # system['Oem']['Dell_G5MC']['BmcIp']
+            bmcmac = "00:00:00:00:00"  # system['Oem']['Dell_G5MC']['BmcMac']
             system = {"nodeid": systemid, "cpu": cpu,
-                    "ram": ram, "storage": localstorage,
-                    "nw": nw, "location": systemlocation,
-                    "uuid": systemuuid, "bmcip": bmcip, "bmcmac": bmcmac}
+                      "ram": ram, "storage": localstorage,
+                      "nw": nw, "location": systemlocation,
+                      "uuid": systemuuid, "bmcip": bmcip, "bmcmac": bmcmac}
             if filterPassed:
-               lst_systems.append(system)
-               # LOG.info(str(node))
+                lst_systems.append(system)
+                # LOG.info(str(node))
     return lst_systems
 
 

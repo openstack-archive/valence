@@ -49,6 +49,7 @@ class PodsController(RestController):
             pecan.abort(404)
         return node
 
+
 class RacksController(RestController):
 
     def __init__(self, *args, **kwargs):
@@ -70,5 +71,3 @@ class RacksController(RestController):
         if not node:
             pecan.abort(404)
         return node
-
-
