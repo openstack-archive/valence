@@ -3,6 +3,8 @@
  */
 
 exports.url = "http://127.0.0.1:6000"
+exports.username = "admin"
+exports.password = "admin"
 
 exports.nodeConfig =
 {
