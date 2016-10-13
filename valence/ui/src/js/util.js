@@ -140,10 +140,10 @@ exports.filterChassis = function(memberList, filter) {
     chassisType = memberList[i]["ChassisType"];
     if (chassisType == filter) {
       returnMembers.push(memberList[i]);
-    }   
-  }   
+    }
+  }
   return returnMembers;
-};  
+};
 
 exports.readAndReturn = function(resource) {
   var url = config.url + resource;
@@ -155,3 +155,10 @@ exports.readAndReturn = function(resource) {
     async: false,
   }).responseText;
 };
+
+exports.showErrorModal = function(title, message) {
+  $("#errorModal .modal-title").html(title);
+  $("#errorModal .modal-body p:first").html(message);
+  $("#errorModal").modal('show');
+};
+

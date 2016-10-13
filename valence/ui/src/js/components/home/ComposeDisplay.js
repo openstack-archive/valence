@@ -32,8 +32,15 @@ const ComposeDisplay = React.createClass({
         this.props.onUpdateNodes();
         this.props.onHideCompose();
       }.bind(this),
-      error: function(xhr, status, err) {
-        console.error(url, status, err.toString());
+      error: function (xhr, status, error) {
+        var response = JSON.parse(xhr.responseText)['error'];
+        var errorTitle = 'Compose Node Error: ' + response['message'];
+        var errorDetail = '';
+        for (var i = 0; i < response['@Message.ExtendedInfo'].length; i++)
+        {
+          errorDetail += response['@Message.ExtendedInfo'][i]['Message'] + ' ';
+        }
+        util.showErrorModal(errorTitle, errorDetail);
       }.bind(this)
     });
   },
