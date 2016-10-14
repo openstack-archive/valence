@@ -52,9 +52,9 @@ Valence installation
 
  8. Start api and controller services
     
-    ``$ service valence-api start`` 
+    ``$ sudo service valence-api start`` 
 
-    ``$ service valence-controller start``
+    ``$ sudo service valence-controller start``
 
  9. Logs are located at /var/logs/valence/
 
