@@ -12,14 +12,13 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from pecan import abort
 from pecan import expose
 from pecan import request
-from pecan import route
 from valence.api.controllers import base
 from valence.api.controllers import link
 from valence.api.controllers import types
-from valence.api.controllers.v1 import flavor as v1flavor
-from valence.api.controllers.v1 import nodes as v1nodes
+from valence.common.redfish import api as rfsapi
 
 
 class MediaType(base.APIBase):
@@ -80,5 +79,15 @@ class V1Controller(object):
     def index(self):
         return V1.convert()
 
-route(V1Controller, 'flavor', v1flavor.FlavorController())
-route(V1Controller, 'nodes', v1nodes.NodesController())
+    @expose('json')
+    def _default(self, *args):
+        """This function just acts as a passthrough podm proxy"""
+        ext = args[0]
+        filterext = ["Chassis", "Services", "Managers", "Systems",
+                     "EventService", "Nodes", "EthernetSwitches"]
+        if ext in filterext:
+            urlext = '/'.join(args)
+            resp = rfsapi.send_request(urlext)
+            return resp.json()
+        else:
+            abort(404)
