@@ -276,6 +276,11 @@ def systems_list(count=None, filters={}):
     return lst_systems
 
 
+def get_systembyid(systemid):
+    resp = send_request("Systems/" + systemid)
+    return resp.json()
+
+
 def get_chassis_list():
     chassis_lnk_lst = urls2list("Chassis")
     lst_chassis = []
