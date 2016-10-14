@@ -25,7 +25,9 @@ import uuid
 from valence.common import rpc_service
 from valence.controller import config as controller_config
 from valence.controller.handlers import flavor_controller
+from valence.controller.handlers import miscellaneous_controller
 from valence.controller.handlers import node_controller
+from valence.controller.handlers import system_controller
 
 LOG = logging.getLogger(__name__)
 
@@ -38,7 +40,9 @@ def main():
     controller_id = uuid.uuid4()
     endpoints = [
         flavor_controller.Handler(),
-        node_controller.Handler()
+        node_controller.Handler(),
+        system_controller.Handler(),
+        miscellaneous_controller.Handler()
     ]
 
     server = rpc_service.Service.create(cfg.CONF.controller.topic,

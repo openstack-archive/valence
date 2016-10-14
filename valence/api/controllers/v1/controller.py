@@ -15,7 +15,6 @@
 from pecan import abort
 from pecan import expose
 from pecan import request
-from pecan import route
 from valence.api.controllers import base
 from valence.api.controllers import link
 from valence.api.controllers import types

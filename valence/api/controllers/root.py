@@ -19,7 +19,11 @@ from pecan import route
 from valence.api.controllers import base
 from valence.api.controllers import link
 from valence.api.controllers import types
-from valence.api.controllers.v1 import controller as v1controller
+from valence.api.controllers.v1.controller import V1Controller
+from valence.api.controllers.v1 import flavor as v1flavor
+from valence.api.controllers.v1 import miscellaneous as v1miscellaneous
+from valence.api.controllers.v1 import nodes as v1nodes
+from valence.api.controllers.v1 import systems as v1systems
 
 
 class Version(base.APIBase):
@@ -75,4 +79,10 @@ class RootController(object):
     def index(self):
         return Root.convert()
 
-route(RootController, 'v1', v1controller.V1Controller())
+
+route(RootController, 'v1', V1Controller())
+route(V1Controller, 'flavor', v1flavor.FlavorController())
+route(V1Controller, 'nodes', v1nodes.NodesController())
+route(V1Controller, 'systems', v1systems.SystemsController())
+route(V1Controller, 'pods', v1miscellaneous.PodsController())
+route(V1Controller, 'racks', v1miscellaneous.RacksController())
