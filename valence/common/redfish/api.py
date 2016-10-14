@@ -49,33 +49,45 @@ def send_request(resource, method="GET", **kwargs):
     return resp
 
 
-def filter_chassis(jsonContent, filterCondition):
-    returnJSONObj = {}
-    returnMembers = []
-    parsed = json.loads(jsonContent)
-    members = parsed['Members']
-    for member in members:
-        resource = member['@odata.id']
-        resp = send_request(resource)
-        memberJsonObj = json.loads(resp.json())
-        chassisType = memberJsonObj['ChassisType']
-        if chassisType == filterCondition:
-            returnMembers.append(member)
-        returnJSONObj["Members"] = returnMembers
-        returnJSONObj["Members@odata.count"] = len(returnMembers)
-    return returnJSONObj
+def filter_chassis(filterCondition):
+    # Fetch all types of chassis based on filtercondition
+    lst_chassis = []
+    chassisurllist = urls2list("Chassis")
+
+    for lnk in chassisurllist:
+        resp = send_request(lnk)
+        LOG.debug("Chassis" + lnk)
+        if resp.status_code != 200:
+            LOG.error("Error in fetching Node details " + lnk)
+        else:
+            chassis = resp.json()
+            filterPassed = True
+            # this below code need to be changed when proper query mechanism
+            # is implemented
+            if any(filterCondition):
+                filterPassed = generic_filter(chassis, filterCondition)
+
+            if not filterPassed:
+                continue
+            else:
+                chassis = {"id": chassis['Id'], "name": chassis['Name'],
+                           "chassistype": chassis['ChassisType']}
+                lst_chassis.append(chassis)
+    return lst_chassis
 
 
 def generic_filter(jsonContent, filterConditions):
     # returns boolean based on filters..its generic filter
     is_filter_passed = False
+    LOG.info(filterConditions)
     for fc in filterConditions:
+        LOG.info(fc)
         if fc in jsonContent:
             if jsonContent[fc].lower() == filterConditions[fc].lower():
                 is_filter_passed = True
             else:
                 is_filter_passed = False
-            break
+                break
         elif "/" in fc:
             querylst = fc.split("/")
             tmp = jsonContent
@@ -85,10 +97,10 @@ def generic_filter(jsonContent, filterConditions):
                 is_filter_passed = True
             else:
                 is_filter_passed = False
-            break
+                break
         else:
             LOG.warn(" Filter string mismatch ")
-    LOG.info(" JSON CONTENT " + str(is_filter_passed))
+    LOG.info(" Filter Passed? " + str(is_filter_passed))
     return is_filter_passed
 
 
@@ -102,31 +114,6 @@ def get_details(source):
         memberJsonObj = json.loads(memberJson)
         returnJSONObj[resource] = memberJsonObj
     return returnJSONObj
-
-
-def systemdetails():
-    returnJSONObj = []
-    parsed = send_request('Systems')
-    members = parsed['Members']
-    for member in members:
-        resource = member['@odata.id']
-        resp = send_request(resource)
-        memberJsonContent = resp.json()
-        memberJSONObj = json.loads(memberJsonContent)
-        returnJSONObj[resource] = memberJSONObj
-    return(json.dumps(returnJSONObj))
-
-
-def nodedetails():
-    returnJSONObj = []
-    parsed = send_request('Nodes')
-    members = parsed['Members']
-    for member in members:
-        resource = member['@odata.id']
-        resp = send_request(resource)
-        memberJSONObj = resp.json()
-        returnJSONObj[resource] = memberJSONObj
-    return(json.dumps(returnJSONObj))
 
 
 def podsdetails():
@@ -143,16 +130,14 @@ def racksdetails():
     return json.dumps(racksDetails)
 
 
-def racks():
-    jsonContent = send_request('Chassis')
-    racks = filter_chassis(jsonContent, 'Rack')
-    return json.dumps(racks)
+def list_racks(filterconditions={}):
+    filterdict = dict(filterconditions.items() + [('ChassisType', 'Sled')])
+    return filter_chassis(filterdict)
 
 
-def pods():
-    jsonContent = send_request('Chassis')
-    pods = filter_chassis(jsonContent, 'Pod')
-    return json.dumps(pods)
+def list_pods(filterconditions={}):
+    filterdict = dict(filterconditions.items() + [('ChassisType', 'Pod')])
+    return filter_chassis(filterdict)
 
 
 def urls2list(url):
@@ -218,62 +203,6 @@ def node_storage_details(nodeurl):
     LOG.debug("Total storage for node %s : %d " % (nodeurl, storagecnt))
     # to convert Bytes in to GB. Divide by 1073741824
     return str(storagecnt / 1073741824).split(".")[0]
-
-
-def systems_list(count=None, filters={}):
-    # comment the count value which is set to 2 now..
-    # list of nodes with hardware details needed for flavor creation
-    # count = 2
-    lst_systems = []
-    systemurllist = urls2list("Systems")
-    podmtree = build_hierarchy_tree()
-
-    for lnk in systemurllist[:count]:
-        filterPassed = True
-        resp = send_request(lnk)
-        system = resp.json()
-
-        # this below code need to be changed when proper query mechanism
-        # is implemented
-        if any(filters):
-            filterPassed = generic_filter(system, filters)
-        if not filterPassed:
-            continue
-
-        systemid = lnk.split("/")[-1]
-        systemuuid = system['UUID']
-        systemlocation = podmtree.getPath(lnk)
-        cpu = node_cpu_details(lnk)
-        ram = node_ram_details(lnk)
-        nw = node_nw_details(lnk)
-        storage = node_storage_details(lnk)
-        node = {"nodeid": systemid, "cpu": cpu,
-                "ram": ram, "storage": storage,
-                "nw": nw, "location": systemlocation,
-                "uuid": systemuuid}
-
-        # filter based on RAM, CPU, NETWORK..etc
-        if 'ram' in filters:
-            filterPassed = (True
-                            if int(ram) >= int(filters['ram'])
-                            else False)
-
-        # filter based on RAM, CPU, NETWORK..etc
-        if 'nw' in filters:
-            filterPassed = (True
-                            if int(nw) >= int(filters['nw'])
-                            else False)
-
-        # filter based on RAM, CPU, NETWORK..etc
-        if 'storage' in filters:
-            filterPassed = (True
-                            if int(storage) >= int(filters['storage'])
-                            else False)
-
-        if filterPassed:
-            lst_systems.append(node)
-        # LOG.info(str(node))
-    return lst_systems
 
 
 def get_chassis_list():
@@ -356,10 +285,57 @@ def delete_composednode(nodeid):
     return resp
 
 
+def systems_list(count=None, filters={}):
+    lst_systems = []
+    systemsurllist = urls2list("Systems")
+
+    for lnk in systemsurllist:
+        filterPassed = True
+        resp = send_request(lnk)
+        LOG.debug("Systems" + lnk)
+        if resp.status_code != 200:
+            LOG.info("Error in fetching Node details " + lnk)
+        else:
+            system = resp.json()
+
+            # this below code need to be changed when proper query mechanism
+            # is implemented
+            if any(filters):
+                filterPassed = generic_filter(system, filters)
+            if not filterPassed:
+                continue
+
+            systemid = lnk.split("/")[-1]
+            systemuuid = system['UUID']
+            systemlocation = system['AssetTag']
+            # podmtree.getPath(lnk) commented as location should be
+            # computed using different logic.ref: Chester
+            cpu = {}
+            ram = 0
+            nw = 0
+            localstorage = node_storage_details(lnk)
+            nw = node_nw_details(lnk)
+
+            if "ProcessorSummary" in system:
+                cpu = {"count": system["ProcessorSummary"]["Count"],
+                       "model": system["ProcessorSummary"]["Model"]}
+
+            if "MemorySummary" in system:
+                ram = system["MemorySummary"]["TotalSystemMemoryGiB"]
+
+            bmcip = "127.0.0.1"  # system['Oem']['Dell_G5MC']['BmcIp']
+            bmcmac = "00:00:00:00:00"  # system['Oem']['Dell_G5MC']['BmcMac']
+            system = {"nodeid": systemid, "cpu": cpu,
+                      "ram": ram, "storage": localstorage,
+                      "nw": nw, "location": systemlocation,
+                      "uuid": systemuuid, "bmcip": bmcip, "bmcmac": bmcmac}
+            if filterPassed:
+                lst_systems.append(system)
+                # LOG.info(str(node))
+    return lst_systems
+
+
 def nodes_list(count=None, filters={}):
-    # comment the count value which is set to 2 now..
-    # list of nodes with hardware details needed for flavor creation
-    # count = 2
     lst_nodes = []
     nodeurllist = urls2list("Nodes")
     # podmtree = build_hierarchy_tree()
@@ -384,7 +360,7 @@ def nodes_list(count=None, filters={}):
             nodeuuid = node['UUID']
             nodelocation = node['AssetTag']
             # podmtree.getPath(lnk) commented as location should be
-            # computed using other logic.consult Chester
+            # computed using another logic.consult Chester
             nodesystemurl = node["Links"]["ComputerSystem"]["@odata.id"]
             cpu = {}
             ram = 0
@@ -409,4 +385,4 @@ def nodes_list(count=None, filters={}):
             if filterPassed:
                 lst_nodes.append(node)
                 # LOG.info(str(node))
-        return lst_nodes
+    return lst_nodes
