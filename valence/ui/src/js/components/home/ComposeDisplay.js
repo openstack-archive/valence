@@ -42,7 +42,7 @@ const ComposeDisplay = React.createClass({
     var storageCapacity = document.getElementById('storageCapacity').value;
     var iqn = document.getElementById('iqn').value;
     var masterDrive = document.getElementById('remoteDrives').value;
-    var procModel = document.getElementById('procModels').value;
+    var processorModel = document.getElementById('processorModels').value;
     var data = {
       "Name": name,
       "Description": description,
@@ -51,7 +51,7 @@ const ComposeDisplay = React.createClass({
       }]
     }
     if (procModel != 'null') {
-      data["Processors"] = [{"Model": procModel}];
+      data["Processors"] = [{"Model": processorModel}];
     }
     if (iqn != 'null' && masterDrive != 'null') {
       data["RemoteDrives"] = [{
@@ -91,6 +91,10 @@ const ComposeDisplay = React.createClass({
                   <td align="left"><input type="number" min="0" id="totalMem" /></td>
                 </tr>
                 <tr>
+                  <td align="right">Processor Model:</td>
+                  <td align="left"><select id="processorModels" /></td>
+                </tr>
+                <tr>
                   <td align="right">Remote Storage Capacity GB:</td>
                   <td align="left"><input type="number" min="0" id="storageCapacity" /></td>
                 </tr>
@@ -101,10 +105,6 @@ const ComposeDisplay = React.createClass({
                 <tr>
                   <td align="right">Remote storage master drive:</td>
                   <td align="left"><select id="remoteDrives" /></td>
-                </tr>
-                <tr>
-                  <td align="right">Processor Model:</td>
-                  <td align="left"><select id="procModels" /></td>
                 </tr>
               </tbody>
             </table>

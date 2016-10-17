@@ -17,7 +17,6 @@ const Layout = React.createClass({
       racks: [],
       systems: [],
       storage: [],
-      processors: [],
       nodes: []
     };
   },
@@ -26,7 +25,6 @@ const Layout = React.createClass({
     this.getPods();
     this.getRacks();
     this.getSystems();
-    this.getProcessors();
     this.getStorage();
     this.getNodes();
   },
@@ -50,7 +48,6 @@ const Layout = React.createClass({
   },
 
   displayCompose: function() {
-    this.getProcessors();
     this.getStorage();
     this.fillComposeForms();
     this.setState({
@@ -78,17 +75,18 @@ const Layout = React.createClass({
 
   fillComposeForms: function() {
     // Fill processor dropdown menu
-    var processorNames = []
-    for (var i = 0; i < this.state.processors.length; i++) {
-      if (this.state.processors[i]['Model'] &&
-          processorNames.indexOf(this.state.processors[i]['Model']) >= 0) {
-            processorsNames.push(this.state.processors[i]['Model']);
+    var processorModels = [];
+    var model;
+    for (var i = 0; i < this.state.systems.length; i++) {
+      model = this.state.systems[i]['ProcessorSummary']['Model'];
+      if (model && processorModels.indexOf(model) >= 0) {
+        processorModels.push(model);
       }
     }
-    this.fillDropdownMenu('procModels', processorNames, processorNames);
+    this.fillDropdownMenu('processorModels', processorModels, processorModels);
     // Fill storage dropdown menu
     var driveNames = [];
-    var driveValues = []
+    var driveValues = [];
     for (var i = 0; i < this.state.storage.length; i++) {
       if (this.state.storage[i]['Mode'] == 'LV') {
         driveNames.push(this.state.storage[i]['Name']);
@@ -120,14 +118,6 @@ const Layout = React.createClass({
 
   setSystems: function(systems) {
     this.setState({systems: systems});
-  },
-
-  getProcessors: function() {
-    util.getProcessors(this.state.systems, this.setProcessors);
-  },
-
-  setProcessors: function(processors) {
-    this.setState({processors: processors});
   },
 
   getStorage: function() {
