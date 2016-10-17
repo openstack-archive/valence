@@ -42,7 +42,7 @@ const ComposeDisplay = React.createClass({
     var storageCapacity = document.getElementById('storageCapacity').value;
     var iqn = document.getElementById('iqn').value;
     var masterDrive = document.getElementById('remoteDrives').value;
-    var procModel = document.getElementById('procModels').value;
+    var processorModel = document.getElementById('processorModels').value;
     var data = {
       "Name": name,
       "Description": description,
@@ -51,7 +51,7 @@ const ComposeDisplay = React.createClass({
       }]
     }
     if (procModel != 'null') {
-      data["Processors"] = [{"Model": procModel}];
+      data["Processors"] = [{"Model": processorModel}];
     }
     if (iqn != 'null' && masterDrive != 'null') {
       data["RemoteDrives"] = [{
@@ -104,7 +104,7 @@ const ComposeDisplay = React.createClass({
                 </tr>
                 <tr>
                   <td align="right">Processor Model:</td>
-                  <td align="left"><select id="procModels" /></td>
+                  <td align="left"><select id="processorModels" /></td>
                 </tr>
               </tbody>
             </table>

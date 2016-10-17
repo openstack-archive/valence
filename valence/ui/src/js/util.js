@@ -110,21 +110,6 @@ exports.getLogicalDrives = function(services, callback) {
   callback(logicalDrives);
 };
 
-exports.getProcessors = function(systems, callback) {
-  var processors = [];
-  var systemProcessorIds;
-  var systemProcessors;
-  for (var i = 0; i < systems.length; i++) {
-    systemProcessorIds = util.readAndReturn(systems[i]['Processors']['@odata.id']);
-    systemProcessorIds = JSON.parse(systemProcessorIds);
-    systemProcessors = util.listItems(systemProcessorIds['Members']);
-    for (var j = 0; j < systemProcessors.length; j++) {
-      processors.push(systemProcessors[j]);
-    }
-  }
-  callback(processors);
-};
-
 exports.listItems = function(items) {
   var returnItems = [];
   var count = items.length;
