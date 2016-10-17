@@ -3,8 +3,7 @@ var util = require('./util.js');
 
 // Base64 username:password on client-side, and append into request header
 $.ajaxSetup({
-  beforeSend: function (xhr)
-  {
+  beforeSend: function(xhr) {
     xhr.setRequestHeader('Authorization',
                          'Basic ' + btoa(config.username + ':' + config.password));
   }
