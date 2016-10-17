@@ -68,3 +68,4 @@ releasenotes/build
 # UI Node files
 valence/ui/node_modules
 valence/ui/npm-debug.log
+valence/ui/src/bundle.min.js
