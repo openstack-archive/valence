@@ -39,7 +39,6 @@ const NodeList = React.createClass({
 
   powerOn: function(nodeId) {
     var url = config.url + '/redfish/v1/Nodes/' + nodeId + '/Actions/ComposedNode.Reset'
-    console.log(nodeId);
     $.ajax({
       url: url,
       type: 'POST',
@@ -48,7 +47,6 @@ const NodeList = React.createClass({
       },
       data: JSON.stringify({"ResetType": "On"}),
       success: function(resp) {
-        console.log(resp);
         this.props.onUpdateNodes();
       }.bind(this),
       error: function(xhr, status, err) {
