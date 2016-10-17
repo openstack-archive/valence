@@ -68,3 +68,4 @@ releasenotes/build
 # UI Node files
 ui/node_modules
 ui/npm-debug.log
+ui/src/bundle.min.js
