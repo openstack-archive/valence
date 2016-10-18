@@ -9,10 +9,9 @@ auth_strategy=noauth
 
 # Log to this file. Make sure the user running rsc has
 # permissions to write to this file!
-log_file = rsc.log
 
 
-log_dir=/var/log/rsc
+log_dir=/var/log/valence
 rpc_response_timeout = 300
 
 
@@ -35,6 +34,4 @@ url=http://<ip address>
 user=<user>
 password=<password>
 
-[conductor]
-#topic=rsc-conductor
 
