@@ -50,7 +50,7 @@ const ComposeDisplay = React.createClass({
         "CapacityMiB": totalMem * 1000
       }]
     }
-    if (procModel != 'null') {
+    if (processorModel != 'null') {
       data["Processors"] = [{"Model": processorModel}];
     }
     if (iqn != 'null' && masterDrive != 'null') {
