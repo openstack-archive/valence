@@ -79,7 +79,7 @@ const Layout = React.createClass({
     var model;
     for (var i = 0; i < this.state.systems.length; i++) {
       model = this.state.systems[i]['ProcessorSummary']['Model'];
-      if (model && processorModels.indexOf(model) >= 0) {
+      if (model && processorModels.indexOf(model) < 0) {
         processorModels.push(model);
       }
     }
