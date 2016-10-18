@@ -66,5 +66,5 @@ etc/magnum/magnum.conf.sample
 releasenotes/build
 
 # UI Node files
-valence/ui/node_modules
-valence/ui/npm-debug.log
+ui/node_modules
+ui/npm-debug.log
