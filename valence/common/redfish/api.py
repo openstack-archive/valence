@@ -159,7 +159,10 @@ def urls2list(url):
     # This will extract the url values from @odata.id inside Members
     resp = send_request(url)
     respdata = resp.json()
-    return [u['@odata.id'] for u in respdata['Members']]
+    if 'Members' in respdata:
+        return [u['@odata.id'] for u in respdata['Members']]
+    else:
+        return {}
 
 
 def extract_val(data, path):
@@ -398,7 +401,10 @@ def nodes_list(count=None, filters={}):
                 ram = node["Memory"]["TotalSystemMemoryGiB"]
 
             if "EthernetInterfaces" in node["Links"]:
-                nw = len(node["Links"]["EthernetInterfaces"])
+                if node["Links"]["EthernetInterfaces"]:
+                    nw = len(node["Links"]["EthernetInterfaces"])
+                else:
+                    nw = 0
 
             bmcip = "127.0.0.1"  # system['Oem']['Dell_G5MC']['BmcIp']
             bmcmac = "00:00:00:00:00"  # system['Oem']['Dell_G5MC']['BmcMac']
