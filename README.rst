@@ -2,14 +2,14 @@
 Openstack Valence Project
 =========================
 
-Valence is a service for lifecycle management of pooled bare-metal hardware infrastructure such as Intel(R) Rack Scale architecture which uses Redfish(TM) as one of the management protocols.
-    
+Valence is a service for lifecycle management of pooled bare-metal hardware infrastructure such as Intel(R) Rack Scale architecture which uses Redfish(TM)as one of the management protocols.
+
 :Free software: Apache license
 :Wiki: https://wiki.openstack.org/wiki/Valence
 :Source: http://git.openstack.org/cgit/openstack/rsc
 :Bugs: http://bugs.launchpad.net/openstack-valence
 
-    
+
 ===========================
 Download and Installation
 ===========================
@@ -26,33 +26,33 @@ Valence installation
 
  2. Configure RabbitMq Server
 
-     ``$ sudo rabbitmqctl add_user rsd rsd    #user this username/pwd in valence.conf``
+     ``$ sudo rabbitmqctl add_user valence valence    #use this username/pwd in valence.conf``
 
-     ``$ sudo rabbitmqctl set_user_tags rsd administrator``
+     ``$ sudo rabbitmqctl set_user_tags valence administrator``
 
-     ``$ sudo rabbitmqctl set_permissions rsd ".*" ".*" ".*"``
-   
+     ``$ sudo rabbitmqctl set_permissions valence ".*" ".*" ".*"``
+
  3. Clone the Valence code from git repo and change the directory to root Valence folder.
 
- 4. Install all necessary software pre-requisites using the pip requirements file. 
+ 4. Install all necessary software pre-requisites using the pip requirements file.
 
     ``$ sudo -E pip install -r requirements.txt``
 
- 5. Execute the 'install_valence.sh' file the Valence root directory. 
+ 5. Execute the 'install_valence.sh' file the Valence root directory.
 
     ``$ ./install_valence.sh``
- 
- 6. Check the values in valence.conf located at /etc/valence/valence.conf   
-         
+
+ 6. Check the values in valence.conf located at /etc/valence/valence.conf
+
      ``set the ip/credentials of podm for which this Valence will interact``
 
      ``set the rabbitmq user/password to the one given above(Step 2)``
 
- 7. Check the values in /etc/init/valence-api.conf, /etc/init/valence-controller.conf 
+ 7. Check the values in /etc/init/valence-api.conf, /etc/init/valence-controller.conf
 
  8. Start api and controller services
-    
-    ``$ service valence-api start`` 
+
+    ``$ service valence-api start``
 
     ``$ service valence-controller start``
 
@@ -61,7 +61,7 @@ Valence installation
 ****************
 GUI installation
 ****************
-Please refer to the installation steps in the ui/README file. 
+Please refer to the installation steps in the ui/README file.
 
 
 **********
