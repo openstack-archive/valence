@@ -414,3 +414,13 @@ def nodes_list(count=None, filters={}):
                 lst_nodes.append(node)
                 # LOG.info(str(node))
         return lst_nodes
+
+
+def power_manage(nodeid, power_action):
+    # set the node to target power state
+    headers = {'Content-type': 'application/json'}
+    data = '{"ResetType":"%s"}' % power_action
+    url = get_rfs_url('Nodes/%s/Actions/ComposedNode.Reset' % nodeid)
+    resp = requests.post(url, data=data, headers=headers, verify=False)
+    return {'is_success': resp.ok, 'reason': resp.content,
+            'status_code': resp.status_code}
