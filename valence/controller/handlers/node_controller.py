@@ -55,3 +55,6 @@ class Handler(object):
 
     def delete_node_storage(self, context, data):
         return {"node": "Deleted storages mapped to a node"}
+
+    def power_manage(self, context, nodeid, power_action):
+        return rfsapi.power_manage(nodeid, power_action)

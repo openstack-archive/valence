@@ -65,3 +65,7 @@ class API(rpc_service.API):
 
     def delete_node_storage(self, data):
         return self._call('delete_node_storage')
+
+    def power_manage(self, nodeid, power_action):
+        return self._call('power_manage', nodeid=nodeid,
+                          power_action=power_action)
