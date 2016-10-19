@@ -413,4 +413,4 @@ def nodes_list(count=None, filters={}):
             if filterPassed:
                 lst_nodes.append(node)
                 # LOG.info(str(node))
-        return lst_nodes
+    return lst_nodes
