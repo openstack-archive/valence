@@ -1,0 +1,9 @@
+Code-Review+1: Andy Yan <yanchao3@lenovo.com>
+Code-Review+2: Seenivasan Gunabalan <agsnivas@gmail.com>
+Workflow+1: Seenivasan Gunabalan <agsnivas@gmail.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Wed, 19 Oct 2016 06:25:36 +0000
+Reviewed-on: https://review.openstack.org/387834
+Project: openstack/rsc
+Branch: refs/heads/master
