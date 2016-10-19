@@ -414,3 +414,18 @@ def nodes_list(count=None, filters={}):
                 lst_nodes.append(node)
                 # LOG.info(str(node))
         return lst_nodes
+
+
+def power_manage(nodeid, power_action):
+    # set the node to target power state
+    headers = {"Content-type": "application/json"}
+    data = "{'ResetType':'%s'}" % power_action
+    url = "Nodes/%s/Actions/ComposedNode.Reset" % nodeid
+    resp = send_request(url, method="POST", data=data, headers=headers)
+
+    if resp is None:
+        return {"is_success": False, "message": "Unknown Exception",
+                "status_code": 500}
+
+    return {"is_success": resp.ok, "message": resp.content,
+            "status_code": resp.status_code}
