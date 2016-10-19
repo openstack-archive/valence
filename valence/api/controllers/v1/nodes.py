@@ -25,6 +25,7 @@ LOG = logging.getLogger(__name__)
 
 
 class NodeDetailController(RestController):
+
     def __init__(self, nodeid):
         self.nodeid = nodeid
 
@@ -42,6 +43,31 @@ class NodeDetailController(RestController):
         pecan.abort(501, "/nodes/node id/storages")
 
 
+class NodeActionController(RestController):
+
+    _VALID_POWER_ACTION = ["On", "ForceOff", "GracefulShutdown",
+                           "GracefulRestart", "ForceRestart"]
+
+    def __init__(self, nodeid):
+        self.nodeid = nodeid
+
+    # HTTP POST /nodes/
+    @expose(template='json')
+    def post(self, **kwargs):
+        # create a power management action such as ForceOff, On
+        power_action = kwargs.get("power_action", "")
+        if power_action not in self._VALID_POWER_ACTION:
+            reason = "unsupported action: '%s', the valid action is in:" \
+                     " %s" % (power_action, self._VALID_POWER_ACTION)
+            pecan.abort(400, {"message": reason})
+
+        rpcapi = controller_api.API(context=request.context)
+        res = rpcapi.power_manage(nodeid=self.nodeid,
+                                     power_action=power_action)
+
+        if not res["is_success"]:
+            pecan.abort(res["status_code"], {"message": res["message"]})
+
 class NodesController(RestController):
 
     def __init__(self, *args, **kwargs):
@@ -55,7 +81,7 @@ class NodesController(RestController):
         res = rpcapi.list_nodes(filters=kwargs)
         return res
 
-    # HTTP GET /nodes/
+    # HTTP POST /nodes/
     @expose(template='json')
     def post(self, **kwargs):
         LOG.debug("POST /nodes")
@@ -76,6 +102,8 @@ class NodesController(RestController):
     def _lookup(self, nodeid, *remainder):
         # node  = get_student_by_primary_key(primary_key)
         if nodeid:
+            if len(remainder) > 0 and remainder[0] == 'action':
+                return NodeActionController(nodeid), remainder[1:]
             return NodeDetailController(nodeid), remainder
         else:
             pecan.abort(404)
