@@ -26,19 +26,19 @@ Valence installation
 
  2. Configure RabbitMq Server
 
-     ``$ sudo rabbitmqctl add_user rsd rsd    #user this username/pwd in valence.conf``
+     ``$ sudo rabbitmqctl add_user valence valence    #use this username/pwd in valence.conf``
 
-     ``$ sudo rabbitmqctl set_user_tags rsd administrator``
+     ``$ sudo rabbitmqctl set_user_tags valence administrator``
 
-     ``$ sudo rabbitmqctl set_permissions rsd ".*" ".*" ".*"``
-   
+     ``$ sudo rabbitmqctl set_permissions valence ".*" ".*" ".*"``
+ 
  3. Clone the Valence code from git repo and change the directory to root Valence folder.
 
- 4. Install all necessary software pre-requisites using the pip requirements file. 
+ 4. Install all necessary software pre-requisites using the pip requirements file.
 
     ``$ sudo -E pip install -r requirements.txt``
 
- 5. Execute the 'install_valence.sh' file the Valence root directory. 
+ 5. Execute the 'install_valence.sh' file the Valence root directory.
 
     ``$ ./install_valence.sh``
  
