@@ -18,7 +18,33 @@ import React from "react";
 var config = require('../../config.js');
 var util = require('../../util.js');
 
+const VlanItem = React.createClass({
+
+  render: function() {
+    return (
+      <div>
+        <input type="text" value={this.props.vlan[0]} readOnly/>
+        <div class="btn-group" data-toggle="buttons">
+          <label class={(this.props.vlan[1] == 'Untagged') ? "btn btn-primary active" : "btn btn-primary"} disabled>
+            <input type="radio" name="options" readOnly/>Untagged
+          </label>
+          <label class={(this.props.vlan[1] == 'Tagged') ? "btn btn-primary active" : "btn btn-primary"} disabled>
+            <input type="radio" name="options" readOnly/>Tagged
+          </label>
+        </div>
+        <button class="btn remove-vlan" type="button" onClick={() => this.props.remove(this.props.vlan)}>-</button>
+      </div>
+    );
+  }
+});
+
 const ComposeDisplay = React.createClass({
+
+  getInitialState: function() {
+    return {
+      vlans: []
+    };
+  },
 
   compose: function() {
     var data = this.prepareRequest();
@@ -59,6 +85,10 @@ const ComposeDisplay = React.createClass({
     var iqn = document.getElementById('iqn').value;
     var masterDrive = document.getElementById('remoteDrives').value;
     var processorModel = document.getElementById('processorModels').value;
+    var vlans = this.state.vlans.map(function(obj) {
+                  return {"VLANId": obj[0],
+                          "Tagged": (obj[1] == "Untagged") ? "false": "true"}
+                })
     var data = {
       "Name": name,
       "Description": description,
@@ -81,11 +111,36 @@ const ComposeDisplay = React.createClass({
         }
       }];
     }
+    data["EthernetInterfaces"] = [{"VLANs": vlans}]
     return JSON.stringify(data);
   },
 
   clearInputs: function() {
     document.getElementById("inputForm").reset();
+    this.setState({vlans: []});
+  },
+
+  addVlan: function() {
+    var vlanId = document.getElementById('vlanId').value;
+    var vlanTag = $(".btn-primary.vlan.active input:first").val();
+    document.getElementById('vlanId').value = '';
+    this.setState({
+      vlans: this.state.vlans.concat([[vlanId, vlanTag]])
+    });
+  },
+
+  removeVlan: function(vlan) {
+    var index = -1;
+    for (var i = 0; i < this.state.vlans.length; i++) {
+      if (vlan[0] == this.state.vlans[i][0] &&
+          vlan[1] == this.state.vlans[i][1]) {
+        index = i;
+        break;
+      }
+    }
+    var newData = this.state.vlans.slice();
+    newData.splice(index, 1);
+    this.setState({vlans: newData});
   },
 
   render: function() {
@@ -127,6 +182,33 @@ const ComposeDisplay = React.createClass({
               <tr>
                 <td align="right">Remote storage master drive:</td>
                 <td align="left"><select id="remoteDrives" /></td>
+              </tr>
+              <tr>
+                <td align="right">Ethernet interface:</td>
+                <td align="left">
+                  {this.state.vlans.map(function(obj) {
+                    return <VlanItem vlan={obj} remove={this.removeVlan} />
+                  }.bind(this))}
+
+                  <div class="control-group" id="fields">
+                    <div class="controls" id="profs">
+                      <form class="input-append">
+                        <div id="field">
+                          <input class="input" id="vlanId" type="number" min="0" placeholder="VLAN ID"/>
+                          <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-primary vlan active">
+                              <input type="radio" name="options" id="vlanUntagged" value="Untagged" checked/>Untagged
+                            </label>
+                            <label class="btn btn-primary vlan">
+                              <input type="radio" name="options" id="vlanTagged" value="Tagged"/>Tagged
+                            </label>
+                          </div>
+                          <button id="btn-add-vlan" class="btn add-vlan" type="button" onClick={() => this.addVlan()}>+</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
