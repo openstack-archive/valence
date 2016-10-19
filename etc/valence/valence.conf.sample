@@ -25,8 +25,8 @@ bind_port = 8181
 [oslo_messaging_rabbit]
 rabbit_host = localhost
 rabbit_port = 5672
-rabbit_userid = rsc
-rabbit_password = rsc
+rabbit_userid = valence
+rabbit_password = valence
 
 [podm]
 #url=http://10.223.197.204
