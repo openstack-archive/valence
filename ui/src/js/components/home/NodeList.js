@@ -23,8 +23,31 @@ const NodeList = React.createClass({
     });
   },
 
+  setBoot: function(nodeId) {
+    var url = config.url + '/redfish/v1/Nodes/' + nodeId;
+    $.ajax({
+      url: url,
+      type: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: JSON.stringify({
+        "Boot": {
+          "BootSourceOverrideEnabled": "Continuous",
+          "BootSourceOverrideTarget": "Pxe"
+        }
+      }),
+      success: function(resp) {
+        this.props.onUpdateNodes();
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(url, status, err.toString());
+      }.bind(this)
+    });
+  },
+
   assemble: function(nodeId) {
-    var url = config.url + '/redfish/v1/Nodes/' + nodeId + '/Actions/ComposedNode.Assemble'
+    var url = config.url + '/redfish/v1/Nodes/' + nodeId + '/Actions/ComposedNode.Assemble';
     $.ajax({
       url: url,
       type: 'POST',
@@ -38,7 +61,7 @@ const NodeList = React.createClass({
   },
 
   powerOn: function(nodeId) {
-    var url = config.url + '/redfish/v1/Nodes/' + nodeId + '/Actions/ComposedNode.Reset'
+    var url = config.url + '/redfish/v1/Nodes/' + nodeId + '/Actions/ComposedNode.Reset';
     $.ajax({
       url: url,
       type: 'POST',
@@ -61,6 +84,7 @@ const NodeList = React.createClass({
         {node.Name}
         <input type="button" class="detail-button" onClick={() => this.props.onShowDetail(node)} value="Show" />
         <input type="button" class="detail-button" onClick={() => this.delete(node.Id)} value="Delete" />
+        <input type="button" class="detail-button" onClick={() => this.setBoot(node.Id)} value="Set Boot Source" />
         <input type="button" class="detail-button" onClick={() => this.assemble(node.Id)} value="Assemble" />
         <input type="button" class="detail-button" onClick={() => this.powerOn(node.Id)} value="Power On" />
         <br />
