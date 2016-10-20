@@ -39,9 +39,9 @@ const Home = React.createClass({
     });
   },
 
-  render: function() {
+  renderHome: function() {
     return (
-      <div style={{display: this.props.display}}>
+      <div styles="inline-block">
         <div class="jumbotron">
           <h2>Welcome to RSD Details</h2>
           <p>This is a brief overview of all kinds of resources in this environment. See the <a href="#">User Guide</a> for more information on how to configure them.</p>
@@ -106,7 +106,16 @@ const Home = React.createClass({
         </div>
       </div>
     );
+  },
+
+  render: function() {
+    if (this.props.display) {
+      return this.renderHome();
+    } else {
+      return (<div styles="none" />);
+    }   
   }
+
 });
 
 export default Home

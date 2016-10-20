@@ -8,7 +8,7 @@ const ResourceList = React.createClass({
     return this.props.resources.map((resource, i) =>
       <div class="resource" key={i}>
         {resource.Name}
-        <input type="button" class="detail-button" onClick={() => this.props.onShowDetail(resource)} value="Show" />
+        <input type="button" class="detail-button" onClick={() => this.props.onShowDetail(resource, this.props.header)} value="Show" />
         <br />
         {resource.Description}
         <hr class="separator"/>

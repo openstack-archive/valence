@@ -9,10 +9,11 @@ const Layout = React.createClass({
 
   getInitialState: function() {
     return {
-      homeDisplay: "inline-block",
-      detailDisplay: "none",
-      composeDisplay: "none",
+      displayHome: true,
+      displayDetail: false,
+      displayCompose: false,
       detailData: "",
+      detailType: "",
       pods: [],
       racks: [],
       systems: [],
@@ -31,19 +32,19 @@ const Layout = React.createClass({
 
   displayHome: function() {
     this.setState({
-      homeDisplay: "inline-block",
-      detailDisplay: "none",
-      composeDisplay: "none",
-      detailData: ""
+      displayHome: true,
+      displayDetail: false,
+      displayCompose: false
     });
   },
 
-  displayDetail: function(item) {
+  displayDetail: function(item, itemType) {
     this.setState({
-      homeDisplay: "none",
-      detailDisplay: "inline-block",
-      composeDisplay: "none",
-      detailData: JSON.stringify(item, null, "\t")
+      displayHome: false,
+      displayDetail: true,
+      displayCompose: false,
+      detailData: item,
+      detailType: itemType
     });
   },
 
@@ -51,10 +52,9 @@ const Layout = React.createClass({
     this.getStorage();
     this.fillComposeForms();
     this.setState({
-      homeDisplay: "none",
-      detailDisplay: "none",
-      composeDisplay: "inline-block",
-      detailData: ""
+      displayHome: false,
+      displayDetail: false,
+      displayCompose: true
     });
   },
 
@@ -176,7 +176,7 @@ const Layout = React.createClass({
         </nav>
 
         <Home
-          display={this.state.homeDisplay}
+          display={this.state.displayHome}
           podList={this.state.pods}
           rackList={this.state.racks}
           systemList={this.state.systems}
@@ -191,12 +191,13 @@ const Layout = React.createClass({
           onUpdateNodes={this.getNodes}
         />
         <DetailDisplay
-          display={this.state.detailDisplay}
+          display={this.state.displayDetail}
           data={this.state.detailData}
+          type={this.state.detailType}
           onHideDetail={this.displayHome}
         />
         <ComposeDisplay
-          display={this.state.composeDisplay}
+          display={this.state.displayCompose}
           systemList={this.state.systems}
           onHideCompose={this.displayHome}
           onUpdateNodes={this.getNodes}
