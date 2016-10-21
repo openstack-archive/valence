@@ -82,6 +82,7 @@ const Home = React.createClass({
                   <ResourceList
                     onShowDetail={this.props.onShowDetail}
                     resources={this.props.systemList}
+                    inUseResources={this.props.usedSystemList}
                     header="SYSTEMS"
                   />
                 </div>
