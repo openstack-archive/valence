@@ -55,9 +55,7 @@ hr.separator {
   border: none;
   color: white;
   padding: 6px 18px;
-  margin-right: 6px;
   text-align: center;
-  display: block;
   border-radius: 4px;
   float: right;
 }
@@ -81,6 +79,38 @@ hr.separator {
   width: 100%;
   border-radius: 4px;
   background-color: #f8f8f8;
+}
+
+.resource {
+  margin-bottom: 10px;
+  padding: 20px;
+  height: 75px;
+  background-color: #b3b3b3;
+  border-radius: 4px;
+}
+
+.in-use-resource {
+  margin-bottom: 10px;
+  padding: 20px;
+  height: 75px;
+  background-color: #00cc44;
+  border-radius: 4px;
+}
+
+.warning-resource {
+  margin-bottom: 10px;
+  padding: 20px;
+  height: 75px;
+  background-color: #cccc00;
+  border-radius: 4px;
+}
+
+.critical-resource {
+  margin-bottom: 10px;
+  padding: 20px;
+  height: 75px;
+  background-color: #e60000;
+  border-radius: 4px;
 }
 
 /*
