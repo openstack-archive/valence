@@ -1,0 +1,12 @@
+{
+  "criteria": [
+    {
+      "name": "cpu",
+      "description": "Generates cpu  based flavors"
+    },
+    {
+      "name": "default",
+      "description": "Generates 3 flavors(Tiny, Medium, Large) for each node considering all cpu cores, ram and storage"
+    }
+  ]
+}
