@@ -1,0 +1,37 @@
+{
+  "resources" : [
+    {
+      "uuid": "bbfddf09-4d7e-40d5-88a9-8acfb2f88c21",
+      "pooled_group_id" : "fabric2-1",
+      "state" : "available",
+      "type" : "storage",
+      "links" : [
+        {
+          "ref" : "self",
+          "href" : "https://127.0.0.1/v1/pooled/bbfddf09-4d7e-40d5-88a9-8acfb2f88c21"
+        },
+        {
+          "ref" : "bookmark",
+          "href" : "https://127.0.0.1/pooled/bbfddf09-4d7e-40d5-88a9-8acfb2f88c21"
+        }
+      ]
+    },
+    {
+      "uuid" : "4c16a45b-b029-49c4-af84-1abcf458a062",
+      "pooled_group_id" : "fabric3-2",
+      "state" : "allocated",
+      "type" : "storage",
+      "links" : [
+        {
+          "ref" : "self",
+          "href" : "https://127.0.0.1/v1/pooled/4c16a45b-b029-49c4-af84-1abcf458a062"
+        },
+        {
+          "ref" : "bookmark",
+          "href" : "https://127.0.0.1/pooled/4c16a45b-b029-49c4-af84-1abcf458a062"
+        }
+      ]
+    }
+  ]
+}
+
