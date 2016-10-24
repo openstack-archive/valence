@@ -1,0 +1,35 @@
+{  
+  "processor_asset" : [
+    {
+      "type" : "CPU",
+      "instruction_set" : "x86-64",
+      "model" : "Multi-Core Intel(R) Xeon(R)Processor 7xxx Series",
+      "speed_mhz" : 3700,
+      "total_core" : 12
+    }
+  ],
+  "memory_asset" : [
+    {
+      "type" : "DDR3",
+      "data_width_bit" : 32,
+      "speed_mhz" : 1600
+    }
+  ],
+  "network_asset" : [
+    {
+      "type" : "ethernet",
+      "speed" : "40000000"
+    }
+  ],
+  "storage_asset" : [
+    {
+      "type" : "SAS",
+      "volume_gb" : 40
+    },
+    {
+      "type:" : "iSCSI",
+      "volume_gb" : 200
+    }
+  ]
+}
+

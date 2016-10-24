@@ -1,0 +1,30 @@
+{
+  "uuid" : "4d8c3732-a248-40ed-bebc-539a6ffd25c0",
+  "node_state" : "off",
+  "boot_source" : "hdd",
+  "target_boot_source": "pxe",
+  "health_status" : "ok", 
+  "name" : "Server-1",
+  "pooled_group_id" : "11z23344-0099-7766-5544-33225511",
+  "metadata" : {  
+    "system_nic" : [     
+      {"mac" : "f1:12:44:55:66:77"},
+      {"mac" : "f2:44:44:44:44:88"}
+    ],
+    "mgmt_mac" : "00:AA:BB:CC:DD:EE",
+    "system_serialno" : "2M220100SL"
+   },
+   "chassis_id" : "chassis3",
+   "created_at" : "2016-04-20T15:40:00+00:00",
+   "updated_at" : "2016-04-20T15:40:00+00:00",
+   "links": [
+     { 
+       "rel" : "self",
+       "href" : "https://127.0.0.1/v1/nodes/4d8c3732-a248-40ed-bebc-539a6ffd25c0"
+     },
+     {
+       "rel" : "boomark",
+       "href" : "https://127.0.0.1/nodes/4d8c3732-a248-40ed-bebc-539a6ffd25c0"
+     }
+   ]
+}

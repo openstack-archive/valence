@@ -1,0 +1,286 @@
+# variables in header
+openstack-request-id:
+  description: >
+    A unique ID for tracking the request. The request ID associated with the request
+    appears in the log lines for that request.
+  in: header
+  required: false
+  type: string
+valence-api-header-version:
+  description: |
+    Specific API microversion used to generate this response.
+  in: header
+  required: true
+  type: string
+x-openstack-valence-api-version:
+  description: >
+    A request SHOULD include this header to indicate to the Valence API controller what
+    version the client supports. The controller will transform the response object into
+    compliance with the requested version, if it is supported, or return a
+    406 Not Supported error.
+    If this header is not supplied, the server will default to ``min_version``
+    in all responses.
+  in: header
+  required: true
+  type: string
+node_ident:
+  description: |
+    The UUID or name of composed node.
+  in: path
+  required: true
+  type: string
+system_ident:
+  description: |
+    The UUID or name of Compute System.
+  in: path
+  required: true
+  type: string
+#
+fields:
+  description: |
+    One or more fields to be returned in response.
+    For example, the following request return only the "uuid", 
+    "node_state" for each node
+
+    ::
+    GET /v1/nodes?fields=uuid,node-state
+  in: query
+  required: true
+  type: array
+
+# variables in common
+created_at:
+  description: |
+    The date and time when the resource was created. The date and time
+    stamp format is `ISO 8601 <https://en.wikipedia.org/wiki/ISO_8601>`_
+    ::
+      CCYY-MM-DDThh:mm:ss±hh:mm
+    For example, ``2015-08-27T09:49:58-05:00``. The ``±hh:mm``
+    value, if included, is the time zone as an offset from UTC.  In
+    the previous example, the offset value is ``-05:00``.
+  in: body
+  required: true
+  type: string
+id:
+  description: |
+    Major API version, eg, "v1"
+  in: body
+  required: true
+  type: string
+links:
+  description: |
+    A list of relative links, includes the slef and bookmark links.
+  in: body
+  required: true
+  type: array
+node_boot_source:
+  description: |
+    The value of this contain the source to boot the composed node, including
+    "pxe", "hdd", "none"
+  in: body
+  required: true
+  type: string
+node_chassis_id:
+  description: |
+    The chassis id that contained composed node (system) can be used to support location id
+    allocation if user want to specific a resource from phyiscal location, ex: Rack12 
+  in: body
+  required: true
+  type: string
+node_description:
+  description: |
+    Description for new created composed node
+  in: body
+  required: true
+  type: string
+node_health_status:
+  description: |
+    Composed node health status, support "ok", "warning", "critical"
+  in: body
+  required: true
+  type: string
+node_memory_asset:
+  description: |
+    Memory asset info.
+  in: body
+  required: true
+  type: array
+node_metadata:
+  description: |
+    Metadata of composed system, usually admin use this info to do basic
+    deployment in DataCenter.
+  in: body
+  required: true
+  type: array
+node_name:
+  description: |
+    Name of composed name (a human-readable string)
+  in: body
+  required: true
+  type: string
+node_network_asset:
+  description: |
+    Network asset info.
+  in: body
+  required: true
+  type: array
+node_processor_asset:
+  description: |
+    Processor asset info.
+  in: body
+  required: true
+  type: array
+node_property:
+  description: |
+    Property of composed node including processor , memory , storage info.
+  in: body
+  required: true
+  type: array
+node_provision_state:
+  description: |
+    The composed node state value set by other orchestation tool, use this value
+    to help with orchestration software know its proviision progress.
+  in: body
+  required: true
+  type: string
+node_request_description:
+   description: |
+     A description for a new composed node
+   in: body
+   required: tree
+   type: string
+node_request_name:
+  description: |
+    Name of new composed node
+  in: body
+  required: true
+  type: string
+node_reset_type:
+  description: |
+    Reset type for a composed , supported "ForceOn", "On", "ForceOff", "GracefulRestart"
+  in: body
+  required: true
+  type: string
+node_state:
+  description: |
+    The current composed node state including "allocating","allocated"
+    "assembling", "on", "off" ,"failed"
+  in: body
+  required: true
+  type: array
+node_storage_asset:
+  description: |
+    Storage asset info.
+  in: body
+  required: true
+  type: array
+node_target_boot_source:
+  description: |
+    The target ( pending ) boot source for next power reset.
+  in: body
+  required: true
+  type: string
+node_uuid:
+  description: |
+    UUID of composed node 
+  in: body
+  required: true
+  type: string
+pooled_group_id:
+  description: |
+    The group id( UUID ) of pooled resource, resource can only be assigned to composed node while id matched.
+  in: body
+  required: true
+  type: string
+system_assettag:
+  description: |
+    Asset Tag value of Compute System
+  in: body
+  required: true
+  type: string
+system_chassis_id:
+  description: |
+    The chassis id that contained Compute system can be used to support location id
+    allocation if user want to specific a resource from phyiscal location, ex: Sled2 
+  in: body
+  required: true
+  type: string
+system_memory_object:
+  description: |
+    The memory (object) inventory of Compute system 
+  in: body
+  required: true
+  type: array 
+system_name:
+  description: |
+    Name of Compute System (a human-readable string)
+  in: body
+  required: true
+  type: string
+system_network_object:
+  description: |
+    The network (object) inventory of Compute System. 
+  in: body
+  required: true
+  type: array 
+system_power_state:
+  description: |
+    The current Compute System power state including "On","Off"
+    "PoweredOn", "PoweredOff"
+  in: body
+  required: true
+  type: array
+system_processor_object:
+  description: |
+    The Processor (object) inventory of a Compute System.
+  in: body
+  required: true
+  type: array 
+system_storage_object:
+  description: |
+    The Storage (object) inventory of a Compute System.
+  in: body
+  required: string
+  type: array
+system_uuid:
+  description: |
+    UUID of Compute System
+  in: body
+  required: true
+  type: string
+updated_at:
+  description: |
+    The date and time when the resource was created. The date and time
+    stamp format is `ISO 8601 <https://en.wikipedia.org/wiki/ISO_8601>`_
+    ::
+      CCYY-MM-DDThh:mm:ss±hh:mm
+    For example, ``2015-08-27T09:49:58-05:00``. The ``±hh:mm``
+    value, if included, is the time zone as an offset from UTC.  In
+    the previous example, the offset value is ``-05:00``.
+  in: body
+  required: true
+  type: string
+version:
+  description: |
+    Versioning of this API response, eg. "1.0".
+  in: body
+  required: true
+  type: string
+versions:
+  description: |
+    Array of information about currently supported versions.
+  in: body
+  required: true
+  type: array
+x-openstack-valence-api-max-version:
+  description: |
+    Maximum API microversion supported by this endpoint, eg. "1.2"
+  in: body 
+  required: true 
+  type: string
+x-openstack-valence-api-min-version:
+  description: |
+    Minimum API microversion supported by this endpoint, eg. "1.0"
+  in: body 
+  required: true
+  type: string
