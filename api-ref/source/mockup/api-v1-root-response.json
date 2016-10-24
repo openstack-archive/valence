@@ -1,0 +1,61 @@
+{
+  "id" : "v1",
+  "links" : [
+    {
+      "href" : "http://127.0.0.1:8181/v1/",
+      "rel" : "self"
+    },
+    {
+      "rel" : "describedby",
+      "type" : "text/html",
+      "href" : "http://docs.openstack.org/developer/valence/dev/api-spec-v1.html"
+    }
+  ],
+  "nodes" : [
+    {
+      "rel" : "self",
+      "href" : "http://127.0.0.1:8181/v1/nodes/"
+    },
+    {
+      "rel" : "bookmark",
+      "href" : "http://127.0.0.1:8181/nodes/"
+    }
+  ],
+  "systems" : [
+    {
+      "href" : "http://127.0.0.1:8181/v1/systems/",
+      "rel" : "self"
+    },
+    {
+      "rel" : "bookmark",
+      "href" : "http://127.0.0.1:8181/systems/"
+    }
+  ],
+  "flavors" : [
+    {
+       "href" : "http://127.0.0.1:8181/v1/flavors/",
+       "rel" : "self"
+    },
+    {
+       "rel" : "bookmark",
+       "href" : "http://127.0.0.1:8181/flavors/"
+    }
+  ],
+  "pooled" : [
+    {
+        "href" : "http://127.0.0.1:8181/v1/pooled/",
+        "rel" : "self"
+    },
+    {
+        "rel" : "bookmark",
+        "href" : "http://127.0.0.1:8181/pooled/"
+    }
+  ],
+  "media_types" : [
+    {
+       "type" : "application/vnd.openstack.valence.v1+json",
+       "base" : "application/json"
+    }
+  ]
+}
+

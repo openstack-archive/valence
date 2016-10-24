@@ -1,0 +1,43 @@
+{
+  "processor" : [
+    {
+      "device_type" : "CPU",
+      "instruction_set" : "x86-64",
+      "model" : "Multi-Core Intel(R) Xeon(R)Processor 7xxx Series",
+      "speed_mhz" : 3700,
+      "total_core" : 12
+    }
+  ],
+  "memory" : [
+    {
+      "device_type" : "DDR3",
+      "data_width_bit" : 32,
+      "speed_mhz" : 1600,
+      "total_memory_gb" : 32
+    }
+  ],
+  "network" : [
+    {
+      "device_type" : "ethernet",
+      "speed_mbps" : "40000"
+    }
+  ],
+  "storage" : [
+    {
+      "protocol" : "SAS",
+      "volume_size_gb" : 40,
+      "pooled_resource" : false
+    },
+    {
+      "protocol" : "iSCSI",
+      "volume_size_gb" : 200,
+      "pooled_resource" : true
+    },
+    {
+      "protocol" : "NVMe",
+      "volume_size_gb" : 300,
+      "pooled_resource" : true
+    }
+  ]
+}
+
