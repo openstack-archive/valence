@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Configure XClarity Administrator" %}{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=_("Configure XClarity Administrator") %}
+{% endblock page_header %}
+
+{% block main %}
+  {% include 'admin/physical_servers/_config.html' %}
+{% endblock %}

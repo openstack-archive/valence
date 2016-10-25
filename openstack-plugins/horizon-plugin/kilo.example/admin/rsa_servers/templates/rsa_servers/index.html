@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load i18n horizon humanize sizeformat %}
+{% block title %}{% trans "RSD Composed Nodes" %}{% endblock %}
+{% block page_header %}
+  <div class='page-header' style="height:50px">
+    <h1 style="float:left">RSD Composed Nodes</h1>
+    {% if selected_pod_manager %}
+    <h3 style="margin-top:9px">&nbsp (Active POD: <a href='../pod_managers'><font color = >{{ selected_pod_manager }}</font></a>)</h3>
+        <!--<h1 style="float:right">POD <font color = red>{{ selected_pod_manager }}</font> Selected</h1>-->
+    {% else %}
+        <h3 style="margin-top:9px">--NO POD Selected</h3>
+        <!--<h1 style="float:right">NO POD Selected</h1>-->
+    {% endif %}
+    {% if actions %}
+      <form class='actions_column pull-right' action='{{ url }}' method="POST">
+        {% csrf_token%}
+        {{ actions }}
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}
+{% block main %}
+<div class="quota-dynamic">
+  <h3>{% trans "RSD Composed Nodes Summary" %}</h3>
+    <div class="d3_quota_bar">
+    <div class="d3_pie_chart_usage" data-used="{% widthratio stats.used_cpu stats.total_cpu 100 %}"></div>
+     <strong>{% trans "CPU Usage" %} <br />
+         {% blocktrans with used=stats.used_cpu|intcomma available=stats.total_cpu|intcomma %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+     </strong>
+    </div>
+
+    <div class="d3_quota_bar">
+    <div class="d3_pie_chart_usage" data-used="{% widthratio stats.used_memory stats.total_memory 100 %}"></div>
+     <strong>{% trans "Memory Usage" %} <br />
+         {% blocktrans with used=stats.used_memory|diskgbformat available=stats.total_memory|diskgbformat %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+     </strong>
+    </div>
+
+    <div class="d3_quota_bar">
+    <div class="d3_pie_chart_usage" data-used="{% widthratio stats.used_disk stats.total_disk 100 %}"></div>
+     <strong>{% trans "Disk Usage" %} <br />
+         {% blocktrans with used=stats.used_disk|diskgbformat available=stats.total_disk|diskgbformat %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+     </strong>
+    </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    {{ table.render }}
+    <!--
+    {{ tab_group.render }}
+    -->
+  </div>
+</div>
+{% endblock %}

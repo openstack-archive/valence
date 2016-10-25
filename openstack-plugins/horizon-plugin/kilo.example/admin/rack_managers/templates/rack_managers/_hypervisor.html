@@ -1,0 +1,19 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block form_id %}associate_hypervisor_form{% endblock %}
+{% block form_action %}{% url 'horizon:admin:physical_servers:hypervizor' uuid %}{% endblock %}
+
+{% block modal_id %}associate_hypervisor_modal{% endblock %}
+{% block modal-header %}{% trans "Associate with nova compute host" %}{% endblock %}
+
+{% block modal-body-right %}
+  <h3>{% trans "Description:" %}</h3>
+  <p>{% trans "Select a nova compute host and associate with physical server to enable PFA (predictable failure alert) triggered automatic VM evacuation." %}</p>
+{% endblock %}
+
+{% block modal-footer %}
+  <input class="btn btn-primary pull-right" type="submit" value="{% trans "Associate" %}" />
+  <a href="{% url 'horizon:admin:physical_servers:index' %}" class="btn btn-default secondary cancel close">{% trans "Cancel" %}</a>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load i18n horizon humanize sizeformat %}
+{% block title %}{% trans "Ethernet Switches" %}{% endblock %}
+
+{% block page_header %}
+  <div class='page-header' style="height:50px">
+    <h1 style="float:left">Ethernet Switches</h1>
+    {% if selected_pod_manager %}
+        <h3 style="margin-top:9px">&nbsp (Active POD: <a href='../pod_managers'><font color = >{{ selected_pod_manager }}</font></a>)</h3>
+        <!--<h1 style="float:right">POD <font color = red>{{ selected_pod_manager }}</font> Selected</h1>-->
+    {% else %}
+        <h3 style="margin-top:9px">--NO POD Selected</h3>
+        <!--<h1 style="float:right">NO POD Selected</h1>-->
+    {% endif %}
+
+    {% if actions %}
+      <form class='actions_column pull-right' action='{{ url }}' method="POST">
+        {% csrf_token%}
+        {{ actions }}
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block main %}
+    {{ table.render }}
+    <div class="col-sm-12">
+        <table id="drawer_info" class="table table-hover" style="display: none">
+            <thead>
+            <tr>
+                <th>Drawer Info</th>
+                <!--<th>Email</th>-->
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Manufacturer</td>
+                <td id="manufacturer">Lenovo</td>
+            </tr>
+            <tr>
+                <td>IndicatorLED</td>
+                <td id='indicatorled'>bb8</td>
+            </tr>
+            <tr>
+                <td>SKU</td>
+                <td id='sku'>960000092</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
+
+
+{% block footer %}
+<!--
+<link href='{{ STATIC_URL }}dashboard/admin/drawers/index.css' type='text/css' rel='stylesheet' />
+<script src='{{ STATIC_URL }}dashboard/admin/drawers/index.js' type='text/javascript' charset='utf-8'></script>
+-->
+{% endblock %}
+

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% load i18n sizeformat %}
+{% block title %}{% trans "Physical Server Detail" %}{% endblock %}
+
+{% block css %}
+      <link href='{{ STATIC_URL }}project/physical_servers/consolewindow.css' type='text/css' rel='stylesheet' />
+      {% include "_stylesheets.html" %}
+{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=_("Physical Server Detail") %}
+{% endblock page_header %}
+
+{% block main %}
+<div class="row-fluid">
+  <div class="span12">
+  <br>
+  <input type="button" name="mybutton" id="button1", value="Remote Console", onclick="getConsole()">(powered by confluent)
+  <br>
+  <br>
+  {{ tab_group.render }}
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {% include "project/physical_servers/_scripts.html" %}
+    <script type="text/javascript">
+        function getConsole(){
+        	var user = '{{console_user}}';
+        	var pass = '{{console_passwd}}';
+        	if(user==''|| pass==''){
+        		alert('please fill in the IMM user and password first')	
+        	}else{
+            	new ConsoleWindow("/confluent-api/nodes/" + '{{ name }}' + "/console/session", '{{ name }}', 10, 10);
+        	}
+        }
+    </script>
+{% endblock %}

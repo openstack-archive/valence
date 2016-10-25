@@ -1,0 +1,101 @@
+{% load i18n sizeformat %}
+
+<h3>{% trans "Physical Server Overview" %}</h3>
+
+<div class="specs row-fluid detail">
+  <h4>{% trans "Specs" %}</h4>
+  <hr class="header_rule">
+</div>
+
+<table class="specTable" border="5" cellpadding="3" cellspacing="1" rules="rows" frame="hsides"
+ width="100%">
+<tr><td>{% trans "Server Name" %}</td><td>{{ server.name }}</td></tr>
+<tr><td>{% trans "Model" %}</td><td>{{ server.product_name }}</td></tr>
+<tr><td>{% trans "Location" %}</td><td>{{ server.location }}</td></tr>
+<tr>
+    <td>{% trans "CPU" %}</td>
+     <td> 
+        <table border=1 frame=void rules=rows cellpadding="3" width="70%">
+            
+            {% for cpu_item in server.cpu %}
+               {% if forloop.counter == 1 %}
+                    <tr>
+                        <th text-align="right">No.</th>
+                        <th text-align="right">Name</th>
+                        <th text-align="right">Family</th>
+                        <th text-align="right">Cores</th>
+                        <th text-align="right">Speed</th>
+                    </tr>
+               {% endif %}
+                <tr>
+                    <td align="left" valign="middle">{{ forloop.counter }}</td>
+                    <td align="left" valign="middle">{{ cpu_item.displayName }}</td>
+                    <td align="left" valign="middle">{{ cpu_item.family }}</td>
+                    <td align="left" valign="middle">{{ cpu_item.cores }}</td>
+                    <td align="left" valign="middle">{{ cpu_item.speed }}MHz</td>
+                </tr>
+            {% endfor %}
+       </table>
+    </td>
+</tr>
+<tr>
+    <td>{% trans "Memory" %}</td>
+    <td> 
+        <table border=1 frame=void rules=rows cellpadding="3" width="70%">
+  			{% for mem_item in server.memory %}
+               {% if forloop.counter == 1 %}
+                    <tr>
+                        <th text-align="right">No.</th>
+                        <th text-align="right">Slot</th>
+                        <th text-align="right">Model</th>
+                        <th text-align="right">serialNumber</th>
+                        <th text-align="right">Speed</th>
+                        <th text-align="right">Capacity</th>
+                    </tr>
+               {% endif %}
+                <tr>
+                    <td align="left" valign="middle">{{ forloop.counter }}</td>
+                    <td align="left" valign="middle">{{ mem_item.slot }}</td>
+                    <td align="left" valign="middle">{{ mem_item.model }}</td>
+                    <td align="left" valign="middle">{{ mem_item.serialNumber }}</td>
+                    <td align="left" valign="middle">{{ mem_item.speed }}MHz</td>
+                    <td align="left" valign="middle">{{ mem_item.capacity }}GB</td>
+                </tr>
+            {% endfor %}
+       </table>
+    </td>
+</tr>
+
+<tr>
+    <td>{% trans "DISK" %}</td>
+    <td> 
+        <table border=1 frame=void rules=rows cellpadding="3" width="70%">
+			{% for disk_item in server.disk %}
+               {% if forloop.counter == 1 %}
+                    <tr>
+                        <th text-align="right">No.</th>
+                        <th text-align="right">Type</th>
+                        <th text-align="right">Size</th>
+                    </tr>
+               {% endif %}
+                <tr>
+                    <td align="left" valign="middle">{{ forloop.counter }}</td>
+                    <td align="left" valign="middle">{{ disk_item.type }}</td>
+                    <td align="left" valign="middle">{{ disk_item.size }}GB</td>
+                </tr>
+            {% endfor %}
+       </table>
+    </td>
+</tr>
+
+<tr>
+    <td>{% trans "NICs" %}</td>
+    <td> 
+        <table border=1 frame=void rules=rows cellpadding="3">
+
+       </table>
+    </td>
+</tr>
+
+
+</table>

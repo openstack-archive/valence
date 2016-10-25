@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load i18n horizon humanize sizeformat %}
+{% block title %}{% trans "Physical Servers" %}{% endblock %}
+
+{% block main %}
+<div class="quota-dynamic">
+  <h3>{% trans "Physical Servers Summary" %}</h3>
+    <div class="d3_quota_bar">
+    <div class="d3_pie_chart_usage" data-used="{% widthratio stats.cpus_used stats.cpus 100 %}"></div>
+     <strong>{% trans "CPU Usage" %} <br />
+         {% blocktrans with used=stats.cpus_used|intcomma available=stats.cpus|intcomma %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+     </strong>
+    </div>
+
+    <div class="d3_quota_bar">
+    <div class="d3_pie_chart_usage" data-used="{% widthratio stats.memory_used stats.memory_gb 100 %}"></div>
+     <strong>{% trans "Memory Usage" %} <br />
+         {% blocktrans with used=stats.memory_used|diskgbformat available=stats.memory_gb|diskgbformat %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+     </strong>
+    </div>
+
+    <div class="d3_quota_bar">
+    <div class="d3_pie_chart_usage" data-used="{% widthratio stats.disk_gb_used stats.disk_gb 100 %}"></div>
+     <strong>{% trans "Disk Usage" %} <br />
+         {% blocktrans with used=stats.disk_gb_used|diskgbformat available=stats.disk_gb|diskgbformat %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+     </strong>
+    </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    {{ tab_group.render }}
+  </div>
+</div>
+{% endblock %}

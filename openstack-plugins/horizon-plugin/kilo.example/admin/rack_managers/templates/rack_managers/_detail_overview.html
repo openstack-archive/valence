@@ -1,0 +1,157 @@
+{% load i18n sizeformat %}
+{% load url from future %}
+
+<h3>{% trans "Rack Manager Overview" %}</h3>
+<br>
+<div class="status detail">
+  <h4>{% trans "Summary" %}</h4>
+  <hr class="header_rule">
+  <dl class="dl-horizontal" />
+</div>
+
+<div class="specs detail">
+  <h4>{% trans "Details" %}</h4>
+  <hr class="header_rule">
+  <dl class="dl-horizontal">
+    <dt>{% trans "Management modules" %}</dt>
+    <dd></dd>
+    <dd></dd>
+    <br>
+    <dt>{% trans "Computer Systems" %}</dt>
+    <dd></dd>
+    {% for c in rack_manager.computer_systems %}
+    <dd><a href="{{ c.url }}">{{ c.name }}</a></dd>
+    {% endfor %}
+    <br>
+    <!--
+    <dd>(1-2) IBM Flex System x880 X6 Compute Node with embedded 10Gb Virtual Fabric<br> 
+(3) <br> 
+(5) <br> 
+(7-10) <br> 
+(11) <br> 
+(12) <br> 
+(12) <br> 
+(14) IBM Flex System Manager Node<br> </dd>
+    -->
+    <dt>{% trans "I/O modules" %}</dt>
+    <dd></dd>
+    <br>
+    <!--
+    <dd>(1) IBM Flex System EN2092 1Gb Ethernet Scalable Switch<br>
+(3) IBM Flex System FC3171 8Gb SAN Switch</dd>
+    -->
+    <dt>{% trans "Power modules" %}</dt>
+    <dd></dd>
+    <br>
+    <dt>{% trans "Cooling devices" %}</dt>
+    <dd></dd>
+    <br>
+    <dt>{% trans "Front LED cards" %}</dt>
+    <dd></dd>
+    <br>
+    <dt>{% trans "Fan logic modules" %}</dt>
+    <dd></dd>
+    <!--
+    <dt>{% trans "Flavor" %}</dt>
+    {% if instance.full_flavor %}
+      <dd>{{ instance.full_flavor.name }}</dd>
+      <dt>{% trans "Flavor ID" %}</dt>
+      <dd>{{ instance.full_flavor.id }}</dd>
+      <dt>{% trans "RAM" %}</dt>
+      <dd>{{ instance.full_flavor.ram|mb_float_format }}</dd>
+      <dt>{% trans "VCPUs" %}</dt>
+      <dd>{{ instance.full_flavor.vcpus }} {% trans "VCPU" %}</dd>
+      <dt>{% trans "Disk" %}</dt>
+      <dd>{{ instance.full_flavor.disk }}{% trans "GB" %}</dd>
+      {% if instance.full_flavor.ephemeral %}
+        <dt>{% trans "Ephemeral Disk" %}</dt>
+        <dd>{{ instance.full_flavor.ephemeral }}{% trans "GB" %}</dd>
+      {% endif %}
+    {% else %}
+      {% trans "Not available" %}
+    {% endif %}
+    -->
+  </dl>
+</div>
+<!--
+<div class="addresses detail">
+    <h4>{% trans "IP Addresses" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+      {% for network, ip_list in instance.addresses.items %}
+        <dt>{{ network|title }}</dt>
+        <dd>
+          {% for ip in ip_list %}
+            {% if not forloop.last %}{{ ip.addr }},&nbsp;{% else %}{{ ip.addr }}{% endif %}
+          {% endfor %}
+        </dd>
+      {% endfor %}
+    </dl>
+</div>
+
+<div class="security_groups detail">
+    <h4>{% trans "Security Groups" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+      {% for group in instance.security_groups %}
+        <dt>{{ group.name }}</dt>
+        <dd>
+          <ul>
+          {% for rule in group.rules %}
+            <li>{{ rule }}</li>
+            {% empty %}
+            <li><em>{% trans "No rules defined." %}</em></li>
+          {% endfor %}
+          </ul>
+        </dd>
+        {% empty %}
+        {% trans "Not available" %}
+      {% endfor %}
+    </dl>
+</div>
+
+<div class="meta detail">
+    <h4>{% trans "Metadata" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+      <dt>{% trans "Key Name" %}</dt>
+      {% with default_key_name="<em>"|add:_("None")|add:"</em>" %}
+      <dd>{{ instance.key_name|default:default_key_name }}</dd>
+      {% endwith %}
+      {% url 'horizon:project:images:images:detail' instance.image.id as image_url %}
+      <dt>{% trans "Image Name" %}</dt>
+      <dd>
+        {% if instance.image %}
+          <a href="{{ image_url }}">{{ instance.image_name }}</a>
+        {% else %}
+          <em>{% trans "None" %}</em>
+        {% endif %}
+      </dd>
+      {% with default_item_value="<em>"|add:_("N/A")|add:"</em>" %}
+      {% for key, value in instance.metadata.items %}
+        <dt>{{ key|force_escape }}</dt>
+        <dd>{{ value|force_escape|default:default_item_value }}</dd>
+      {% endfor %}
+      {% endwith %}
+    </dl>
+</div>
+
+<div class="volumes detail">
+    <h4>{% trans "Volumes Attached" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+    {% for volume in instance.volumes %}
+        <dt>{% trans "Attached To" %}</dt>
+        <dd>
+            {% url 'horizon:project:volumes:volumes:detail' volume.id as volume_url %}
+            {% blocktrans with volume_label=volume.name|default:volume.id volume_device=volume.device %}
+            <a href="{{ volume_url }}">{{ volume_label }}</a> on {{ volume_device }}
+            {% endblocktrans %}
+        </dd>
+        {% empty %}
+        <dt>{% trans "Volume" %}</dt>
+        <dd><em>{% trans "No volumes attached." %}</em></dd>
+    {% endfor %}
+    </dl>
+</div>
+-->

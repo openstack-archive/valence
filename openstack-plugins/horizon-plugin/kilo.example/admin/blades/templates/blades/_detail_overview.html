@@ -1,0 +1,231 @@
+{% load i18n sizeformat %}
+{% load url from future %}
+
+<h3>{% trans "Computer System Overview" %}</h3>
+<br>
+<div class="status detail">
+  <h4>{% trans "Summary" %}</h4>
+  <hr class="header_rule">
+  <dl class="dl-horizontal">
+    <!--
+    <dt>{% trans "ID" %}</dt>
+    <dd>{{ pcie_switch_id }}</dd>
+    -->
+    <dt>{% trans "Name" %}</dt>
+    <dd>{{ blade.name }}</dd>
+    <dt>{% trans "Status" %}</dt>
+    <!--<dd>{{ blade.status }}</dd>-->
+    {% if blade.status == 'OK' %}
+    <dd><div class="fa fa-square" style="margin: 0 auto; color: #5CB85C; font-size:17px;"></div> OK</dd>
+    {% endif %}
+    <dt>{% trans "Model" %}</dt>
+    <dd>{{ blade.model }}</dd>
+    <dt>{% trans "Serial Number" %}</dt>
+    <dd>{{ blade.serial_number }}</dd>
+    <dt>{% trans "Part Number" %}</dt>
+    <dd>{{ blade.part_number }}</dd>
+    <dt>{% trans "Location" %}</dt>
+    <dd><a href="../../../racks/{{ blade.rack_id }}/detail">{{ blade.rack }}</a>: {{ blade.location }}</dd>
+    <!--
+    <dt>{% trans "Firmware Version" %}</dt>
+    <dd>{{ blade.firmwareversion }}</dd>
+    -->
+    <dt>{% trans "Description" %}</dt>
+    <dd>{{ blade.description }}</dd>
+  </dl>
+</div>
+<div class="specs detail">
+  <h4>{% trans "Details" %}</h4>
+  <dl class="dl-horizontal">
+    <dt>{% trans "Power Modules" %}</dt>
+    <hr class="header_rule">
+    <dd>
+    Power 1: Normal<br>
+    Power 2: Normal<br>
+    </dd>
+    <br>
+
+    <dt>{% trans "Interfaces" %}</dt>
+    <hr class="header_rule">
+    {% for interface in blade.interfaces %}
+    <dd>
+    IP: {{ interface.ip_address }},  Mac: {{ interface.mac_address }},  Description:{{ interface.description }} <br>
+    </dd>
+    {% endfor %}
+    <br>
+
+    <dt>{% trans "Disks" %}</dt>
+    <hr class="header_rule">
+    {% for disk in blade.disks %}
+    <dd>
+    Capacity: {{ disk.size_gb }}GB, Type:{{ disk.type }}, Model:{{ disk.model }} <br>
+    </dd>
+    {% endfor %}
+    <br>
+
+    <dt>{% trans "Cooling Devices" %}</dt>
+    <hr class="header_rule">
+    <dd>
+    Fan 1A Tach: 6120RPM, Speed 30, Normal<br>
+    Fan 2A Tach: 6120RPM, Speed 30, Normal<br>
+    </dd>
+
+    <br>
+
+    <dt>{% trans "Composed Node" %}</dt>
+    <hr class="header_rule">
+    <dd>
+    <a href='../../../rsa_servers/{{ blade.composed_node.composed_node_id }}/detail'>{{ blade.composed_node.composed_node_name }}</a><br>
+    </dd>
+
+
+    <dt class='processor'>{% trans "Processors" %} <i class='fa fa-caret-down'></i></dt>
+    <hr class="header_rule">
+    <div class='processor_son'>
+    <div id="accordion0">
+        {% for cpu in blade.cpus %}
+        <dd class='accordion_pointer'>
+        {{ cpu.name }} 
+        <i class='fa fa-caret-down'></i>
+        <br>
+        </dd>
+        <dd>
+        &nbsp;&nbsp;&nbsp;&nbsp;Model: {{ cpu.model }} <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;Total cores: {{ cpu.total_cores }}<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;Total threads: {{ cpu.total_threads }} <br> 
+        &nbsp;&nbsp;&nbsp;&nbsp;Speed: {{ cpu.speed_mhz }} MHz<br>
+        </dd>
+        {% endfor %}
+    </div>
+    </div>
+    <br>
+
+    <dt class='memory'>{% trans "Memory" %}<i class='fa fa-caret-down'></i></dt>
+    <hr class="header_rule">
+    <div class='memory_son'>
+    <div id="accordion1">
+        {% for memory in blade.memorys %}
+        <dd class='accordion_pointer'>
+        {{ memory.name }}
+        <i class='fa fa-caret-down'></i>
+        <br>
+        </dd>
+        <dd>
+        &nbsp;&nbsp;&nbsp;&nbsp;Speed: {{ memory.speed_mhz }} MHz, <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;Capacity: {{ memory.capacity_mb }} MB, <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;Type: {{ memory.device_type }}, <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;Manufacturor: {{ memory.manufacturer }} <br>
+        </dd>
+        {% endfor %}
+    </div>
+    <br>
+
+  </dl>
+</div>
+
+<!--
+<div class="specs detail">
+  <h4>{% trans "Specs" %}</h4>
+  <hr class="header_rule">
+  <dl class="dl-horizontal">
+    <dt>{% trans "Flavor" %}</dt>
+    {% if instance.full_flavor %}
+      <dd>{{ instance.full_flavor.name }}</dd>
+      <dt>{% trans "Flavor ID" %}</dt>
+      <dd>{{ instance.full_flavor.id }}</dd>
+      <dt>{% trans "RAM" %}</dt>
+      <dd>{{ instance.full_flavor.ram|mb_float_format }}</dd>
+      <dt>{% trans "VCPUs" %}</dt>
+      <dd>{{ instance.full_flavor.vcpus }} {% trans "VCPU" %}</dd>
+      <dt>{% trans "Disk" %}</dt>
+      <dd>{{ instance.full_flavor.disk }}{% trans "GB" %}</dd>
+      {% if instance.full_flavor.ephemeral %}
+        <dt>{% trans "Ephemeral Disk" %}</dt>
+        <dd>{{ instance.full_flavor.ephemeral }}{% trans "GB" %}</dd>
+      {% endif %}
+    {% else %}
+      {% trans "Not available" %}
+    {% endif %}
+  </dl>
+</div>
+<div class="addresses detail">
+    <h4>{% trans "IP Addresses" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+      {% for network, ip_list in instance.addresses.items %}
+        <dt>{{ network|title }}</dt>
+        <dd>
+          {% for ip in ip_list %}
+            {% if not forloop.last %}{{ ip.addr }},&nbsp;{% else %}{{ ip.addr }}{% endif %}
+          {% endfor %}
+        </dd>
+      {% endfor %}
+    </dl>
+</div>
+
+<div class="security_groups detail">
+    <h4>{% trans "Security Groups" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+      {% for group in instance.security_groups %}
+        <dt>{{ group.name }}</dt>
+        <dd>
+          <ul>
+          {% for rule in group.rules %}
+            <li>{{ rule }}</li>
+            {% empty %}
+            <li><em>{% trans "No rules defined." %}</em></li>
+          {% endfor %}
+          </ul>
+        </dd>
+        {% empty %}
+        {% trans "Not available" %}
+      {% endfor %}
+    </dl>
+</div>
+
+<div class="meta detail">
+    <h4>{% trans "Metadata" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+      <dt>{% trans "Key Name" %}</dt>
+      {% with default_key_name="<em>"|add:_("None")|add:"</em>" %}
+      <dd>{{ instance.key_name|default:default_key_name }}</dd>
+      {% endwith %}
+      {% url 'horizon:project:images:images:detail' instance.image.id as image_url %}
+      <dt>{% trans "Image Name" %}</dt>
+      <dd>
+        {% if instance.image %}
+          <a href="{{ image_url }}">{{ instance.image_name }}</a>
+        {% else %}
+          <em>{% trans "None" %}</em>
+        {% endif %}
+      </dd>
+      {% with default_item_value="<em>"|add:_("N/A")|add:"</em>" %}
+      {% for key, value in instance.metadata.items %}
+        <dt>{{ key|force_escape }}</dt>
+        <dd>{{ value|force_escape|default:default_item_value }}</dd>
+      {% endfor %}
+      {% endwith %}
+    </dl>
+</div>
+
+<div class="volumes detail">
+    <h4>{% trans "Volumes Attached" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+    {% for volume in instance.volumes %}
+        <dt>{% trans "Attached To" %}</dt>
+        <dd>
+            {% url 'horizon:project:volumes:volumes:detail' volume.id as volume_url %}
+            {% blocktrans with volume_label=volume.name|default:volume.id volume_device=volume.device %}
+            <a href="{{ volume_url }}">{{ volume_label }}</a> on {{ volume_device }}
+            {% endblocktrans %}
+        </dd>
+        {% empty %}
+        <dt>{% trans "Volume" %}</dt>
+        <dd><em>{% trans "No volumes attached." %}</em></dd>
+    {% endfor %}
+    </dl>
+</div>
+-->

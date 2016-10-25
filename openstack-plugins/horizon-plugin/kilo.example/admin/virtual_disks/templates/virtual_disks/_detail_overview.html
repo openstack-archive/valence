@@ -1,0 +1,150 @@
+{% load i18n sizeformat %}
+{% load url from future %}
+
+<h3>{% trans "Virtual Disk Overview" %}</h3>
+<br>
+<div class="status detail">
+  <h4>{% trans "Summary" %}</h4>
+  <hr class="header_rule">
+  <dl class="dl-horizontal">
+    <dt>{% trans "ID" %}</dt>
+    <dd>{{ virtual_disk_id }}</dd>
+    <dt>{% trans "Name" %}</dt>
+    <dd>{{ virtualdisk.name }}</dd>
+    <!--
+    <dt>{% trans "Status" %}</dt>
+    <dd>{{ virtualdisk.status }}</dd>
+    <dt>{% trans "Health" %}</dt>
+    <dd>{{ virtualdisk.health }}</dd>
+    <dt>{% trans "Type" %}</dt>
+    <dd>{{ virtualdisk.type }}</dd>
+    <dt>{% trans "Mode" %}</dt>
+    <dd>{{ virtualdisk.mode }}</dd>
+    -->
+    <dt>{% trans "Capacity" %}</dt>
+    <dd>{{ virtualdisk.size_GB }} GB</dd>
+    <dt>{% trans "Description" %}</dt>
+    <dd>{{ virtualdisk.description }}</dd>
+    <!--
+    <dt>{% trans "Image" %}</dt>
+    <dd>{{ virtualdisk.image }}</dd>
+    <dt>{% trans "targets" %}</dt>
+    <dd>{{ virtualdisk.targets }}</dd>
+    <dt>{% trans "snapshot" %}</dt>
+    <dd>{{ virtualdisk.snapshot }}</dd>
+    -->
+  </dl>
+</div>
+
+<div class="specs detail">
+  <h4>{% trans "Details" %}</h4>
+  <hr class="header_rule">
+  <dl class="dl-horizontal">
+      <dt style="width:190px;">{% trans "Attached Composed Servers" %}</dt>
+      {% for c in virtualdisk.composed_node %}
+      <dd style="margin-left:205px;"><a href="../../../rsa_servers/{{c.1}}/detail/">{{ c.0 }}</a></dd>
+      {% endfor %}
+    <!--
+    <dt>{% trans "Flavor" %}</dt>
+    {% if instance.full_flavor %}
+      <dd>{{ instance.full_flavor.name }}</dd>
+      <dt>{% trans "Flavor ID" %}</dt>
+      <dd>{{ instance.full_flavor.id }}</dd>
+      <dt>{% trans "RAM" %}</dt>
+      <dd>{{ instance.full_flavor.ram|mb_float_format }}</dd>
+      <dt>{% trans "VCPUs" %}</dt>
+      <dd>{{ instance.full_flavor.vcpus }} {% trans "VCPU" %}</dd>
+      <dt>{% trans "Disk" %}</dt>
+      <dd>{{ instance.full_flavor.disk }}{% trans "GB" %}</dd>
+      {% if instance.full_flavor.ephemeral %}
+        <dt>{% trans "Ephemeral Disk" %}</dt>
+        <dd>{{ instance.full_flavor.ephemeral }}{% trans "GB" %}</dd>
+      {% endif %}
+    {% else %}
+      {% trans "Not available" %}
+    {% endif %}
+    -->
+  </dl>
+</div>
+<!--
+<div class="addresses detail">
+    <h4>{% trans "IP Addresses" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+      {% for network, ip_list in instance.addresses.items %}
+        <dt>{{ network|title }}</dt>
+        <dd>
+          {% for ip in ip_list %}
+            {% if not forloop.last %}{{ ip.addr }},&nbsp;{% else %}{{ ip.addr }}{% endif %}
+          {% endfor %}
+        </dd>
+      {% endfor %}
+    </dl>
+</div>
+
+<div class="security_groups detail">
+    <h4>{% trans "Security Groups" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+      {% for group in instance.security_groups %}
+        <dt>{{ group.name }}</dt>
+        <dd>
+          <ul>
+          {% for rule in group.rules %}
+            <li>{{ rule }}</li>
+            {% empty %}
+            <li><em>{% trans "No rules defined." %}</em></li>
+          {% endfor %}
+          </ul>
+        </dd>
+        {% empty %}
+        {% trans "Not available" %}
+      {% endfor %}
+    </dl>
+</div>
+
+<div class="meta detail">
+    <h4>{% trans "Metadata" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+      <dt>{% trans "Key Name" %}</dt>
+      {% with default_key_name="<em>"|add:_("None")|add:"</em>" %}
+      <dd>{{ instance.key_name|default:default_key_name }}</dd>
+      {% endwith %}
+      {% url 'horizon:project:images:images:detail' instance.image.id as image_url %}
+      <dt>{% trans "Image Name" %}</dt>
+      <dd>
+        {% if instance.image %}
+          <a href="{{ image_url }}">{{ instance.image_name }}</a>
+        {% else %}
+          <em>{% trans "None" %}</em>
+        {% endif %}
+      </dd>
+      {% with default_item_value="<em>"|add:_("N/A")|add:"</em>" %}
+      {% for key, value in instance.metadata.items %}
+        <dt>{{ key|force_escape }}</dt>
+        <dd>{{ value|force_escape|default:default_item_value }}</dd>
+      {% endfor %}
+      {% endwith %}
+    </dl>
+</div>
+
+<div class="volumes detail">
+    <h4>{% trans "Volumes Attached" %}</h4>
+    <hr class="header_rule">
+    <dl class="dl-horizontal">
+    {% for volume in instance.volumes %}
+        <dt>{% trans "Attached To" %}</dt>
+        <dd>
+            {% url 'horizon:project:volumes:volumes:detail' volume.id as volume_url %}
+            {% blocktrans with volume_label=volume.name|default:volume.id volume_device=volume.device %}
+            <a href="{{ volume_url }}">{{ volume_label }}</a> on {{ volume_device }}
+            {% endblocktrans %}
+        </dd>
+        {% empty %}
+        <dt>{% trans "Volume" %}</dt>
+        <dd><em>{% trans "No volumes attached." %}</em></dd>
+    {% endfor %}
+    </dl>
+</div>
+-->

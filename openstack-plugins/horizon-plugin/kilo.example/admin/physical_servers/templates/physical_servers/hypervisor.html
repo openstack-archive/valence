@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Associate Physical Server to Nova Host" %}{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=_("Associate Physical Server to Nova Host") %}
+{% endblock page_header %}
+
+{% block main %}
+  {% include 'admin/physical_servers/_hypervisor.html' %}
+{% endblock %}

@@ -1,0 +1,23 @@
+{% load i18n sizeformat %}
+
+<h3>{% trans "Physical Server Pre-Deploy Check" %}</h3>
+
+<div class="specs row-fluid detail">
+  <h4>{% trans "Ready Status" %}</h4>
+  <hr class="header_rule">
+</div>
+
+{% if server.driver == 'lenovo_xclarity' %}
+	<h5>{% trans "Please make sure that the access statue is online, and secure boot mode is disabled" %}</h5>
+	<h5>{% trans "Please make sure that the UEFI is enabled, and remote presence mode is enabled, and valid mac is ok" %}</h5>
+	<h5>{% trans "If you are deploying OS using the static ip address, please give out the ip address while deploying" %}</h5>
+	<br></br>
+	<br>{% trans "Server Name" %}&emsp;&emsp;&emsp;&emsp;&emsp;{{ server.name }}</br>
+	<br>{% trans "Server Secure Boot Mode" %}&emsp;&emsp;&emsp;&emsp;&emsp;{{ server.readyCheck.secureBootMode }}</br>
+	<br>{% trans "Server UEFI Mode" %}&emsp;&emsp;&emsp;&emsp;&emsp;{{ server.readyCheck.uefiMode }}</br>
+	<br>{% trans "Server RemotePresence Mode" %}&emsp;&emsp;&emsp;&emsp;&emsp;{{ server.readyCheck.remotePresenceMode }}</br>
+	<br>{% trans "Server AccessState" %}&emsp;&emsp;&emsp;&emsp;&emsp;{{ server.readyCheck.accessState }}</br>
+	<br>{% trans "Server ValidMac" %}&emsp;&emsp;&emsp;&emsp;&emsp;{{ server.readyCheck.validMac }}</br>
+{% else %}
+    <h4>{% trans "Not Supported Yet" %}</h4>
+{% endif %}

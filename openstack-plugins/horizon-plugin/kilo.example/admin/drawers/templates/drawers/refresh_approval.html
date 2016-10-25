@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Refresh Approval List" %}{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=_("Refresh Approval List") %}
+{% endblock page_header %}
+
+{% block main %}
+  {% include 'admin/physical_servers/_refresh_approval.html' %}
+{% endblock %}

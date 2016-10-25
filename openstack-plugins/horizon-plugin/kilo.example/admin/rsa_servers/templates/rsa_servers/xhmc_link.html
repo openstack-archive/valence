@@ -1,0 +1,11 @@
+{% load i18n %}
+<a href="{{link}}" target="_blank" id="xhmc_{{ id }}" class="link-popover" rel="popover" tabindex="0" data-trigger="focus" data-content="" data-original-title="{% blocktrans %}Jump to XClarity Administrator">{{link}}{% endblocktrans %}</a>
+<script type="text/javascript" charset="utf-8">
+$(function () {
+  var $xhmc = $("#xhmc_{{ id }}");
+  // NOTE(tsufiev): check this in case this template is used in network topology -> terminate instance
+  if ( $xhmc.popover ) {
+    $xhmc.popover({html:true});
+  }
+});
+</script>

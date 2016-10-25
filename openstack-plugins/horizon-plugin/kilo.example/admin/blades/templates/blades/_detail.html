@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load i18n sizeformat %}
+{% block title %}{% trans "Computer System Details" %}{% endblock %}
+
+{% block main %}
+<div class="row">
+  <div class="col-sm-12">
+  {{ tab_group.render }}
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<link href='{{ STATIC_URL }}dashboard/admin/blades/detail.css' type='text/css' rel='stylesheet' />
+{% endblock %}
+
+{% block js %}
+  {% include "horizon/_scripts.html" %}
+    <script>
+        $( "#accordion0" ).accordion({
+          collapsible: true,
+          active: false
+        });
+        $( "#accordion1" ).accordion({
+          collapsible: true,
+          active: false
+        });
+        $(".processor_son").css({'display':'none'}) ;
+        $( ".processor" ).click(function(){
+                if($(".processor_son").css('display') == 'none'){
+                    $(".processor_son").css({'display': 'block'}) ;
+                }
+                else{
+                    $(".processor_son").css({'display': 'none'}) ;
+                }
+        })
+        $(".memory_son").css({'display':'none'}) ;
+        $( ".memory" ).click(function(){
+                if($(".memory_son").css('display') == 'none'){
+                    $(".memory_son").css({'display': 'block'}) ;
+                }
+                else{
+                    $(".memory_son").css({'display': 'none'}) ;
+                }
+        })
+    </script>
+{% endblock %}

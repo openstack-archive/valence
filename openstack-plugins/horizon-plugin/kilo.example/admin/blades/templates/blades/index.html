@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load i18n horizon humanize sizeformat %}
+{% block title %}{% trans "Computer System" %}{% endblock %}
+
+{% block page_header %}
+  <div class='page-header' style="height:50px">
+    <h1 style="float:left">Computer Systems</h1>
+    {% if selected_pod_manager %}
+        <h3 style="margin-top:9px">&nbsp (Active POD: <a href='../pod_managers'><font color = >{{ selected_pod_manager }}</font></a>)</h3>
+        <!--<h1 style="float:right">POD <font color = red>{{ selected_pod_manager }}</font> Selected</h1>-->
+    {% else %}
+        <h3 style="margin-top:9px">--NO POD Selected</h3>
+        <!--<h1 style="float:right">NO POD Selected</h1>-->
+    {% endif %}
+
+    {% if actions %}
+      <form class='actions_column pull-right' action='{{ url }}' method="POST">
+        {% csrf_token%}
+        {{ actions }}
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block main %}
+    {{ table.render }}
+    <div class="col-sm-12">
+        <table id="pcie_switch_info" class="table table-hover" style="display: none">
+            <thead>
+            <tr>
+                <th>Pcie Switch Info</th>
+                <!--<th>Email</th>-->
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Manufacturer:</td>
+                <td id="manufacturer"></td>
+            </tr>
+            <tr>
+                <td>ManufacturingDate:</td>
+                <td id='manufacturingdata'></td>
+            </tr>
+            <tr>
+                <td>SerialNumber:</td>
+                <td id='serialnumber'></td>
+            </tr>
+            <tr>
+                <td>PartNumber:</td>
+                <td id='partnumber'></td>
+            </tr>
+            <tr>
+                <td>FirmwareName:</td>
+                <td id='firmwarename'></td>
+            </tr>
+            <tr>
+                <td>FirmwareVersion:</td>
+                <td id='firmwareversion'></td>
+            </tr>
+            <tr>
+                <td>Role:</td>
+                <td id='role'></td>
+            </tr>
+            <tr>
+                <td>Ports Usage:</td>
+                <td id='ports_usage'></td>
+            </tr>
+            <tr>
+                <td>Events:</td>
+                <td id='events'></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block footer %}
+<script src='{{ STATIC_URL }}dashboard/admin/blades/index.js' type='text/javascript' charset='utf-8'></script>
+<!--
+<link href='{{ STATIC_URL }}dashboard/admin/pcie_switches/index.css' type='text/css' rel='stylesheet' />
+<script src='{{ STATIC_URL }}dashboard/admin/pcie_switches/index.js' type='text/javascript' charset='utf-8'></script>
+-->
+{% endblock %}

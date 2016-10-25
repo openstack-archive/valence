@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% load i18n sizeformat %}
+{% block title %}{% trans "Physical Server Pre-Deploy Check" %}{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=_("Pre-Deploy Check") %}
+{% endblock page_header %}
+
+{% block main %}
+<div class="row-fluid">
+  <div class="span12">
+  {{ tab_group.render }}
+  </div>
+</div>
+{% endblock %}

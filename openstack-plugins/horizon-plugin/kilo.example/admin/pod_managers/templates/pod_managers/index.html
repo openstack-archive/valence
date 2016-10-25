@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load i18n horizon humanize sizeformat %}
+{% block title %}{% trans "Pod Managers" %}{% endblock %}
+
+{% block page_header %}
+  <div class='page-header' style="height:50px">
+    <h1 style="float:left">POD Managers</h1>
+    {% if selected_pod_manager %}
+        <h3 style="margin-top:9px">&nbsp (Active POD: <a href='../pod_managers'><font color = >{{ selected_pod_manager }}</font></a>)</h3>
+        <!--<h1 style="float:right">POD <font color = red>{{ selected_pod_manager }}</font> Selected</h1>-->
+    {% else %}
+        <h3 style="margin-top:9px">--NO POD Selected</h3>
+        <!--<h1 style="float:right">NO POD Selected</h1>-->
+    {% endif %}
+
+    {% if actions %}
+      <form class='actions_column pull-right' action='{{ url }}' method="POST">
+        {% csrf_token%}
+        {{ actions }}
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}
+
+
+{% block main %}
+<div class="row">
+    <div class="col-sm-12">
+    {{ table.render }}
+    </div>
+    <div class="col-sm-12">
+        <br>
+        <table id="virtualdisk_info" class="table table-hover" >
+            <thead>
+            <tr>
+                <th colspan='4'>Hardware Resource Summary</th>
+                <!--<th>Email</th>-->
+            </tr>
+            </thead>
+            <!--
+            <tbody>
+            <tr>
+                <td><a href='../racks/'>Rack: 3</a></td>
+                <td id="image"><a href='../rsa_servers/'>Composed Node: 7</a></td>
+            </tr>
+            <tr>
+                <td><a href='../drawers/'>Drawer: 4</a></td>
+                <td id='targets'><a href='../virtual_disks/'>Storage: 8</a></td>
+            </tr>
+            <tr>
+                <td><a href='../drawers/'>Chassis: 5</a></td>
+                <td id='snapshot'></td>
+            </tr>
+            <tr>
+                <td><a href='../blades/'>Computer System: 6</a></td>
+                <td id='physical_driver'></td>
+            </tr>
+           </tbody>
+           -->
+        </table>
+        <div class='row' style='margin-left: 63px'>
+            <div class='col-sm-12' style='margin-bottom:25px'>
+                <div class='col-sm-2' style='text-align:center;'>
+                    <img src='{{ STATIC_URL }}dashboard/img/RSD_composed_node_64.png'></img>
+                    {% if pod_manager_hardware_summary.ComposedNodes == 0 %}
+                        <div href='../rsa_servers/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Composed Node: {{  pod_manager_hardware_summary.ComposedNodes }}</div>
+                    {% else %}
+                        <a href='../rsa_servers/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Composed Node: {{  pod_manager_hardware_summary.ComposedNodes }}</a>
+                    {% endif %}
+                </div>
+                <div class='col-sm-2' style='text-align:center;'>
+                    <img src='{{ STATIC_URL }}dashboard/img/ge96_rack_24.png'></img>
+                    {% if pod_manager_hardware_summary.Racks == 0 %}
+                        <div href='../racks/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Rack: {{ pod_manager_hardware_summary.Racks }}</div>
+                    {% else %}
+                        <a href='../racks/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Rack: {{ pod_manager_hardware_summary.Racks }}</a>
+                    {% endif %}
+                </div>
+                <div class='col-sm-2' style='text-align:center;height: 128px;'>
+                    <img src='{{ STATIC_URL }}dashboard/img/ge48_chassis_24.png'></img>
+                    {% if pod_manager_hardware_summary.Drawer == 0 %}
+                        <div href='../drawers/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Drawer: {{  pod_manager_hardware_summary.Drawer }}</div>
+                    {% else %}
+                        <a href='../drawers/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Drawer: {{  pod_manager_hardware_summary.Drawer }}</a>
+                    {% endif %}
+                </div>
+                <div class='col-sm-2' style='text-align:center;'>
+                    <img src='{{ STATIC_URL }}dashboard/img/ge48_fsmcomputenode_24.png'></img>
+                    {% if pod_manager_hardware_summary.ComputerSystems == 0 %}
+                        <div href='../blades/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Computer System: {{  pod_manager_hardware_summary.ComputerSystems }}</div>
+                    {% else %}
+                        <a href='../blades/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Computer System: {{  pod_manager_hardware_summary.ComputerSystems }}</a>
+                    {% endif %}
+                </div>
+                <div class='col-sm-2' style='text-align:center;'>
+                    <img src='{{ STATIC_URL }}dashboard/img/RSD_virtual_disk_64.png'></img>
+                    {% if pod_manager_hardware_summary.Storages == 0 %}
+                        <div href='../virtual_disks/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Storage: {{  pod_manager_hardware_summary.Storages }}</div>
+                    {% else %}
+                        <a href='../virtual_disks/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Storage: {{  pod_manager_hardware_summary.Storages }}</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!--
+            <div class='col-sm-6' style='border-right:solid 3px #ccc;text-align:center;'>
+                <a href='../racks/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Rack: {{ pod_manager_hardware_summary.Racks }}</a>
+                <a href='../drawers/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Drawer: {{  pod_manager_hardware_summary.Drawer }}</a>
+                <a href='../blades/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Computer System: {{  pod_manager_hardware_summary.ComputerSystems }}</a>
+            </div>
+            <div class='col-sm-6' style='text-align:center;'>
+                <a href='../rsa_servers/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Composed Node: {{  pod_manager_hardware_summary.ComposedNodes }}</a>
+                <a href='../virtual_disks/' style='font-size:18px; display:block; height:30px; line-height:30px;'>Storage: {{  pod_manager_hardware_summary.Volumes }}</a>
+            </div>
+            -->
+        </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+<link href='{{ STATIC_URL }}dashboard/admin/pod_managers/index.css' type='text/css' rel='stylesheet' />
+<script src='{{ STATIC_URL }}dashboard/admin/pod_managers/index.js' type='text/javascript' charset='utf-8'></script>
+{% endblock %}
+
