@@ -13,7 +13,7 @@ const Home = React.createClass({
      *
      * TODO(ntpttr): Remove this once the compose menu is fully flushed out.
      */
-    var url = config.url + '/redfish/v1/Nodes/Actions/Allocate';
+    var url = config.url + '/Nodes/Actions/Allocate';
     $.ajax({
       url: url,
       type: 'POST',
