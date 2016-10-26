@@ -1,16 +1,8 @@
 var config = require('./config.js');
 var util = require('./util.js');
 
-// Base64 username:password on client-side, and append into request header
-$.ajaxSetup({
-  beforeSend: function(xhr) {
-    xhr.setRequestHeader('Authorization',
-                         'Basic ' + btoa(config.username + ':' + config.password));
-  }
-});
-
 exports.getPods = function(callback) {
-  var url = config.url + '/redfish/v1/Chassis';
+  var url = config.url + '/v1/Chassis';
   $.ajax({
     url: url,
     type: 'GET',
@@ -28,7 +20,7 @@ exports.getPods = function(callback) {
 };
 
 exports.getRacks = function(callback) {
-  var url = config.url + '/redfish/v1/Chassis';
+  var url = config.url + '/v1/Chassis';
   $.ajax({
     url: url,
     type: 'GET',
@@ -46,7 +38,7 @@ exports.getRacks = function(callback) {
 };
 
 exports.getSystems = function(callback) {
-  var url = config.url + '/redfish/v1/Systems';
+  var url = config.url + '/v1/Systems';
   $.ajax({
     url: url,
     type: 'GET',
@@ -63,7 +55,7 @@ exports.getSystems = function(callback) {
 };
 
 exports.getNodes = function(callback) {
-  var url = config.url + '/redfish/v1/Nodes';
+  var url = config.url + '/v1/Nodes';
   $.ajax({
     url: url,
     type: 'GET',
@@ -80,7 +72,7 @@ exports.getNodes = function(callback) {
 };
 
 exports.getStorage = function(callback) {
-  var url = config.url + '/redfish/v1/Services';
+  var url = config.url + '/v1/Services';
   $.ajax({
     url: url,
     type: 'GET',

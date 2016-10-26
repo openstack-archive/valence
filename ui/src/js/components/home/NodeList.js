@@ -6,7 +6,7 @@ var util = require('../../util.js');
 const NodeList = React.createClass({
 
   delete: function(nodeId) {
-    var url = config.url + '/redfish/v1/Nodes/' + nodeId;
+    var url = config.url + '/v1/Nodes/' + nodeId;
     $.ajax({
       url: url,
       type: 'DELETE',
@@ -24,7 +24,7 @@ const NodeList = React.createClass({
   },
 
   setBoot: function(nodeId) {
-    var url = config.url + '/redfish/v1/Nodes/' + nodeId;
+    var url = config.url + '/v1/Nodes/' + nodeId;
     $.ajax({
       url: url,
       type: 'PATCH',
@@ -47,7 +47,7 @@ const NodeList = React.createClass({
   },
 
   assemble: function(nodeId) {
-    var url = config.url + '/redfish/v1/Nodes/' + nodeId + '/Actions/ComposedNode.Assemble';
+    var url = config.url + '/v1/Nodes/' + nodeId + '/Actions/ComposedNode.Assemble';
     $.ajax({
       url: url,
       type: 'POST',
@@ -61,7 +61,7 @@ const NodeList = React.createClass({
   },
 
   powerOn: function(nodeId) {
-    var url = config.url + '/redfish/v1/Nodes/' + nodeId + '/Actions/ComposedNode.Reset';
+    var url = config.url + '/v1/Nodes/' + nodeId + '/Actions/ComposedNode.Reset';
     $.ajax({
       url: url,
       type: 'POST',

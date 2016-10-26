@@ -1,10 +1,8 @@
 /*
- * Configuration file for RSC UI. 
+ * Configuration file for RSC UI.
  */
 
-exports.url = "http://127.0.0.1:6000"
-exports.username = "admin"
-exports.password = "admin"
+exports.url = "http://127.0.0.1:8181"
 
 exports.nodeConfig =
 {
