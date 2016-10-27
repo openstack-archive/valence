@@ -58,7 +58,8 @@ class RSAChassis(base.IronicObject):
     @staticmethod
     def _from_db_object_list(db_objects, cls, context):
         """Converts a list of database entities to a list of formal objects."""
-        return [RSAChassis._from_db_object(cls(context), obj) for obj in db_objects]
+        return [RSAChassis._from_db_object(cls(context), obj) for obj in
+                db_objects]
 
     @base.remotable_classmethod
     def get(cls, context, rsa_chassis_id):
@@ -100,7 +101,8 @@ class RSAChassis(base.IronicObject):
         return rsa_chassis
 
     @base.remotable_classmethod
-    def list_by_pod_and_type(cls, context, pod_id, type, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def list_by_pod_and_type(cls, context, pod_id, type, limit=None,
+                             marker=None, sort_key=None, sort_dir=None):
         """Return a list of rsa_chassis objects.
 
         :param context: Security context.
@@ -185,7 +187,8 @@ class RSAChassis(base.IronicObject):
         """
         current = self.__class__.get_by_url(self._context, url=self.url)
         for field in self.fields:
-            if (hasattr(self, base.get_attrname(field)) and self[field] != current[field]):
+            if (hasattr(self, base.get_attrname(field)) and self[field] !=
+                current[field]):
                 self[field] = current[field]
 
     @base.remotable_classmethod
@@ -196,15 +199,18 @@ class RSAChassis(base.IronicObject):
         return sum
 
     @base.remotable_classmethod
-    def get_chassis_computer_systems(cls, pod_id, chassis, chassis_id, context=None):
+    def get_chassis_computer_systems(cls, pod_id, chassis, chassis_id,
+                                     context=None):
         """Return computer systems belong to this chassis.
         """
-        systems = cls.dbapi.get_rack_computer_systems(pod_id, chassis, chassis_id)
+        systems = cls.dbapi.get_rack_computer_systems(pod_id, chassis,
+                                                      chassis_id)
         computer_systems = []
         for system in systems:
             computer_system = dict()
             computer_system['system_name'] = system[0]
             computer_system['system_id'] = system[1]
-            computer_system['system_location'] = eval(system[2])['SystemLocation']
+            computer_system['system_location'] = eval(system[2])[
+                'SystemLocation']
             computer_systems.append(computer_system)
         return computer_systems

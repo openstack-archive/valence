@@ -59,7 +59,8 @@ class Switch(base.IronicObject):
         return chassis
 
     @base.remotable_classmethod
-    def list_by_pod_id(cls, context, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def list_by_pod_id(cls, context, pod_id, limit=None, marker=None,
+                       sort_key=None, sort_dir=None):
         """Return a list of switch objects.
 
         :param context: Security context.
@@ -71,8 +72,10 @@ class Switch(base.IronicObject):
         :returns: a list of :class:`switch` object.
 
         """
-        db_switch = cls.dbapi.get_pod_switch_list(pod_id, limit=limit, marker=marker,
-                                                  sort_key=sort_key, sort_dir=sort_dir)
+        db_switch = cls.dbapi.get_pod_switch_list(pod_id, limit=limit,
+                                                  marker=marker,
+                                                  sort_key=sort_key,
+                                                  sort_dir=sort_dir)
         return [Switch._from_db_object(cls(context), obj) for obj in db_switch]
 
     @base.remotable
@@ -146,5 +149,5 @@ class Switch(base.IronicObject):
         current = self.__class__.get_by_id(self._context, self.id)
         for field in self.fields:
             if (hasattr(self, base.get_attrname(field)) and
-                    self[field] != current[field]):
+                        self[field] != current[field]):
                 self[field] = current[field]

@@ -143,7 +143,8 @@ class Node(Base):
     __tablename__ = 'nodes'
     __table_args__ = (
         schema.UniqueConstraint('uuid', name='uniq_nodes0uuid'),
-        schema.UniqueConstraint('instance_uuid', name='uniq_nodes0instance_uuid'),
+        schema.UniqueConstraint('instance_uuid',
+                                name='uniq_nodes0instance_uuid'),
         schema.UniqueConstraint('name', name='uniq_nodes0name'),
         table_args())
     id = Column(Integer, primary_key=True)
@@ -209,7 +210,8 @@ class Port(Base):
 class PodManager(Base):
     """Represents the instance of pod manager administrators"""
     __tablename__ = 'pod_manager'
-    __table_args__ = (schema.UniqueConstraint("ipaddress", name="pod_manager0ipaddress"),)
+    __table_args__ = (
+        schema.UniqueConstraint("ipaddress", name="pod_manager0ipaddress"),)
 
     id = Column(Integer, primary_key=True)
     """use the types.IPAddress maybe better"""
@@ -233,7 +235,8 @@ class ComposedNode(Base):
     url = Column(String(255))
     description = Column(String(255))
     pod_id = Column(Integer, ForeignKey('pod_manager.id', ondelete='CASCADE'))
-    computer_system_id = Column(Integer, ForeignKey('computer_system.id', ondelete='CASCADE'))
+    computer_system_id = Column(Integer, ForeignKey('computer_system.id',
+                                                    ondelete='CASCADE'))
     volume_id = Column(String(255))
     # volume_id = Column(Integer, ForeignKey('volume.id', ondelete='CASCADE'))
 
@@ -376,7 +379,8 @@ class CPU(Base):
     processor_architecture = Column(String(16))
     instruction_set = Column(String(16))
     manufacturer = Column(String(64))
-    computer_system_id = Column(Integer, ForeignKey('computer_system.id', ondelete='CASCADE'))
+    computer_system_id = Column(Integer, ForeignKey('computer_system.id',
+                                                    ondelete='CASCADE'))
 
 
 class Memory(Base):
@@ -391,7 +395,8 @@ class Memory(Base):
     serial_number = Column(String(64))
     part_number = Column(String(64))
     manufacturer = Column(String(64))
-    computer_system_id = Column(Integer, ForeignKey('computer_system.id', ondelete='CASCADE'))
+    computer_system_id = Column(Integer, ForeignKey('computer_system.id',
+                                                    ondelete='CASCADE'))
 
 
 class Disk(Base):
@@ -404,7 +409,8 @@ class Disk(Base):
     size_gb = Column(Integer, nullable=False)
     serial_number = Column(String(64))
     volume_id = Column(Integer)
-    computer_system_id = Column(Integer, ForeignKey('computer_system.id', ondelete='CASCADE'))
+    computer_system_id = Column(Integer, ForeignKey('computer_system.id',
+                                                    ondelete='CASCADE'))
 
 
 class Interface(Base):
@@ -420,7 +426,8 @@ class Interface(Base):
     mac_address = Column(String(64), nullable=False)
     ip_address = Column(String(64))
     status = Column(String(255))
-    computer_system_id = Column(Integer, ForeignKey('computer_system.id', ondelete='CASCADE'))
+    computer_system_id = Column(Integer, ForeignKey('computer_system.id',
+                                                    ondelete='CASCADE'))
 
 
 class Switch(Base):

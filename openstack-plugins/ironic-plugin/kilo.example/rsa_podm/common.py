@@ -49,7 +49,8 @@ def parse_podm_driver_info(node):
         try:
             parsed_driver_info[param] = str(driver_info[param])
         except KeyError:
-            error_msgs.append(_("'%s' not supplied to RSA POD Manager Driver.") % param)
+            error_msgs.append(
+                _("'%s' not supplied to RSA POD Manager Driver.") % param)
         except UnicodeEncodeError:
             error_msgs.append(_("'%s' contains non-ASCII symbol.") % param)
 
@@ -60,7 +61,9 @@ def parse_podm_driver_info(node):
         error_msgs.append(_("'podm_protocol' contains non-ASCII symbol."))
 
     if error_msgs:
-        msg = (_('The following errors were encountered while parsing driver_info:\n%s') % '\n'.join(error_msgs))
+        msg = (_(
+            'The following errors were encountered while parsing driver_info:\n%s') % '\n'.join(
+            error_msgs))
         raise exception.InvalidParameterValue(msg)
 
     return parsed_driver_info

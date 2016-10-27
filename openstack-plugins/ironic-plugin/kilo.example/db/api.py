@@ -42,7 +42,8 @@ class Connection(object):
         """Constructor."""
 
     @abc.abstractmethod
-    def get_nodeinfo_list(self, columns=None, filters=None, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_nodeinfo_list(self, columns=None, filters=None, limit=None,
+                          marker=None, sort_key=None, sort_dir=None):
         """Get specific columns for matching nodes.
 
         Return a list of the specified columns for all nodes that match the
@@ -71,7 +72,8 @@ class Connection(object):
         """
 
     @abc.abstractmethod
-    def get_node_list(self, filters=None, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_node_list(self, filters=None, limit=None, marker=None,
+                      sort_key=None, sort_dir=None):
         """Return a list of nodes.
 
         :param filters: Filters to apply. Defaults to None.
@@ -229,7 +231,8 @@ class Connection(object):
         """
 
     @abc.abstractmethod
-    def get_port_list(self, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_port_list(self, limit=None, marker=None, sort_key=None,
+                      sort_dir=None):
         """Return a list of ports.
 
         :param limit: Maximum number of ports to return.
@@ -241,7 +244,8 @@ class Connection(object):
         """
 
     @abc.abstractmethod
-    def get_ports_by_node_id(self, node_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_ports_by_node_id(self, node_id, limit=None, marker=None,
+                             sort_key=None, sort_dir=None):
         """List all the ports for a given node.
 
         :param node_id: The integer node ID.
@@ -301,7 +305,8 @@ class Connection(object):
         """
 
     @abc.abstractmethod
-    def get_chassis_list(self, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_chassis_list(self, limit=None, marker=None, sort_key=None,
+                         sort_dir=None):
         """Return a list of chassis.
 
         :param limit: Maximum number of chassis to return.
@@ -402,7 +407,8 @@ class Connection(object):
         """
 
     @abc.abstractmethod
-    def get_xclarity_list(self, filters=None, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_xclarity_list(self, filters=None, limit=None, marker=None,
+                          sort_key=None, sort_dir=None):
         """get the xclarity list from db
         """
 
@@ -431,7 +437,8 @@ class Connection(object):
         """
 
     @abc.abstractmethod
-    def get_subscription_list(self, filters=None, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_subscription_list(self, filters=None, limit=None, marker=None,
+                              sort_key=None, sort_dir=None):
         """get the Subscription list from db
         """
 
@@ -465,7 +472,8 @@ class Connection(object):
         """
 
     @abc.abstractmethod
-    def get_pod_manager_list(self, filters=None, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_pod_manager_list(self, filters=None, limit=None, marker=None,
+                             sort_key=None, sort_dir=None):
         """get the pod_manager list from db
         """
 
@@ -489,7 +497,9 @@ class Connection(object):
     """
 
     @abc.abstractmethod
-    def get_rsa_chassis_list_by_pod_and_type(self, pod_id, chassis_type, limit=None, marker=None, sort_key=None,
+    def get_rsa_chassis_list_by_pod_and_type(self, pod_id, chassis_type,
+                                             limit=None, marker=None,
+                                             sort_key=None,
                                              sort_dir=None):
         """get rack list or drawer list"""
 
@@ -526,7 +536,8 @@ class Connection(object):
         """ get cpu info"""
 
     @abc.abstractmethod
-    def get_node_cpu_list(self, rsa_node_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_node_cpu_list(self, rsa_node_id, limit=None, marker=None,
+                          sort_key=None, sort_dir=None):
         """ get cpu info"""
 
     @abc.abstractmethod
@@ -554,7 +565,8 @@ class Connection(object):
         """ get memory info"""
 
     @abc.abstractmethod
-    def get_node_memory_list(self, rsa_node_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_node_memory_list(self, rsa_node_id, limit=None, marker=None,
+                             sort_key=None, sort_dir=None):
         """ get memory info"""
 
     @abc.abstractmethod
@@ -582,7 +594,8 @@ class Connection(object):
         """get disk by url"""
 
     @abc.abstractmethod
-    def get_node_disk_list(self, rsa_node_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_node_disk_list(self, rsa_node_id, limit=None, marker=None,
+                           sort_key=None, sort_dir=None):
         """get disk list"""
 
     @abc.abstractmethod
@@ -610,7 +623,8 @@ class Connection(object):
         """get switch by url"""
 
     @abc.abstractmethod
-    def get_pod_switch_list(self, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_pod_switch_list(self, pod_id, limit=None, marker=None,
+                            sort_key=None, sort_dir=None):
         """get switch list"""
 
     @abc.abstractmethod
@@ -634,7 +648,8 @@ class Connection(object):
         """get volume by url"""
 
     @abc.abstractmethod
-    def get_pod_volume_list(self, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_pod_volume_list(self, pod_id, limit=None, marker=None,
+                            sort_key=None, sort_dir=None):
         """get volume list"""
 
     @abc.abstractmethod
@@ -654,7 +669,8 @@ class Connection(object):
         """get interface by id"""
 
     @abc.abstractmethod
-    def get_node_interface_list(self, node_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_node_interface_list(self, node_id, limit=None, marker=None,
+                                sort_key=None, sort_dir=None):
         """get interface list"""
 
     @abc.abstractmethod
@@ -682,7 +698,8 @@ class Connection(object):
         """get manager by url"""
 
     @abc.abstractmethod
-    def get_manager_list(self, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_manager_list(self, pod_id, limit=None, marker=None, sort_key=None,
+                         sort_dir=None):
         """get manager list"""
 
     @abc.abstractmethod
@@ -710,7 +727,8 @@ class Connection(object):
         """get target by url"""
 
     @abc.abstractmethod
-    def get_target_list_by_pod(self, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_target_list_by_pod(self, pod_id, limit=None, marker=None,
+                               sort_key=None, sort_dir=None):
         """get target list"""
 
     @abc.abstractmethod
@@ -738,7 +756,8 @@ class Connection(object):
         """get pcieswitch by url"""
 
     @abc.abstractmethod
-    def get_pcieswitch_list_by_pod(self, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def get_pcieswitch_list_by_pod(self, pod_id, limit=None, marker=None,
+                                   sort_key=None, sort_dir=None):
         """get pcieswitch list"""
 
     @abc.abstractmethod
