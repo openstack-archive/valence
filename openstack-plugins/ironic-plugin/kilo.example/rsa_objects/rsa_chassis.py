@@ -58,15 +58,11 @@ class RSAChassis(base.IronicObject):
     @staticmethod
     def _from_db_object_list(db_objects, cls, context):
         """Converts a list of database entities to a list of formal objects."""
-        return [RSAChassis._from_db_object(cls(context), obj) for obj in db_objects]
+        return [RSAChassis._from_db_object(cls(context), obj) for obj in
+                db_objects]
 
     @base.remotable_classmethod
     def get(cls, context, rsa_chassis_id):
-        """Find a rsa_chassis based on its id or uuid and return a rsa_chassis object.
-
-        :param rsa_chassis_id: the id *or* uuid of a rsa_chassis.
-        :returns: a :class:`rsa_chassis` object.
-        """
         if strutils.is_int_like(rsa_chassis_id):
             return cls.get_by_id(context, rsa_chassis_id)
         elif uuidutils.is_uuid_like(rsa_chassis_id):
@@ -78,133 +74,68 @@ class RSAChassis(base.IronicObject):
 
     @base.remotable_classmethod
     def get_by_id(cls, context, rsa_chassis_id):
-        """Find a rsa_chassis based on its integer id and return a rsa_chassis object.
-
-        :param rsa_chassis_id: the id of a rsa_chassis.
-        :returns: a :class:`rsa_chassis` object.
-        """
         db_rsa_chassis = cls.dbapi.get_rsa_chassis_by_id(rsa_chassis_id)
         rsa_chassis = RSAChassis._from_db_object(cls(context), db_rsa_chassis)
         return rsa_chassis
 
     @base.remotable_classmethod
     def get_by_url(cls, context, url):
-        """Find a rsa_chassis based on uuid and return a :class:`rsa_chassis` object.
-
-        :param url: the uuid of a rsa_chassis.
-        :param context: Security context
-        :returns: a :class:`rsa_chassis` object.
-        """
         db_rsa_chassis = cls.dbapi.get_rsa_chassis_by_url(url)
         rsa_chassis = RSAChassis._from_db_object(cls(context), db_rsa_chassis)
         return rsa_chassis
 
     @base.remotable_classmethod
-    def list_by_pod_and_type(cls, context, pod_id, type, limit=None, marker=None, sort_key=None, sort_dir=None):
-        """Return a list of rsa_chassis objects.
-
-        :param context: Security context.
-        :param type: Rack or Drawer
-        :param pod_id: pod manager id
-        :param limit: maximum number of resources to return in a single result.
-        :param marker: pagination marker for large data sets.
-        :param sort_key: column to sort results by.
-        :param sort_dir: direction to sort. "asc" or "desc".
-        :returns: a list of :class:`rsa_chassis` object.
-
-        """
-        db_rsa_chassis = cls.dbapi.get_rsa_chassis_list_by_pod_and_type(pod_id,
-                                                                        type,
-                                                                        limit=limit,
-                                                                        marker=marker,
-                                                                        sort_key=sort_key,
-                                                                        sort_dir=sort_dir)
+    def list_by_pod_and_type(cls, context, pod_id, type, limit=None,
+                             marker=None, sort_key=None, sort_dir=None):
+        db_rsa_chassis = \
+            cls.dbapi.get_rsa_chassis_list_by_pod_and_type(pod_id,
+                                                           type,
+                                                           limit=limit,
+                                                           marker=marker,
+                                                           sort_key=sort_key,
+                                                           sort_dir=sort_dir)
         return RSAChassis._from_db_object_list(db_rsa_chassis, cls, context)
 
     @base.remotable
     def create(self, context=None):
-        """Create a rsa_chassis record in the DB.
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: rsa_chassis(context)
-
-        """
         values = self.obj_get_changes()
         db_rsa_chassis = self.dbapi.create_rsa_chassis(values)
         self._from_db_object(self, db_rsa_chassis)
 
     @base.remotable_classmethod
     def destroy(cls, pod_id, chassis_type, context=None):
-        """Delete the rsa_chassis from the DB.
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: rsa_chassis(context)
-        """
         cls.dbapi.destroy_rsa_chassis(pod_id, chassis_type)
 
     @base.remotable
     def save(self, context=None):
-        """Save updates to this rsa_chassis.
-
-        Updates will be made column by column based on the result
-        of self.what_changed().
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: rsa_chassis(context)
-        """
         updates = self.obj_get_changes()
         self.dbapi.update_rsa_chassis(self.url, updates)
         self.obj_reset_changes()
 
     @base.remotable
     def refresh(self, context=None):
-        """Loads updates for this rsa_chassis.
-
-        Loads a rsa_chassis with the same uuid from the database and
-        checks for updated attributes. Updates are applied from
-        the loaded rsa_chassis column by column, if there are any updates.
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: rsa_chassis(context)
-        """
         current = self.__class__.get_by_url(self._context, url=self.url)
         for field in self.fields:
-            if (hasattr(self, base.get_attrname(field)) and self[field] != current[field]):
+            if (hasattr(self, base.get_attrname(field)) and
+                        self[field] != current[field]):
                 self[field] = current[field]
 
     @base.remotable_classmethod
     def get_rack_resource(cls, pod_id, rack_id, context=None):
-        """Return Rack resource sum.
-        """
         sum = cls.dbapi.get_rack_resource(pod_id, rack_id)
         return sum
 
     @base.remotable_classmethod
-    def get_chassis_computer_systems(cls, pod_id, chassis, chassis_id, context=None):
-        """Return computer systems belong to this chassis.
-        """
-        systems = cls.dbapi.get_rack_computer_systems(pod_id, chassis, chassis_id)
+    def get_chassis_computer_systems(cls, pod_id, chassis, chassis_id,
+                                     context=None):
+        systems = cls.dbapi.get_rack_computer_systems(pod_id, chassis,
+                                                      chassis_id)
         computer_systems = []
         for system in systems:
             computer_system = dict()
             computer_system['system_name'] = system[0]
             computer_system['system_id'] = system[1]
-            computer_system['system_location'] = eval(system[2])['SystemLocation']
+            computer_system['system_location'] = eval(system[2])[
+                'SystemLocation']
             computer_systems.append(computer_system)
         return computer_systems

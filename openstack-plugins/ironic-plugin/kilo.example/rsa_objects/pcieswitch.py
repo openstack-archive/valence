@@ -48,15 +48,11 @@ class PCIeSwitch(base.IronicObject):
     @staticmethod
     def _from_db_object_list(db_objects, cls, context):
         """Converts a list of database entities to a list of formal objects."""
-        return [PCIeSwitch._from_db_object(cls(context), obj) for obj in db_objects]
+        return [PCIeSwitch._from_db_object(cls(context), obj) for obj in
+                db_objects]
 
     @base.remotable_classmethod
     def get(cls, context, pcieswitch_id):
-        """Find a pcieswitch based on its id or uuid and return a pcieswitch object.
-
-        :param pcieswitch_id: the id *or* uuid of a pcieswitch.
-        :returns: a :class:`pcieswitch` object.
-        """
         if strutils.is_int_like(pcieswitch_id):
             return cls.get_by_id(context, pcieswitch_id)
         elif uuidutils.is_uuid_like(pcieswitch_id):
@@ -68,41 +64,19 @@ class PCIeSwitch(base.IronicObject):
 
     @base.remotable_classmethod
     def get_by_id(cls, context, pcieswitch_id):
-        """Find a pcieswitch based on its integer id and return a pcieswitch object.
-
-        :param pcieswitch_id: the id of a pcieswitch.
-        :returns: a :class:`pcieswitch` object.
-        """
         db_pcieswitch = cls.dbapi.get_pcieswitch_by_id(pcieswitch_id)
         pcieswitch = PCIeSwitch._from_db_object(cls(context), db_pcieswitch)
         return pcieswitch
 
     @base.remotable_classmethod
     def get_by_url(cls, context, url):
-        """Find a pcieswitch based on uuid and return a :class:`pcieswitch` object.
-
-        :param url: the uuid of a pcieswitch.
-        :param context: Security context
-        :returns: a :class:`pcieswitch` object.
-        """
         db_pcieswitch = cls.dbapi.get_pcieswitch_by_url(url)
         pcieswitch = PCIeSwitch._from_db_object(cls(context), db_pcieswitch)
         return pcieswitch
 
     @base.remotable_classmethod
-    def list_by_pod(cls, context, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None):
-        """Return a list of pcieswitch objects.
-
-        :param context: Security context.
-        :param type: Rack or Drawer
-        :param pod_id: pod manager id
-        :param limit: maximum number of resources to return in a single result.
-        :param marker: pagination marker for large data sets.
-        :param sort_key: column to sort results by.
-        :param sort_dir: direction to sort. "asc" or "desc".
-        :returns: a list of :class:`pcieswitch` object.
-
-        """
+    def list_by_pod(cls, context, pod_id, limit=None, marker=None,
+                    sort_key=None, sort_dir=None):
         db_pcieswitch = cls.dbapi.get_pcieswitch_list_by_pod(pod_id,
                                                              limit=limit,
                                                              marker=marker,
@@ -112,67 +86,24 @@ class PCIeSwitch(base.IronicObject):
 
     @base.remotable
     def create(self, context=None):
-        """Create a pcieswitch record in the DB.
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: pcieswitch(context)
-
-        """
         values = self.obj_get_changes()
         db_pcieswitch = self.dbapi.create_pcieswitch(values)
         self._from_db_object(self, db_pcieswitch)
 
     @base.remotable_classmethod
     def destroy(cls, pod_id, context=None):
-        """Delete the pcieswitch from the DB.
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: pcieswitch(context)
-        """
         cls.dbapi.destroy_pcieswitch(pod_id)
 
     @base.remotable
     def save(self, context=None):
-        """Save updates to this pcieswitch.
-
-        Updates will be made column by column based on the result
-        of self.what_changed().
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: pcieswitch(context)
-        """
         updates = self.obj_get_changes()
         self.dbapi.update_pcieswitch(self.url, updates)
         self.obj_reset_changes()
 
     @base.remotable
     def refresh(self, context=None):
-        """Loads updates for this pcieswitch.
-
-        Loads a pcieswitch with the same uuid from the database and
-        checks for updated attributes. Updates are applied from
-        the loaded pcieswitch column by column, if there are any updates.
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: pcieswitch(context)
-        """
         current = self.__class__.get_by_url(self._context, url=self.url)
         for field in self.fields:
-            if (hasattr(self, base.get_attrname(field)) and self[field] != current[field]):
+            if (hasattr(self, base.get_attrname(field)) and
+                        self[field] != current[field]):
                 self[field] = current[field]
