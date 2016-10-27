@@ -82,7 +82,8 @@ class ConfluentAPI(object):
         try:
             _http_log_req(method, url, body, headers)
             resp = requests.request(method, url, data=body,
-                                    headers=headers, auth=(self.username, self.password),
+                                    headers=headers,
+                                    auth=(self.username, self.password),
                                     verify=self.verify)
             _http_log_resp(resp, resp.text)
 
@@ -112,7 +113,8 @@ class ConfluentAPI(object):
         max_attempts = self.retries + 1
         for i in range(max_attempts):
             try:
-                return self._do_request(method, action_url, body=body, headers=headers)
+                return self._do_request(method, action_url, body=body,
+                                        headers=headers)
             except exception.InvalidParameterValue as e:
                 # Exception has already been logged by do_request()
                 if i < self.retries:
@@ -128,7 +130,8 @@ class ConfluentAPI(object):
 
         raise exception.InvalidParameterValue(msg)
 
-    def create_confluent_node(self, manager, name, passwd, user, method='ipmi'):
+    def create_confluent_node(self, manager, name, passwd, user,
+                              method='ipmi'):
         """add a node into confluent server, with manager and name, method first
         , when the user update the authentication in UI, do the update then"""
 
@@ -158,9 +161,11 @@ class ConfluentAPI(object):
             if user:
                 update_body['secret.hardwaremanagementuser'] = user
 
-            self._retry_request('PUT', '/nodes/' + name + '/attributes/all', update_body)
+            self._retry_request('PUT', '/nodes/' + name + '/attributes/all',
+                                update_body)
         else:
-            self.create_confluent_node(manager, name, None, None, method="ipmi")
+            self.create_confluent_node(manager, name, None, None,
+                                       method="ipmi")
 
     def delete_confluent_node(self, name):
         """delete the confluent node"""

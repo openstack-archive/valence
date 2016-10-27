@@ -64,7 +64,8 @@ class PodManager(base.IronicObject):
         return pod_manager
 
     @base.remotable_classmethod
-    def list(cls, context, limit=None, marker=None, sort_key=None, sort_dir=None, filters=None):
+    def list(cls, context, limit=None, marker=None, sort_key=None,
+             sort_dir=None, filters=None):
         """Return a list of XClarity objects.
 
         :param context: Security context.
@@ -76,15 +77,17 @@ class PodManager(base.IronicObject):
         :returns: a list of :class:`XClarity` object.
 
         """
-        db_driver_instance_servers = cls.dbapi.get_pod_manager_list(filters=filters,
-                                                                    limit=limit,
-                                                                    marker=marker,
-                                                                    sort_key=sort_key,
-                                                                    sort_dir=sort_dir)
-        return [PodManager._from_db_object(cls(context), obj) for obj in db_driver_instance_servers]
+        db_driver_instance_servers = cls.dbapi.get_pod_manager_list(
+            filters=filters,
+            limit=limit,
+            marker=marker,
+            sort_key=sort_key,
+            sort_dir=sort_dir)
+        return [PodManager._from_db_object(cls(context), obj) for obj in
+                db_driver_instance_servers]
 
     """
-    do we need to provide a method to reserve a xclarity? 
+    do we need to provide a method to reserve a xclarity?
     if one xclarity is in-active, do we need to reserve it?
     and, also the release
     """
@@ -94,7 +97,7 @@ class PodManager(base.IronicObject):
         """Create a driver_instance_server record in the DB.
 
         Column-wise updates will be made based on the result of
-        self.what_changed(). 
+        self.what_changed().
 
         :param context: Security context. NOTE: This should only
                         be used internally by the indirection_api.
@@ -154,5 +157,6 @@ class PodManager(base.IronicObject):
         """
         current = self.__class__.get_by_id(self._context, self.id)
         for field in self.fields:
-            if hasattr(self, base.get_attrname(field)) and self[field] != current[field]:
+            if hasattr(self, base.get_attrname(field)) and self[field] != \
+                    current[field]:
                 self[field] = current[field]
