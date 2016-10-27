@@ -1,0 +1,10 @@
+Workflow+1: Andy Yan <yanchao3@lenovo.com>
+Code-Review+1: Andy Yan <yanchao3@lenovo.com>
+Code-Review+2: Nate Potter <nathaniel.potter@intel.com>
+Workflow+1: Nate Potter <nathaniel.potter@intel.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Thu, 27 Oct 2016 18:09:40 +0000
+Reviewed-on: https://review.openstack.org/389059
+Project: openstack/rsc
+Branch: refs/heads/master
