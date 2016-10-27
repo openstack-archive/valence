@@ -58,7 +58,8 @@ class CPU(base.IronicObject):
         return cpu
 
     @base.remotable_classmethod
-    def list_by_node_id(cls, context, node_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def list_by_node_id(cls, context, node_id, limit=None, marker=None,
+                        sort_key=None, sort_dir=None):
         """Return a list of cpu objects.
 
         :param context: Security context.
@@ -69,12 +70,16 @@ class CPU(base.IronicObject):
         :returns: a list of :class:`cpu` object.
 
         """
-        db_cpu = cls.dbapi.get_node_cpu_list(node_id, limit=limit, marker=marker, sort_key=sort_key, sort_dir=sort_dir)
+        db_cpu = cls.dbapi.get_node_cpu_list(node_id, limit=limit,
+                                             marker=marker, sort_key=sort_key,
+                                             sort_dir=sort_dir)
         return [CPU._from_db_object(cls(context), obj) for obj in db_cpu]
 
     @base.remotable_classmethod
-    def get_all_list(cls,context,limit=None, marker=None, sort_key=None, sort_dir=None):
-        db_cpu = cls.dbapi.get_cpu_list(limit=limit, marker=marker, sort_key=sort_key, sort_dir=sort_dir)
+    def get_all_list(cls, context, limit=None, marker=None, sort_key=None,
+                     sort_dir=None):
+        db_cpu = cls.dbapi.get_cpu_list(limit=limit, marker=marker,
+                                        sort_key=sort_key, sort_dir=sort_dir)
         return [CPU._from_db_object(cls(context), obj) for obj in db_cpu]
 
     @base.remotable_classmethod
@@ -153,5 +158,5 @@ class CPU(base.IronicObject):
         current = self.__class__.get_by_id(self._context, self.id)
         for field in self.fields:
             if (hasattr(self, base.get_attrname(field)) and
-                    self[field] != current[field]):
+                        self[field] != current[field]):
                 self[field] = current[field]
