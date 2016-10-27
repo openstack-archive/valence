@@ -1,0 +1,46 @@
+{
+  "processor" : [
+    {
+      "device_type": "cpu",
+      "instruction_set" : "x86-64",
+      "model" : "Multi-Core Intel(R) Xeon(R)Processor 7xxx Series",
+      "speed_mhz" : 3700,
+      "total_core": 12
+    }
+  ],
+  "memory" : [
+    {
+      "device_type" : "DDR3",
+      "data_width_bit" : 32,
+      "speed_mhz" : 1600,
+      "total_memory_gb": 32
+    }
+  ],
+  "storage" : [
+    {
+      "protocol" : "SAS",
+      "volume_size_gb": 300
+    },
+    {
+      "protocol" : "SATA",
+      "volume_size_gb": 240
+    }
+  ],
+  "network" : [
+    {
+      "device_type" : "ethernet",
+      "speed_mbps" : "40000",
+    },
+    {
+      "device_type" : "ethernet",
+      "speed_mbps" : "40000"
+    }
+  ],
+  "accelator": [
+    {
+      "device_type": "fpga",
+      "model": "Altera 3xxx series",
+      "gate_counte": "100000"
+    }
+  ]
+}

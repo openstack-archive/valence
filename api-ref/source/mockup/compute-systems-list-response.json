@@ -1,0 +1,35 @@
+{
+  "systems" : [
+    {
+      "uuid" : "87e34f20-9c80-4e03-ba77-d836cfc26e70",
+      "name" : "compute-system-1" ,
+      "power_state" : "On" ,
+      "links": [
+        {
+          "rel" : "self",
+          "href" : "https://127.0.0.1/v1/systems/87e34f20-9c80-4e03-ba77-d836cfc26e70"
+        },
+        {
+          "href" : "https://127.0.0.1/systems/87e34f20-9c80-4e03-ba77-d836cfc26e70",
+          "rel" : "bookmark"
+        }
+      ]
+    },
+    {
+      "uuid" : "5a13e8a8-f8c7-480c-8098-0b6710b80709",
+      "name" : "compute-system-2" ,
+      "power_state" : "On" ,
+      "links": [
+        {
+          "rel" : "self",
+          "href" : "https://127.0.0.1/v1/systems/5a13e8a8-f8c7-480c-8098-0b6710b80709"
+        },
+        {
+          "href" : "https://127.0.0.1/systems/5a13e8a8-f8c7-480c-8098-0b6710b80709",
+          "rel" : "bookmark"
+        }
+      ]
+    }
+  ]
+}
+

@@ -1,0 +1,21 @@
+{
+  "uuid" : "87e34f20-9c80-4e03-ba77-d836cfc26e70",
+  "power_state" : "Off",
+  "name" : "system-1",
+  "description": "description of compute system",
+  "chassis_id" : "sled2",
+  "assettag": "ComputeSystem-123"
+  "updated_at": "2016-08-25T01:13:16+00:00",
+  "created_at": "2016-08-25T01:13:16+00:00",
+  "links": [
+    {
+      "rel" : "self",
+      "href" : "https://127.0.0.1/v1/systems/87e34f20-9c80-4e03-ba77-d836cfc26e70"
+    },
+    {
+      "rel" : "boomark",
+      "href" : "https://127.0.0.1/systems/87e34f20-9c80-4e03-ba77-d836cfc26e70"
+    }
+  ]
+}
+

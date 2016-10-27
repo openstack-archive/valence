@@ -1,0 +1,27 @@
+{
+  "uuid" : "4c16a45b-b029-49c4-af84-1abcf458a062",
+  "pooled_group_id" : "fabric2-1",
+  "state": "available",
+  "health_status" : "OK",
+  "type" : "storage",
+  "entity_link": "/chassis/PCIe/Drives/Disk.0",
+  "entity_capability" :
+    {
+      "volume_size_gb" : 200,
+      "protocol" : "NVMe",
+      "erase_on_detach": "true"
+    },
+  "updated_at": "2016-08-25T01:13:16+00:00",
+  "created_at": "2016-08-25T01:13:16+00:00",
+  "links": [
+    {
+      "rel" : "self",
+      "href" : "https://127.0.0.1/v1/pooled/4c16a45b-b029-49c4-af84-1abcf458a062"
+    },
+    {
+      "rel" : "boomark",
+      "href" : "https://127.0.0.1/pooled/4c16a45b-b029-49c4-af84-1abcf458a062"
+    }
+  ]
+}
+

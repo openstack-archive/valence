@@ -1,0 +1,30 @@
+{
+  "name": "OpenStack Valence API",
+  "description": "Valence is an OpenStack project which aims to provide node composition based on Redfish(R) API.",
+  "versions": [
+    {
+      "id": "v1.0",
+      "links": [
+        {
+          "href": "http://127.0.0.1:8181/v1/",
+          "rel": "self"
+        }
+      ],
+      "status": "CURRENT",
+      "max_version": "",
+      "min_version": ""
+    },
+    {
+      "id": "v1.1",
+      "links": [
+        {
+          "href": "http://127.0.0.1:8181/v1/",
+          "ref": "self"
+        }
+      ],
+      "status": "",
+      "max_version": "1.1",
+      "min_version": "1.0"
+    }
+  ]
+}

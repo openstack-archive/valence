@@ -1,0 +1,35 @@
+{
+  "nodes" : [
+    {
+      "uuid" : "ee1ecc3c-d3dd-f4ff-a6aa-uu7uk9k0",
+      "name" : "Server-1" ,
+      "nodes_power_state" : "On" ,
+      "links": [
+        {
+          "rel" : "self",
+          "href" : "https://127.0.0.1/v1/nodes/ee1ecc3c-d3dd-f4ff-a6aa-uu7uk9k0"
+        },
+        {
+          "href" : "https://127.0.0.1/nodes/ee1ecc3c-d3dd-f4ff-a6aa-uu7uk9k0",
+          "rel" : "bookmark"
+        }
+      ]
+    },
+    {
+      "uuid" : "4d8c3732-a248-40ed-bebc-539a6ffd25c0" ,
+      "name" : "Server-2",
+      "node_power_state" : "Off" ,
+      "links" : [
+        {
+          "ref" : "self",
+          "href" : "https://127.0.0.1/v1/nodes/4d8c3732-a248-40ed-bebc-539a6ffd25c0"
+        },
+        {
+          "ref" : "bookmark",
+          "href" : "https://127.0.0.1/nodes/4d8c3732-a248-40ed-bebc-539a6ffd25c0"
+        }
+      ]
+    }
+  ]
+}
+

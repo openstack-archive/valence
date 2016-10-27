@@ -1,0 +1,14 @@
+{
+  "uuid" : "eeeecccc-dddd-ffff-aaaa-uuuukkkk",
+  "name" : "Test-node-1",
+  "links" : [
+    {
+      "rel" : "self",
+      "href" : "https://127.0.0.1/v1/nodes/eeeecccc-dddd-ffff-aaaa-uuuukkkk"
+    },
+    {
+      "href" : "https://127.0.0.1/v1/nodes/eeeecccc-dddd-ffff-aaaa-uuuukkkk",
+      "rel" : "bookmark"
+    }
+  ]
+}
