@@ -11,14 +11,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-
-"""
-Common functionalities shared between different podm driver modules.
-"""
-
 from ironic.common.i18n import _
-from ironic import objects
 from ironic.common import exception
+from ironic import objects
 from ironic.common import states
 from ironic.drivers.modules.rsa_podm import constants
 
@@ -38,9 +33,7 @@ def parse_podm_driver_info(node):
     :returns: a dict containing information from driver_info
               and default values.
     :raises: InvalidParameterValue if some mandatory information
-             is missing on the node or on invalid inputs.
-    """
-
+             is missing on the node or on invalid inputs."""
     driver_info = node.driver_info
     parsed_driver_info = {}
 
@@ -49,7 +42,8 @@ def parse_podm_driver_info(node):
         try:
             parsed_driver_info[param] = str(driver_info[param])
         except KeyError:
-            error_msgs.append(_("'%s' not supplied to RSA POD Manager Driver.") % param)
+            error_msgs.append(
+                _("'%s' not supplied to RSA POD Manager Driver.") % param)
         except UnicodeEncodeError:
             error_msgs.append(_("'%s' contains non-ASCII symbol.") % param)
 
@@ -60,7 +54,9 @@ def parse_podm_driver_info(node):
         error_msgs.append(_("'podm_protocol' contains non-ASCII symbol."))
 
     if error_msgs:
-        msg = (_('The following errors were encountered while parsing driver_info:\n%s') % '\n'.join(error_msgs))
+        msg = (_(
+            'The following errors were encountered while parsing '
+            'driver_info:\n%s') % '\n'.join(error_msgs))
         raise exception.InvalidParameterValue(msg)
 
     return parsed_driver_info
@@ -76,13 +72,12 @@ def get_powerstatus_from_statuscode(status):
 
 
 def check_exist_in_db(context, physical_uuid, nodelist):
-    """
-    physical uuid is a property in extra
-    uuid and instance_uuid is a property of node 
+    """physical uuid is a property in extra
+    uuid and instance_uuid is a property of node
+
     :param nodelist:
     :param physical_uuid:
-    :param context:
-    """
+    :param context:"""
     for db_node in nodelist:
         if db_node.extra['physical_uuid'] == physical_uuid:
             return objects.Node.get_by_uuid(context, db_node['uuid'])

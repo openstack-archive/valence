@@ -42,58 +42,29 @@ class RackView(base.IronicObject):
     @staticmethod
     def _from_db_object_list(db_objects, cls, context):
         """Converts a list of database entities to a list of formal objects."""
-        return [RackView._from_db_object(cls(context), obj) for obj in db_objects]
+        return [RackView._from_db_object(cls(context), obj) for obj in
+                db_objects]
 
     @base.remotable
     def get_rack_view_by_rack_id(self, cls, context, rack_id):
         db_rack_views = cls.dbapi.get_rack_view_by_rack_id(rack_id)
-        return map(lambda rack_view: RackView._from_db_object(cls(context), rack_view), db_rack_views)
+        return map(lambda rack_view: RackView._from_db_object(cls(context),
+                                                              rack_view),
+                   db_rack_views)
 
     @base.remotable
     def create(self, context=None):
-        """Create a rack_view record in the DB.
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: rack_view(context)
-
-        """
         values = self.obj_get_changes()
         db_rack_view = self.dbapi.create_rack_view(values)
         self._from_db_object(self, db_rack_view)
 
     @base.remotable
     def destroy(self, context=None):
-        """Delete the rack_view from the DB.
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: rack_view(context)
-        """
         self.dbapi.destroy_rack_view(self.uuid)
         self.obj_reset_changes()
 
     @base.remotable
     def save(self, context=None):
-        """Save updates to this rack_view.
-
-        Updates will be made column by column based on the result
-        of self.what_changed().
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: rack_view(context)
-        """
         updates = self.obj_get_changes()
         self.dbapi.update_rack_view(self.id, updates)
         self.obj_reset_changes()
-
