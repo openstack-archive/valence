@@ -12,24 +12,20 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import logging
-from utils import http
-import constants
+
 from compiler.ast import flatten
-import rsa_resource_rest_template as default_data
+import constants
 from ironic import objects
+import logging
+import rsa_resource_rest_template as default_data
+from utils import http
+
 
 _logger = logging.getLogger(__name__)
 
-"""
-pod manager wrapper to execute all the podm operations
-"""
-
 
 def get_podm_connection(context, ip, user, passwd):
-    """
-    get the pod manager connection by detail info
-    """
+    """get the pod manager connection by detail info"""
     _logger.info('get the pod manager connection')
     podm_manager_api = PodManagerAPI(context, ip, user, passwd)
     _logger.info('end of getting the pod manager connection')
@@ -91,16 +87,19 @@ class PodManagerAPI(object):
 
     def set_rsa_node_power_state(self, path, state):
         url = self.domain + path
-        return http.do_post_request(url=url, auth=self.auth, body={"ResetType": state})
+        return http.do_post_request(url=url, auth=self.auth,
+                                    body={"ResetType": state})
 
     def get_composed_node_list_info(self):
-        return self.__parse_elements_from_collection_path(path='/redfish/v1/Nodes',
-                                                          default_data_value=default_data.composed_node)
+        return self.__parse_elements_from_collection_path(
+            path='/redfish/v1/Nodes',
+            default_data_value=default_data.composed_node)
 
     def get_computer_system_list_info(self):
         system_list = []
         systems_collection_url = self.domain + '/redfish/v1/Systems'
-        systems_collection_info = http.do_get_request(url=systems_collection_url, auth=self.auth)
+        systems_collection_info = http.do_get_request(
+            url=systems_collection_url, auth=self.auth)
         for system in systems_collection_info['Members']:
             system_info = self.__get_computer_system_info(system['@odata.id'])
             system_list.append(system_info)
@@ -115,12 +114,14 @@ class PodManagerAPI(object):
             chassis_url = self.domain + chassis["@odata.id"]
             chassis_info = http.do_get_request(url=chassis_url, auth=self.auth)
             chassis_info = dict(default_data.chassis, **chassis_info)
-            if chassis_type is None or chassis_info["ChassisType"] == chassis_type:
+            if chassis_type is None or chassis_info[
+                "ChassisType"] == chassis_type:
                 chassis_list.append(chassis_info)
         return chassis_list
 
     def get_drawers_list_info(self):
-        return self.get_chassis_list(chassis_type=constants.CHASSIS_TYPE_DRAWER)
+        return self.get_chassis_list(
+            chassis_type=constants.CHASSIS_TYPE_DRAWER)
 
     def get_racks_list_info(self):
         return self.get_chassis_list(chassis_type=constants.CHASSIS_TYPE_RACK)
@@ -129,33 +130,40 @@ class PodManagerAPI(object):
         if self.pod_type == "LENOVO-PODM":
             storage_service_path = "/redfish/v1/Chassis/PCIeSwitchChassis1"
             storage_service_list = []
-            storage = http.do_get_request(url=self.domain + storage_service_path, auth=self.auth)
+            storage = http.do_get_request(
+                url=self.domain + storage_service_path, auth=self.auth)
             storage_service_list.append(storage)
         else:
             storage_service_path = "/redfish/v1/Services/service1/Targets"
-            storage_service_list = self.__parse_elements_from_collection_path(storage_service_path)
+            storage_service_list = self.__parse_elements_from_collection_path(
+                storage_service_path)
 
         return storage_service_list
 
     def get_volume_list_info(self):
         if self.pod_type == 'LENOVO-PODM':
-            storage_service_path = '/redfish/v1/Chassis/PCIeSwitchChassis1/StorageAdapters'
+            storage_service_path = \
+                '/redfish/v1/Chassis/PCIeSwitchChassis1/StorageAdapters'
         else:
             storage_service_path = '/redfish/v1/Services'
-        storage_service_list = self.__parse_elements_from_collection_path(storage_service_path)
+        storage_service_list = self.__parse_elements_from_collection_path(
+            storage_service_path)
         logical_drive_collection = []
         for storage in storage_service_list:
-            logical_drive_collection_path = storage["LogicalDrives"]['@odata.id']
-            logical_drive_collection = self.__parse_elements_from_collection_path(logical_drive_collection_path,
-                                                                                  default_data_value=default_data.volume)
-            logical_drive_collection += self.get_volume_list_from_node() if self.pod_type == 'LENOVO-PODM' else []
+            logical_drive_collection_path = storage["LogicalDrives"][
+                '@odata.id']
+            logical_drive_collection = \
+                self.__parse_elements_from_collection_path(
+                    logical_drive_collection_path,
+                    default_data_value=default_data.volume)
         return logical_drive_collection
 
     def get_volume_list_from_node(self):
         node_list = self.get_composed_node_list_info()
         volume_list = []
         for node in node_list:
-            volume_list_path = node['Oem']['Lenovo:RackScale']['ComposedLogicalDrives']
+            volume_list_path = node['Oem']['Lenovo:RackScale'][
+                'ComposedLogicalDrives']
             for member in volume_list_path:
                 volume_path = self.domain + member['@odata.id']
                 volume = http.do_get_request(url=volume_path, auth=self.auth)
@@ -169,57 +177,73 @@ class PodManagerAPI(object):
 
     def get_manager_list_info(self):
         manager_path = "/redfish/v1/Managers"
-        manager_list = self.__parse_elements_from_collection_path(manager_path, default_data.manager)
+        manager_list = \
+            self.__parse_elements_from_collection_path(manager_path,
+                                                       default_data.manager)
         return manager_list
 
-    #  ------------------------------ callable functions -------------------------------------  #
+    #  ---------------- callable functions ----------------------------  #
 
     def __get_computer_system_info(self, path):
         computer_system_url = self.domain + path
-        computer_system_info = http.do_get_request(url=computer_system_url, auth=self.auth)
-        system_info = dict(default_data.computer_system, **computer_system_info)
+        computer_system_info = http.do_get_request(url=computer_system_url,
+                                                   auth=self.auth)
+        system_info = dict(default_data.computer_system,
+                           **computer_system_info)
         # fill cpu info
         cpus_path = system_info["Processors"]["@odata.id"]
         if len(cpus_path) > 1:
-            system_info['cpus'] = self.__parse_elements_from_collection_path(cpus_path, default_data.processors)
+            system_info['cpus'] = self.__parse_elements_from_collection_path(
+                cpus_path, default_data.processors)
         # fill memorys info
         mems_path = system_info["DimmConfig"]["@odata.id"]
         if len(mems_path) > 1:
-            system_info['memorys'] = self.__parse_elements_from_collection_path(mems_path, default_data.memory_dimm)
+            system_info[
+                'memorys'] = self.__parse_elements_from_collection_path(
+                mems_path, default_data.memory_dimm)
         # fill disks info
         vendor = "Intel" if self.pod_type == "LENOVO-PODM" else "Lenovo"
-        adapter_collection_path = system_info["Oem"][vendor + ":RackScale"]["Adapters"]["@odata.id"]
+        adapter_collection_path = \
+            system_info["Oem"][vendor + ":RackScale"]["Adapters"]["@odata.id"]
         if len(adapter_collection_path) > 1:
-            system_info['disks'] = self.__get_disk_list_info_from_adapter_path(adapter_collection_path)
+            system_info['disks'] = self.__get_disk_list_info_from_adapter_path(
+                adapter_collection_path)
         # fill interface info
         interface_path = system_info["EthernetInterfaces"]["@odata.id"]
         if len(interface_path) > 1:
-            system_info['interfaces'] = self.__parse_elements_from_collection_path(interface_path)
+            system_info[
+                'interfaces'] = self.__parse_elements_from_collection_path(
+                interface_path)
         return system_info
 
     def __get_disk_list_info_from_adapter_path(self, path):
         disks = []
         if self.pod_type == "LENOVO-PODM":
-            disks = self.__parse_elements_from_collection_path(path + "/Drives")
+            disks = self.__parse_elements_from_collection_path(
+                path + "/Drives")
         else:  # INTEL-COMMON
             adapters = self.__parse_elements_from_collection_path(path)
             for adapter in adapters:
                 device_collection_path = adapter['Devices']['@odata.id']
-                devices = self.__parse_elements_from_collection_path(device_collection_path, default_data.disk)
+                devices = self.__parse_elements_from_collection_path(
+                    device_collection_path, default_data.disk)
                 disks.append(devices)
         return flatten(disks)
 
-    def __parse_elements_from_collection_path(self, path, default_data_value=None):
+    def __parse_elements_from_collection_path(self, path,
+                                              default_data_value=None):
         element_info_list = []
         collection_url = self.domain + path
         try:
-            collection = http.do_get_request(url=collection_url, auth=self.auth)
+            collection = http.do_get_request(url=collection_url,
+                                             auth=self.auth)
         except Exception:
             collection = {}
         if collection:
             for element in collection["Members"]:
                 element_url = self.domain + element["@odata.id"]
-                element_info = http.do_get_request(url=element_url, auth=self.auth)
+                element_info = http.do_get_request(url=element_url,
+                                                   auth=self.auth)
                 if default_data_value is not None:
                     element_info = dict(default_data_value, **element_info)
                 element_info_list.append(element_info)
