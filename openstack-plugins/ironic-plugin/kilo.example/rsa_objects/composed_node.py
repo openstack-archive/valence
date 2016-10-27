@@ -41,7 +41,8 @@ class ComposedNode(base.IronicObject):
 
     @base.remotable_classmethod
     def get_by_id(cls, context, node_id):
-        """Find a node based on its integer id and return a Node details info including cpu memory and disk.
+        """Find a node based on its integer id and return a Node details
+        info including cpu memory and disk.
 
         :param node_id: the id of a node.
         :returns: a :class:`Node` object.
@@ -56,14 +57,16 @@ class ComposedNode(base.IronicObject):
 
     @base.remotable_classmethod
     def get_by_system_id(cls, context, system_id):
-        """Find a node based on its integer id and return a Node details info including cpu memory and disk.
+        """Find a node based on its integer id and return a Node details
+        info including cpu memory and disk.
 
         :param node_id: the id of a node.
         :returns: a :class:`Node` object.
         """
         db_node = cls.dbapi.get_composed_node_by_system_id(system_id)
         if db_node:
-            return {'composed_node_name': db_node[0], 'composed_node_id': db_node[1]}
+            return {'composed_node_name': db_node[0],
+                    'composed_node_id': db_node[1]}
         else:
             return None
 
@@ -79,7 +82,8 @@ class ComposedNode(base.IronicObject):
         return node
 
     @base.remotable_classmethod
-    def list_by_pod(cls, context, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None, ):
+    def list_by_pod(cls, context, pod_id, limit=None, marker=None,
+                    sort_key=None, sort_dir=None, ):
         """Return a list of Node objects.filter_by pod_id
 
         :param pod_id: which pod scope
@@ -97,7 +101,8 @@ class ComposedNode(base.IronicObject):
                                                     marker=marker,
                                                     sort_key=sort_key,
                                                     sort_dir=sort_dir)
-        return [ComposedNode._from_db_object(cls(context), obj) for obj in db_nodes]
+        return [ComposedNode._from_db_object(cls(context), obj) for obj in
+                db_nodes]
 
     @base.remotable_classmethod
     def get_system_by_id(cls, context, pod_id):

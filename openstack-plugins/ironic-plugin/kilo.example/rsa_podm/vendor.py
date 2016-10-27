@@ -69,8 +69,9 @@ class RSAPodmVendorPassthru(base.VendorInterface):
             'manage_pod_manager': self.manage_pod_manager,
             'get_pod_manager_list': self.get_pod_manager_list,
             'unmanage_pod_manager': self.unmanage_exist_pod_manager,
-            'inventory_pod_manager_resources': self.inventory_pod_manager_resources,
-	    'get_pod_inventory_status': self.get_pod_inventory_status,
+            'inventory_pod_manager_resources':
+                self.inventory_pod_manager_resources,
+            'get_pod_inventory_status': self.get_pod_inventory_status,
 
             # chassis: Rack and Drawer
             'inventory_rsa_chassis': self.inventory_rsa_chassis,
@@ -80,19 +81,21 @@ class RSAPodmVendorPassthru(base.VendorInterface):
             'get_drawer_info': self.get_drawer_by_chassis_id,
             'get_rack_view': self.get_rack_view,
 
-	    # get pcieSwitch info
-	    'get_pcie_switch': self.get_pcie_switch_info,
+            # get pcieSwitch info
+            'get_pcie_switch': self.get_pcie_switch_info,
 
             # computer system
             'get_computer_system_list': self.get_computer_system_list,
             'inventory_computer_system': self.inventory_computer_system,
-            'get_computer_system_info': self.get_computer_system_details_info_by_id,
+            'get_computer_system_info':
+                self.get_computer_system_details_info_by_id,
             'set_system_power_state': 1,
 
             # composed node
             'get_composed_node_list': self.get_composed_node_list,
             'inventory_composed_node': self.inventory_composed_node,
-            'get_composed_node_info': self.get_composed_node_details_info_by_id,
+            'get_composed_node_info':
+                self.get_composed_node_details_info_by_id,
             'set_node_power_state': self.set_composed_node_power_state,
 
             # ethernet switches
@@ -120,19 +123,22 @@ class RSAPodmVendorPassthru(base.VendorInterface):
 
             # Others
             'get_resource_summary': self.get_resource_usage_summary,
-            'get_pod_manager_hardware_summary': self.get_pod_manager_hardware_summary,
-            'get_rack_hardware_summary': self.get_rack_hardware_resource_summary,
+            'get_pod_manager_hardware_summary':
+                self.get_pod_manager_hardware_summary,
+            'get_rack_hardware_summary':
+                self.get_rack_hardware_resource_summary,
         }
         return functions_map[method](context, **kwargs)
 
-    #  ------------------------------ cache declare -------------------------------------  #
+    #  --------- cache declare -------------------------------------  #
 
-    select_pod_managers = {}  # use for cache to protect from so much get operation from DB
+    # use for cache to protect from so much get operation from DB
+    select_pod_managers = {}
     # use for cache to protect from so many generate operations of
     # PodManagerAPI class
     pod_manager_adapters = {}
 
-    #  ------------------------------ callable functions -------------------------------------  #
+    #  ---------- callable functions -------------------------------  #
 
     """
     summary
@@ -141,38 +147,55 @@ class RSAPodmVendorPassthru(base.VendorInterface):
     def get_resource_usage_summary(self, context, **kwargs):
         pod_id = kwargs['pod_id']
         usage = dict()
-        total_system_id_list = [system.id for system in objects.ComputerSystem.list_by_pod(context, pod_id)]
-        used_system_id_list = [node.computer_system_id for node in objects.ComposedNode.list_by_pod(context, pod_id)]
+        total_system_id_list = [system.id for system in
+                                objects.ComputerSystem.list_by_pod(context,
+                                                                   pod_id)]
+        used_system_id_list = [node.computer_system_id for node in
+                               objects.ComposedNode.list_by_pod(context,
+                                                                pod_id)]
 
         for model in ['Disk', 'CPU', 'Memory']:
             for flag in ['total', 'used']:
-                string = 'objects.%s.get_%s_sum_by_systems(context, %s_system_id_list)' % (model, model.lower(), flag)
+                string = 'objects.%s.get_%s_sum_by_systems(context, ' \
+                         '%s_system_id_list)' % (model,
+                                                 model.lower(),
+                                                 flag)
                 usage[flag + '_' + model.lower()] = eval(string)
 
         return {'data': usage}
 
     def get_pod_manager_hardware_summary(self, context, **kwargs):
         pod_id = kwargs['pod_id']
-        #pod_type = self.__get_pod_manager(context, pod_id).type
-        #object_model = objects.PCIeSwitch if pod_type == 'LENOVO-PODM' else objects.RemoteTarget
-        #storage = len(object_model.list_by_pod(context, pod_id))
 
         return {
             'data': {
-                'Racks': len(objects.RSAChassis.list_by_pod_and_type(context, pod_id, constants.CHASSIS_TYPE_RACK)),
-                'Drawer': len(objects.RSAChassis.list_by_pod_and_type(context, pod_id, constants.CHASSIS_TYPE_DRAWER)),
-                'ComputerSystems': len(objects.ComputerSystem.list_by_pod(context, pod_id)),
-                #'Storage': storage,
-                'EthernentSwitchs': len(objects.Switch.list_by_pod_id(context, pod_id)),
-                'ComposedNodes': len(objects.ComposedNode.list_by_pod(context, pod_id)),
-                'Storages': len(objects.Volume.list_by_pod_id(context, pod_id)),
+                'Racks': len(
+                    objects.RSAChassis
+                        .list_by_pod_and_type(context,
+                                              pod_id,
+                                              constants.CHASSIS_TYPE_RACK)),
+                'Drawer': len(
+                    objects.RSAChassis
+                        .list_by_pod_and_type(context,
+                                              pod_id,
+                                              constants.CHASSIS_TYPE_DRAWER)),
+                'ComputerSystems': len(
+                    objects.ComputerSystem.list_by_pod(context, pod_id)),
+                # 'Storage': storage,
+                'EthernentSwitchs': len(
+                    objects.Switch.list_by_pod_id(context, pod_id)),
+                'ComposedNodes': len(
+                    objects.ComposedNode.list_by_pod(context, pod_id)),
+                'Storages': len(
+                    objects.Volume.list_by_pod_id(context, pod_id)),
             }
         }
 
     def get_rack_hardware_resource_summary(self, context, **kwargs):
         pod_id = kwargs['pod_id']
         rack_id = kwargs['rack_id']
-        return {'data': objects.RSAChassis.get_rack_resource(pod_id, rack_id, context)}
+        return {'data': objects.RSAChassis.get_rack_resource(pod_id, rack_id,
+                                                             context)}
 
     """
     Pod Manager functions
@@ -220,7 +243,8 @@ class RSAPodmVendorPassthru(base.VendorInterface):
             self.inventory_composed_node(context, pod_id=pod_id)
             self.inventory_ethernet_switches(context, pod_id=pod_id)
         except Exception as ex:
-            LOG.error("refresh inventory for pod manger: %s failed" % pod_manager.name)
+            LOG.error(
+                "refresh inventory pod manger: %s failed" % pod_manager.name)
             LOG.error(ex)
             pod_manager.inventory_status = 'failed'
             pod_manager.save()
@@ -230,7 +254,8 @@ class RSAPodmVendorPassthru(base.VendorInterface):
 
     def get_pod_inventory_status(self, context, **kwargs):
         pod_id = kwargs['pod_id']
-        return {'data': objects.PodManager.get_by_id(context, pod_id).inventory_status}
+        return {'data': objects.PodManager.get_by_id(context,
+                                                     pod_id).inventory_status}
 
     """
     RSA Chassis (Rack and Drawer) functions
@@ -246,55 +271,74 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         adapter = self.__get_pod_manager_adapter(context, pod_id)
         chassis_list = adapter.get_chassis_list(chassis_type=chassis_type)
         # insert chassis info into DB
-        map(lambda chassis_info: self.__synchronize_rsa_chassis(context, pod_id, chassis_info), chassis_list)
+        map(lambda chassis_info: self.__synchronize_rsa_chassis(context,
+                                                                pod_id,
+                                                                chassis_info),
+            chassis_list)
 
     def get_rack_list(self, context, **kwargs):
         pod_id = kwargs['pod_id']
-        chassis_list = objects.RSAChassis.list_by_pod_and_type(context, pod_id, constants.CHASSIS_TYPE_RACK)
+        chassis_list = objects.RSAChassis \
+            .list_by_pod_and_type(context, pod_id,
+                                  constants.CHASSIS_TYPE_RACK)
         return {'data': map(lambda x: x.as_dict(), chassis_list)}
 
     def get_rack_by_chassis_id(self, context, **kwargs):
         chassis_id = kwargs['chassis_id']
-        return {'data': objects.RSAChassis.get_by_id(context, chassis_id).as_dict()}
+        return {'data': objects.RSAChassis.get_by_id(context,
+                                                     chassis_id).as_dict()}
 
     def get_drawer_list(self, context, **kwargs):
         pod_id = kwargs['pod_id']
-        chassis_list = objects.RSAChassis.list_by_pod_and_type(context, pod_id, constants.CHASSIS_TYPE_DRAWER)
+        chassis_list = objects.RSAChassis \
+            .list_by_pod_and_type(context, pod_id,
+                                  constants.CHASSIS_TYPE_DRAWER)
         return {'data': map(lambda x: x.as_dict(), chassis_list)}
 
     def get_drawer_by_chassis_id(self, context, **kwargs):
         pod_id = kwargs['pod_id']
         chassis_id = kwargs['chassis_id']
-        chassis_info = objects.RSAChassis.get_by_id(context, chassis_id).as_dict()
+        chassis_info = objects.RSAChassis.get_by_id(context,
+                                                    chassis_id).as_dict()
         # get rack id
         pod_manager_url = self.__get_pod_manager(context, pod_id).url
-        rack_url = pod_manager_url + '/redfish/v1/Chassis/' + eval(chassis_info['location'])['Rack']
+        rack_url = pod_manager_url + '/redfish/v1/Chassis/' + \
+                   eval(chassis_info['location'])['Rack']
         rack_id = objects.RSAChassis.get_by_url(context, rack_url).id
         chassis_info['rack_id'] = rack_id
         # get computer systems
         chassis = chassis_info['url'].split('/')[-1]
-        chassis_info['computer_systems'] = objects.RSAChassis.get_chassis_computer_systems(pod_id, chassis, chassis_id,
-                                                                                           context)
+        chassis_info[
+            'computer_systems'] = objects.RSAChassis \
+            .get_chassis_computer_systems(pod_id, chassis, chassis_id, context)
         return {'data': chassis_info}
 
     def get_rack_view(self, context, **kwargs):
         pod_id = kwargs['pod_id']
         rack_id = kwargs['rack_id']
         rack_name = objects.RSAChassis.get_by_id(context, rack_id).name
-        switch_list = self.get_ethernet_switch_list(context, pod_id=pod_id)['data']
-        switch_list = filter(lambda switch: rack_name in switch["location"], switch_list)
+        switch_list = self.get_ethernet_switch_list(context, pod_id=pod_id)[
+            'data']
+        switch_list = filter(lambda switch: rack_name in switch["location"],
+                             switch_list)
         switch_list = map(self.__filter_switch, switch_list)
         drawer_list = self.get_drawer_list(context, pod_id=pod_id)['data']
-        drawer_list = filter(lambda drawer: rack_name in drawer["location"], drawer_list)
+        drawer_list = filter(lambda drawer: rack_name in drawer["location"],
+                             drawer_list)
         drawer_list = map(self.__filter_drawer, drawer_list)
-        drawer_list = sorted(drawer_list, key=lambda drawer: int(drawer['ULocation'][0:2]), reverse=True)
+        drawer_list = sorted(drawer_list,
+                             key=lambda drawer: int(drawer['ULocation'][0:2]),
+                             reverse=True)
         if switch_list:
             drawer_list.insert(0, switch_list[0])
         return {'data': drawer_list}
 
     def get_pcie_switch_info(self, context, **kwargs):
-	pod_id = kwargs['pod_id']
-	pcie = objects.RSAChassis.list_by_pod_and_type(context, pod_id, 'RackMount')[0]
+        pod_id = kwargs['pod_id']
+        pcie = \
+            objects.RSAChassis.list_by_pod_and_type(context, pod_id,
+                                                    'RackMount')[
+                0]
         return {'data': pcie.as_dict()}
 
     """
@@ -306,7 +350,8 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         pod_type = self.__get_pod_manager(context, pod_id).type
         system_list = objects.ComputerSystem.list_by_pod(context, pod_id)
         data = map(
-            lambda system: self.__filter_system_location(system) if pod_type != "INTEL-COMMON" else system.as_dict(),
+            lambda system: self.__filter_system_location(
+                system) if pod_type != "INTEL-COMMON" else system.as_dict(),
             system_list)
 
         return {'data': data}
@@ -319,7 +364,9 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         adapter = self.__get_pod_manager_adapter(context, pod_id)
         computer_systems = adapter.get_computer_system_list_info()
         # insert computer system info DB
-        map(lambda system: self.__synchronize_computer_system(context, pod_id, system), computer_systems)
+        map(lambda system: self.__synchronize_computer_system(context, pod_id,
+                                                              system),
+            computer_systems)
 
     def get_computer_system_details_info_by_id(self, context, **kwargs):
         pod_id = kwargs['pod_id']
@@ -329,22 +376,32 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         # get chassis id by url
         pod_type = self.__get_pod_manager(context, pod_id).type
         if pod_type == "INTEL-COMMON":
-            drawer_url = pod_manager_url + '/redfish/v1/Chassis/' + eval(system.location)['Chassis']
-            rack_url = pod_manager_url + '/redfish/v1/Chassis/' + eval(system.location)['Rack']
+            drawer_url = pod_manager_url + '/redfish/v1/Chassis/' + \
+                         eval(system.location)['Chassis']
+            rack_url = pod_manager_url + '/redfish/v1/Chassis/' + \
+                       eval(system.location)['Rack']
             drawer_id = objects.RSAChassis.get_by_url(context, drawer_url).id
             rack_id = objects.RSAChassis.get_by_url(context, rack_url).id
             system = system.as_dict()
         else:
-            drawer_id = eval(objects.ComputerSystem.get_by_id(context, node_id).location)["Chassis"]
-            rack_id = eval(objects.ComputerSystem.get_by_id(context, node_id).location)["Rack"]
+            drawer_id = \
+                eval(objects.ComputerSystem.get_by_id(context,
+                                                      node_id).location)[
+                    "Chassis"]
+            rack_id = \
+                eval(objects.ComputerSystem.get_by_id(context,
+                                                      node_id).location)[
+                    "Rack"]
             system = self.__filter_system_location(system)
         system['drawer_id'] = drawer_id
         system['rack_id'] = rack_id
         system['cpus'] = objects.CPU.list_by_node_id(context, node_id)
         system['memorys'] = objects.Memory.list_by_node_id(context, node_id)
         system['disks'] = objects.Disk.list_by_node_id(context, node_id)
-        system['interfaces'] = objects.Interface.list_by_node_id(context, node_id)
-        system['composed_node'] = objects.ComposedNode.get_by_system_id(context, node_id)
+        system['interfaces'] = objects.Interface.list_by_node_id(context,
+                                                                 node_id)
+        system['composed_node'] = objects.ComposedNode.get_by_system_id(
+            context, node_id)
         return {'data': system}
 
     def set_computer_system_power_state(self, context, **kwargs):
@@ -370,8 +427,10 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         node_list = objects.ComposedNode.list_by_pod(context, pod_id)
         node_list_info = []
         for node in node_list:
-            system = objects.ComputerSystem.get_by_id(context, node.computer_system_id)
-            system = self.__filter_system_location(system) if pod_type != "INTEL-COMMON" else system.as_dict()
+            system = objects.ComputerSystem.get_by_id(context,
+                                                      node.computer_system_id)
+            system = self.__filter_system_location(
+                system) if pod_type != "INTEL-COMMON" else system.as_dict()
             info = dict(system, **node.as_dict())
             node_list_info.append(info)
         return {'data': node_list_info}
@@ -384,17 +443,23 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         adapter = self.__get_pod_manager_adapter(context, pod_id)
         composed_nodes = adapter.get_composed_node_list_info()
         # insert composed node info DB
-        map(lambda node: self.__synchronize_composed_node(context, pod_id, node), composed_nodes)
+        map(lambda node: self.__synchronize_composed_node(context, pod_id,
+                                                          node),
+            composed_nodes)
 
     def get_composed_node_details_info_by_id(self, context, **kwargs):
         pod_id = kwargs['pod_id']
         node_id = kwargs['node_id']
         node = objects.ComposedNode.get_by_id(context, node_id)
         # get system info
-        system = self.get_computer_system_details_info_by_id(context, pod_id=pod_id, system_id=node.computer_system_id)
+        system = \
+            self.get_computer_system_details_info_by_id(
+                context, pod_id=pod_id, system_id=node.computer_system_id)
         system['data']['computer_system_name'] = system['data']['name']
         # get volume info
-        volume_list = map(lambda volume_id: objects.Volume.get_by_id(context, volume_id).as_dict(),
+        volume_list = map(lambda volume_id:
+                          objects.Volume.get_by_id(context,
+                                                   volume_id).as_dict(),
                           eval(node.volume_id))
         system['data']['volume'] = volume_list
         return {'data': dict(system['data'], **node.as_dict())}
@@ -430,7 +495,8 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         adapter = self.__get_pod_manager_adapter(context, pod_id)
         switch_list = adapter.get_ethernet_switches_list_info()
         # insert switch into DB
-        map(lambda switch: self.__synchronize_switch(context, pod_id, switch), switch_list)
+        map(lambda switch: self.__synchronize_switch(context, pod_id, switch),
+            switch_list)
 
     """
     Volumes functions
@@ -439,7 +505,9 @@ class RSAPodmVendorPassthru(base.VendorInterface):
     def get_volume_list(self, context, **kwargs):
         pod_id = kwargs['pod_id']
         volume_list = objects.Volume.list_by_pod_id(context, pod_id)
-        data = map(lambda volume: self.get_volume_info(context, volume_id=volume.id)['data'], volume_list)
+        data = map(
+            lambda volume: self.get_volume_info(context, volume_id=volume.id)[
+                'data'], volume_list)
         return {'data': data}
 
     def get_volume_info(self, context, **kwargs):
@@ -447,13 +515,15 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         volume = objects.Volume.get_by_id(context, volume_id).as_dict()
         # get storage_name
         pod_type = self.__get_pod_manager(context, volume['pod_id']).type
-        storage_model = objects.PCIeSwitch if pod_type == 'LENOVO-PODM' else objects.RemoteTarget
+        storage_model = objects.PCIeSwitch
         try:
-            volume['storage_name'] = storage_model.get_by_id(context, volume['controller_id']).name
+            volume['storage_name'] = storage_model.get_by_id(context, volume[
+                'controller_id']).name
         except Exception:  # TODO wait for pcieSwitch-volume relationship
             volume['storage_name'] = ''
-	# get composed_node
-        volume["composed_node"] = objects.ComposedNode.get_by_volume_id(context, volume_id)
+        # get composed_node
+        volume["composed_node"] = objects.ComposedNode.get_by_volume_id(
+            context, volume_id)
         return {'data': volume}
 
     def inventory_volumes(self, context, **kwargs):
@@ -464,7 +534,8 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         adapter = self.__get_pod_manager_adapter(context, pod_id)
         volume_list = adapter.get_volume_list_info()
         # insert volume into DB
-        map(lambda volume: self.__synchronize_volume(context, pod_id, volume), volume_list)
+        map(lambda volume: self.__synchronize_volume(context, pod_id, volume),
+            volume_list)
 
     """
     Storage functions
@@ -473,31 +544,33 @@ class RSAPodmVendorPassthru(base.VendorInterface):
     def get_storage_list(self, context, **kwargs):
         pod_id = kwargs['pod_id']
         pod_type = self.__get_pod_manager(context, pod_id).type
-        storage_model = objects.PCIeSwitch if pod_type == 'LENOVO-PODM' else objects.RemoteTarget
+        storage_model = objects.PCIeSwitch
         storage_list = storage_model.list_by_pod(context, pod_id)
         storage_list = map(lambda target: target.as_dict(), storage_list)
-        data = {"storage_name": storage_model.__name__, "storage_list": storage_list}
+        data = {"storage_name": storage_model.__name__,
+                "storage_list": storage_list}
         return {'data': data}
 
     def get_storage_info(self, context, **kwargs):
         storage_id = kwargs['storage_id']
         pod_id = kwargs['pod_id']
         pod_type = self.__get_pod_manager(context, pod_id).type
-        storage_model = objects.PCIeSwitch if pod_type == 'LENOVO-PODM' else objects.RemoteTarget
+        storage_model = objects.PCIeSwitch
         storage = storage_model.get_by_id(context, storage_id).as_dict()
         return {'data': storage}
 
     def inventory_storages(self, context, **kwargs):
         pod_id = kwargs['pod_id']
         pod_type = self.__get_pod_manager(context, pod_id).type
-        storage_model = objects.PCIeSwitch if pod_type == 'LENOVO-PODM' else objects.RemoteTarget
+        storage_model = objects.PCIeSwitch
         # delete storages
         storage_model.destroy(pod_id, context)
         # get storage info from pod manager adapter
         adapter = self.__get_pod_manager_adapter(context, pod_id)
         storage_list = adapter.get_storage_list_info()
         # insert storage into DB
-        map(lambda storage: self.__synchronize_storage(context, pod_id, storage), storage_list)
+        map(lambda storage: self.__synchronize_storage(context, pod_id,
+                                                       storage), storage_list)
 
     """
     RMM functions
@@ -529,7 +602,8 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         adapter = self.__get_pod_manager_adapter(context, pod_id)
         managers = adapter.get_manager_list_info()
         # insert manager info DB
-        map(lambda manager: self.__synchronize_manager(context, pod_id, manager), managers)
+        map(lambda manager: self.__synchronize_manager(context, pod_id,
+                                                       manager), managers)
 
     """
     Others functions
@@ -538,7 +612,7 @@ class RSAPodmVendorPassthru(base.VendorInterface):
     def get_resource_summary_usage(self, context, **kwargs):
         return {'data': ""}
 
-    # ------------------------------- helper functions ------------------------------- #
+    # ------------- helper functions ------------------------------- #
 
     def __get_pod_manager(self, context, pod_manager_id):
         # deal with cache mechanism
@@ -555,10 +629,10 @@ class RSAPodmVendorPassthru(base.VendorInterface):
             return self.pod_manager_adapters[pod_manager_id]
         else:
             pod_manager = self.__get_pod_manager(context, pod_manager_id)
-            pod_manager_adapter = rsa_podm_adapter.get_podm_connection(context,
-                                                                       ip=pod_manager.ipaddress,
-                                                                       user=pod_manager.username,
-                                                                       passwd=pod_manager.password)
+            pod_manager_adapter = \
+                rsa_podm_adapter.get_podm_connection(
+                    context, ip=pod_manager.ipaddress,
+                    user=pod_manager.username, passwd=pod_manager.password)
             self.pod_manager_adapters[pod_manager_id] = pod_manager_adapter
             return pod_manager_adapter
 
@@ -579,8 +653,11 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         drawer['UHeight'] = eval(db_drawer['location'])['UHeight']
         drawer['UWidth'] = eval(db_drawer['location'])['UWidth']
         drawer_name = db_drawer['url'].split('/')[-1]
-        drawer['computer_systems'] = objects.RSAChassis.get_chassis_computer_systems(db_drawer['pod_id'], drawer_name,
-                                                                                     drawer['id'], self.context)
+        drawer['computer_systems'] = objects.RSAChassis \
+            .get_chassis_computer_systems(db_drawer['pod_id'],
+                                          drawer_name,
+                                          drawer['id'],
+                                          self.context)
         return drawer
 
     def __filter_switch(self, db_switch):
@@ -591,7 +668,8 @@ class RSAPodmVendorPassthru(base.VendorInterface):
 
     def __filter_system_location(self, system):
         location = eval(system.location)
-        location['Rack'] = objects.RSAChassis.get_by_id(self.context, location['Rack']).name
+        location['Rack'] = objects.RSAChassis.get_by_id(self.context,
+                                                        location['Rack']).name
         system.location = location
         return system.as_dict()
 
@@ -607,8 +685,10 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         """
         pod_manager_url = self.__get_pod_manager(context, pod_id).url
         try:
-            manager_url = pod_manager_url + system_info["Links"]["ManagedBy"][0]["@odata.id"]
-            chassis_url = pod_manager_url + system_info["Links"]["Chassis"][0]["@odata.id"]
+            manager_url = pod_manager_url + \
+                          system_info["Links"]["ManagedBy"][0]["@odata.id"]
+            chassis_url = pod_manager_url + system_info["Links"]["Chassis"][0][
+                "@odata.id"]
         except Exception:
             manager_url = ''
             chassis_url = ''
@@ -623,21 +703,34 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         system_db.status = system_info['Status']
         pod_type = self.__get_pod_manager(context, pod_id).type
         if pod_type == "INTEL-COMMON":
-            system_db.location = system_info['Oem']['Lenovo:RackScale']['Location']
-        else:  # TODO system's location store chassis/rack id & use id to search systems in rack/drawer later
+            system_db.location = system_info['Oem']['Lenovo:RackScale'][
+                'Location']
+        else:
+            # TODO system's location store chassis/rack id & use id
+            # to search systems in rack/drawer later
             chassis = objects.RSAChassis.get_by_url(context, chassis_url)
-            rack = eval(objects.RSAChassis.get_by_id(context, chassis.id).location)["Rack"]
+            rack = \
+                eval(objects.RSAChassis.get_by_id(context,
+                                                  chassis.id).location)[
+                    "Rack"]
             rack_url = pod_manager_url + "/redfish/v1/Chassis/" + rack
             rack_id = objects.RSAChassis.get_by_url(context, rack_url).id
-            system_location = int(system_info['Oem']['Lenovo:RackScale']['SystemLocation'])
-            system_location = 14 if system_location % 14 == 0 else system_location % 14
-            chassis_location = int(filter(str.isdigit, str(eval(chassis.location)['ULocation'])))
-            ULocation = chassis_location + int(math.floor((system_location+1)/2))
-            system_db.location = {"Chassis": chassis.id, "Rack": rack_id, "ULocation": ULocation, "UHeight": "",
-                                  "UWidth": "", "SystemLocation": system_location}
+            system_location = int(
+                system_info['Oem']['Lenovo:RackScale']['SystemLocation'])
+            system_location = 14 if system_location % 14 == 0 \
+                else system_location % 14
+            chassis_location = int(
+                filter(str.isdigit, str(eval(chassis.location)['ULocation'])))
+            ULocation = chassis_location + int(
+                math.floor((system_location + 1) / 2))
+            system_db.location = {"Chassis": chassis.id, "Rack": rack_id,
+                                  "ULocation": ULocation, "UHeight": "",
+                                  "UWidth": "",
+                                  "SystemLocation": system_location}
         system_db.pod_id = pod_id
         try:
-            system_db.manager_id = objects.Manager.get_by_url(context, manager_url).id
+            system_db.manager_id = objects.Manager.get_by_url(context,
+                                                              manager_url).id
         except Exception:
             system_db.manager_id = 0
         system_db.url = pod_manager_url + system_info['@odata.id']
@@ -663,16 +756,20 @@ class RSAPodmVendorPassthru(base.VendorInterface):
     def __synchronize_composed_node(self, context, pod_id, node_info):
         pod_type = self.__get_pod_manager(context, pod_id).type
         pod_manager_url = self.__get_pod_manager(context, pod_id).url
-        computer_system_url = pod_manager_url + node_info['Links']['ComputerSystem']['@odata.id']
-        volume_list = node_info["Links"]["LocalDrives"] if pod_type == "INTEL-COMMON" else \
+        computer_system_url = pod_manager_url + \
+                              node_info['Links']['ComputerSystem']['@odata.id']
+        volume_list = node_info["Links"][
+            "LocalDrives"] if pod_type == "INTEL-COMMON" else \
             node_info['Oem']['Lenovo:RackScale']['ComposedLogicalDrives']
 
         node_db = objects.ComposedNode(context)
         node_db.name = node_info['Name']
         node_db.description = node_info['Description']
         node_db.url = pod_manager_url + node_info['@odata.id']
-        node_db.computer_system_id = objects.ComputerSystem.get_by_url(context, computer_system_url).id
-        node_db.volume_id = self.__get_volume_ids(context, pod_manager_url, volume_list)
+        node_db.computer_system_id = \
+            objects.ComputerSystem.get_by_url(context, computer_system_url).id
+        node_db.volume_id = self.__get_volume_ids(context, pod_manager_url,
+                                                  volume_list)
         node_db.pod_id = pod_id
         node_db.create()
 
@@ -711,7 +808,8 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         disk_db.serial_number = disk_info['SerialNumber']
         disk_db.create()
 
-    def __insert_interface_info(self, context, interface_info, computer_system_id):
+    def __insert_interface_info(self, context, interface_info,
+                                computer_system_id):
         interface_db = objects.Interface(context)
         interface_db.computer_system_id = computer_system_id
         interface_db.name = interface_info['Name']
@@ -747,24 +845,32 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         uuid = chassis_info["Oem"][vendor + ":RackScale"]["UUID"]
         pod_manager_url = self.__get_pod_manager(context, pod_id).url
         try:
-            manager_url = pod_manager_url + chassis_info["Links"]["ManagedBy"][0]["@odata.id"]
-            chassis_db.manager_id = objects.Manager.get_by_url(context, manager_url).id
+            manager_url = pod_manager_url + \
+                          chassis_info["Links"]["ManagedBy"][0]["@odata.id"]
+            chassis_db.manager_id = objects.Manager.get_by_url(context,
+                                                               manager_url).id
         except Exception:
             chassis_db.manager_id = 0
         chassis_db.type = chassis_info["ChassisType"]
         chassis_db.uuid = uuid
         chassis_db.url = pod_manager_url + chassis_info["@odata.id"]
         if pod_type == "INTEL-COMMON":
-            chassis_db.location = chassis_info['Oem']['Lenovo:RackScale']['Location']
+            chassis_db.location = chassis_info['Oem']['Lenovo:RackScale'][
+                'Location']
         else:
-            Rack = chassis_info['Oem']['Intel:RackScale']['Location']["ParentId"]
+            Rack = chassis_info['Oem']['Intel:RackScale']['Location'][
+                "ParentId"]
             try:
-                ULocation = chassis_info['Oem']['Lenovo:RackScale']['Location']["LowerUnit"] + ' U'
-                UHeight = chassis_info['Oem']['Lenovo:RackScale']['Location']["Height"] + ' U'
+                ULocation = \
+                    chassis_info['Oem']['Lenovo:RackScale']['Location'][
+                        "LowerUnit"] + ' U'
+                UHeight = chassis_info['Oem']['Lenovo:RackScale']['Location'][
+                              "Height"] + ' U'
             except Exception:
                 ULocation = ""
                 UHeight = ""
-            chassis_db.location = {"ULocation": ULocation, "UWidth": "", "Rack": Rack, "UHeight": UHeight}
+            chassis_db.location = {"ULocation": ULocation, "UWidth": "",
+                                   "Rack": Rack, "UHeight": UHeight}
         chassis_db.name = chassis_info["Name"]
         chassis_db.pod_id = pod_id
         chassis_db.description = chassis_info["Description"]
@@ -795,14 +901,18 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         volume_db.url = pod_manager_url + volume_info['@odata.id']
         volume_db.name = volume_info["Name"]
         volume_db.description = volume_info["Description"]
-        volume_db.mode = volume_info["Mode"] if "Mode" in volume_info else volume_info["Model"]
-        volume_db.size_GB = volume_info["CapacityGiB"] if "CapacityGiB" in volume_info else volume_info[
-                                                                                                "CapacityBytes"] / 10 ** 9
+        volume_db.mode = volume_info["Mode"] if "Mode" in volume_info else \
+            volume_info["Model"]
+        volume_db.size_GB = volume_info[
+            "CapacityGiB"] if "CapacityGiB" in volume_info \
+            else volume_info["CapacityBytes"] / 10 ** 9
         volume_db.pod_id = pod_id
         volume_db.type = ''
         if pod_type == "INTEL-COMMON":
-            storage_url = pod_manager_url + volume_info['Links']['Targets'][0]['@odata.id']
-            volume_db.controller_id = objects.RemoteTarget.get_by_url(context, storage_url).id
+            storage_url = pod_manager_url + volume_info['Links']['Targets'][0][
+                '@odata.id']
+            volume_db.controller_id = \
+                objects.RemoteTarget.get_by_url(context, storage_url).id
         else:
             volume_db.controller_id = 0
         volume_db.create()
@@ -818,15 +928,17 @@ class RSAPodmVendorPassthru(base.VendorInterface):
         :return: target_db1
         """
         pod_type = self.__get_pod_manager(context, pod_id).type
-        storage_model = objects.PCIeSwitch if pod_type == 'LENOVO-PODM' else objects.RemoteTarget
+        storage_model = objects.PCIeSwitch
         pod_manager_url = self.__get_pod_manager(context, pod_id).url
         storage_db = storage_model(context)
         storage_db.url = pod_manager_url + storage_info['@odata.id']
         storage_db.name = storage_info["Name"]
         storage_db.pod_id = pod_id
         if storage_model == objects.RemoteTarget:
-            storage_db.address = storage_info["Address"][0]["iSCSI"]["TargetPortalIP"]
-            storage_db.port = storage_info["Address"][0]["iSCSI"]["TargetPortalPort"]
+            storage_db.address = storage_info["Address"][0]["iSCSI"][
+                "TargetPortalIP"]
+            storage_db.port = storage_info["Address"][0]["iSCSI"][
+                "TargetPortalPort"]
             storage_db.status = storage_info["Status"]
         else:
             storage_db.description = storage_info["Description"]

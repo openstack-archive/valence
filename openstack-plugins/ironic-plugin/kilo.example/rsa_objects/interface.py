@@ -47,7 +47,8 @@ class Interface(base.IronicObject):
     @staticmethod
     def _from_db_object_list(db_objects, cls, context):
         """Converts a list of database entities to a list of formal objects."""
-        return [Interface._from_db_object(cls(context), obj) for obj in db_objects]
+        return [Interface._from_db_object(cls(context), obj) for obj in
+                db_objects]
 
     @base.remotable_classmethod
     def get(cls, context, interface_id):
@@ -77,10 +78,14 @@ class Interface(base.IronicObject):
         return interface
 
     @base.remotable_classmethod
-    def list_by_node_id(cls, context, node_id, limit=None, marker=None, sort_key=None, sort_dir=None):
-        db_interface = cls.dbapi.get_node_interface_list(node_id, limit=limit, marker=marker, sort_key=sort_key,
+    def list_by_node_id(cls, context, node_id, limit=None, marker=None,
+                        sort_key=None, sort_dir=None):
+        db_interface = cls.dbapi.get_node_interface_list(node_id, limit=limit,
+                                                         marker=marker,
+                                                         sort_key=sort_key,
                                                          sort_dir=sort_dir)
-        return [Interface._from_db_object(cls(context), obj) for obj in db_interface]
+        return [Interface._from_db_object(cls(context), obj) for obj in
+                db_interface]
 
     @base.remotable
     def create(self, context=None):

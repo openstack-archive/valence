@@ -56,7 +56,8 @@ class ComputerSystem(base.IronicObject):
 
     @base.remotable_classmethod
     def get_by_id(cls, context, node_id):
-        """Find a node based on its integer id and return a Node details info including cpu memory and disk.
+        """Find a node based on its integer id and return a Node details
+        info including cpu memory and disk.
 
         :param node_id: the id of a node.
         :returns: a :class:`Node` object.
@@ -76,7 +77,8 @@ class ComputerSystem(base.IronicObject):
         return node
 
     @base.remotable_classmethod
-    def list_by_pod(cls, context, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None, ):
+    def list_by_pod(cls, context, pod_id, limit=None, marker=None,
+                    sort_key=None, sort_dir=None, ):
         """Return a list of Node objects.filter_by pod_id
 
         :param pod_id: which pod scope
@@ -94,7 +96,8 @@ class ComputerSystem(base.IronicObject):
                                                       marker=marker,
                                                       sort_key=sort_key,
                                                       sort_dir=sort_dir)
-        return [ComputerSystem._from_db_object(cls(context), obj) for obj in db_nodes]
+        return [ComputerSystem._from_db_object(cls(context), obj) for obj in
+                db_nodes]
 
     @base.remotable
     def create(self, context=None):
@@ -166,4 +169,3 @@ class ComputerSystem(base.IronicObject):
                         object, e.g.: driver_instance_server(context)
         """
         cls.dbapi.destroy_computer_system(pod_id)
-

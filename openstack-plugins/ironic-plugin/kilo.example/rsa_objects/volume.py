@@ -55,7 +55,8 @@ class Volume(base.IronicObject):
         return volume
 
     @base.remotable_classmethod
-    def list_by_pod_id(cls, context, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def list_by_pod_id(cls, context, pod_id, limit=None, marker=None,
+                       sort_key=None, sort_dir=None):
         """Return a list of volume objects.
 
         :param context: Security context.
@@ -67,7 +68,10 @@ class Volume(base.IronicObject):
         :returns: a list of :class:`volume` object.
 
         """
-        db_volume = cls.dbapi.get_pod_volume_list(pod_id, limit=limit, marker=marker, sort_key=sort_key, sort_dir=sort_dir)
+        db_volume = cls.dbapi.get_pod_volume_list(pod_id, limit=limit,
+                                                  marker=marker,
+                                                  sort_key=sort_key,
+                                                  sort_dir=sort_dir)
         return [Volume._from_db_object(cls(context), obj) for obj in db_volume]
 
     @base.remotable
@@ -141,5 +145,5 @@ class Volume(base.IronicObject):
         current = self.__class__.get_by_url(self._context, url=self.url)
         for field in self.fields:
             if (hasattr(self, base.get_attrname(field)) and
-                    self[field] != current[field]):
+                        self[field] != current[field]):
                 self[field] = current[field]

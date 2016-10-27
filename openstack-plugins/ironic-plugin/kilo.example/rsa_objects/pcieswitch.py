@@ -48,7 +48,8 @@ class PCIeSwitch(base.IronicObject):
     @staticmethod
     def _from_db_object_list(db_objects, cls, context):
         """Converts a list of database entities to a list of formal objects."""
-        return [PCIeSwitch._from_db_object(cls(context), obj) for obj in db_objects]
+        return [PCIeSwitch._from_db_object(cls(context), obj) for obj in
+                db_objects]
 
     @base.remotable_classmethod
     def get(cls, context, pcieswitch_id):
@@ -90,7 +91,8 @@ class PCIeSwitch(base.IronicObject):
         return pcieswitch
 
     @base.remotable_classmethod
-    def list_by_pod(cls, context, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def list_by_pod(cls, context, pod_id, limit=None, marker=None,
+                    sort_key=None, sort_dir=None):
         """Return a list of pcieswitch objects.
 
         :param context: Security context.
@@ -174,5 +176,6 @@ class PCIeSwitch(base.IronicObject):
         """
         current = self.__class__.get_by_url(self._context, url=self.url)
         for field in self.fields:
-            if (hasattr(self, base.get_attrname(field)) and self[field] != current[field]):
+            if (hasattr(self, base.get_attrname(field)) and self[field] !=
+                current[field]):
                 self[field] = current[field]

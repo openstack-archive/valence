@@ -51,7 +51,8 @@ class Memory(base.IronicObject):
         return cls.dbapi.get_memory_by_url(url)
 
     @base.remotable_classmethod
-    def list_by_node_id(cls, context, node_id, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def list_by_node_id(cls, context, node_id, limit=None, marker=None,
+                        sort_key=None, sort_dir=None):
         """Return a list of memory objects.
 
         :param context: Security context.
@@ -64,12 +65,17 @@ class Memory(base.IronicObject):
         :returns: a list of :class:`memory` object.
 
         """
-        db_memory = cls.dbapi.get_node_memory_list(node_id, limit=limit, marker=marker, sort_key=sort_key, sort_dir=sort_dir)
+        db_memory = cls.dbapi.get_node_memory_list(node_id, limit=limit,
+                                                   marker=marker,
+                                                   sort_key=sort_key,
+                                                   sort_dir=sort_dir)
         return [Memory._from_db_object(cls(context), obj) for obj in db_memory]
 
     @base.remotable_classmethod
-    def get_all_list(cls,context,limit=None, marker=None, sort_key=None, sort_dir=None):
-        db_mem = cls.dbapi.get_mem_list(limit=limit, marker=marker, sort_key=sort_key, sort_dir=sort_dir)
+    def get_all_list(cls, context, limit=None, marker=None, sort_key=None,
+                     sort_dir=None):
+        db_mem = cls.dbapi.get_mem_list(limit=limit, marker=marker,
+                                        sort_key=sort_key, sort_dir=sort_dir)
         return [Memory._from_db_object(cls(context), obj) for obj in db_mem]
 
     @base.remotable_classmethod

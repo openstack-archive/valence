@@ -42,12 +42,15 @@ class RackView(base.IronicObject):
     @staticmethod
     def _from_db_object_list(db_objects, cls, context):
         """Converts a list of database entities to a list of formal objects."""
-        return [RackView._from_db_object(cls(context), obj) for obj in db_objects]
+        return [RackView._from_db_object(cls(context), obj) for obj in
+                db_objects]
 
     @base.remotable
     def get_rack_view_by_rack_id(self, cls, context, rack_id):
         db_rack_views = cls.dbapi.get_rack_view_by_rack_id(rack_id)
-        return map(lambda rack_view: RackView._from_db_object(cls(context), rack_view), db_rack_views)
+        return map(lambda rack_view: RackView._from_db_object(cls(context),
+                                                              rack_view),
+                   db_rack_views)
 
     @base.remotable
     def create(self, context=None):
@@ -96,4 +99,3 @@ class RackView(base.IronicObject):
         updates = self.obj_get_changes()
         self.dbapi.update_rack_view(self.id, updates)
         self.obj_reset_changes()
-

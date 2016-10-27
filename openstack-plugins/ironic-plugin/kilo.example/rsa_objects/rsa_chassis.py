@@ -58,11 +58,13 @@ class RSAChassis(base.IronicObject):
     @staticmethod
     def _from_db_object_list(db_objects, cls, context):
         """Converts a list of database entities to a list of formal objects."""
-        return [RSAChassis._from_db_object(cls(context), obj) for obj in db_objects]
+        return [RSAChassis._from_db_object(cls(context), obj) for obj in
+                db_objects]
 
     @base.remotable_classmethod
     def get(cls, context, rsa_chassis_id):
-        """Find a rsa_chassis based on its id or uuid and return a rsa_chassis object.
+        """Find a rsa_chassis based on its id or uuid and return a
+        rsa_chassis object.
 
         :param rsa_chassis_id: the id *or* uuid of a rsa_chassis.
         :returns: a :class:`rsa_chassis` object.
@@ -78,7 +80,8 @@ class RSAChassis(base.IronicObject):
 
     @base.remotable_classmethod
     def get_by_id(cls, context, rsa_chassis_id):
-        """Find a rsa_chassis based on its integer id and return a rsa_chassis object.
+        """Find a rsa_chassis based on its integer id and return a
+        rsa_chassis object.
 
         :param rsa_chassis_id: the id of a rsa_chassis.
         :returns: a :class:`rsa_chassis` object.
@@ -89,7 +92,7 @@ class RSAChassis(base.IronicObject):
 
     @base.remotable_classmethod
     def get_by_url(cls, context, url):
-        """Find a rsa_chassis based on uuid and return a :class:`rsa_chassis` object.
+        """Find a rsa_chassis based on uuid and return a `rsa_chassis` object.
 
         :param url: the uuid of a rsa_chassis.
         :param context: Security context
@@ -100,7 +103,8 @@ class RSAChassis(base.IronicObject):
         return rsa_chassis
 
     @base.remotable_classmethod
-    def list_by_pod_and_type(cls, context, pod_id, type, limit=None, marker=None, sort_key=None, sort_dir=None):
+    def list_by_pod_and_type(cls, context, pod_id, type, limit=None,
+                             marker=None, sort_key=None, sort_dir=None):
         """Return a list of rsa_chassis objects.
 
         :param context: Security context.
@@ -113,12 +117,13 @@ class RSAChassis(base.IronicObject):
         :returns: a list of :class:`rsa_chassis` object.
 
         """
-        db_rsa_chassis = cls.dbapi.get_rsa_chassis_list_by_pod_and_type(pod_id,
-                                                                        type,
-                                                                        limit=limit,
-                                                                        marker=marker,
-                                                                        sort_key=sort_key,
-                                                                        sort_dir=sort_dir)
+        db_rsa_chassis = \
+            cls.dbapi.get_rsa_chassis_list_by_pod_and_type(pod_id,
+                                                           type,
+                                                           limit=limit,
+                                                           marker=marker,
+                                                           sort_key=sort_key,
+                                                           sort_dir=sort_dir)
         return RSAChassis._from_db_object_list(db_rsa_chassis, cls, context)
 
     @base.remotable
@@ -185,7 +190,8 @@ class RSAChassis(base.IronicObject):
         """
         current = self.__class__.get_by_url(self._context, url=self.url)
         for field in self.fields:
-            if (hasattr(self, base.get_attrname(field)) and self[field] != current[field]):
+            if (hasattr(self, base.get_attrname(field)) and self[field] !=
+                current[field]):
                 self[field] = current[field]
 
     @base.remotable_classmethod
@@ -196,15 +202,18 @@ class RSAChassis(base.IronicObject):
         return sum
 
     @base.remotable_classmethod
-    def get_chassis_computer_systems(cls, pod_id, chassis, chassis_id, context=None):
+    def get_chassis_computer_systems(cls, pod_id, chassis, chassis_id,
+                                     context=None):
         """Return computer systems belong to this chassis.
         """
-        systems = cls.dbapi.get_rack_computer_systems(pod_id, chassis, chassis_id)
+        systems = cls.dbapi.get_rack_computer_systems(pod_id, chassis,
+                                                      chassis_id)
         computer_systems = []
         for system in systems:
             computer_system = dict()
             computer_system['system_name'] = system[0]
             computer_system['system_id'] = system[1]
-            computer_system['system_location'] = eval(system[2])['SystemLocation']
+            computer_system['system_location'] = eval(system[2])[
+                'SystemLocation']
             computer_systems.append(computer_system)
         return computer_systems
