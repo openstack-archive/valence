@@ -20,7 +20,7 @@ from ironic.objects import utils as obj_utils
 
 class Manager(base.IronicObject):
     dbapi = db_api.get_instance()
-    
+
     fields = {
         'id': int,
         'pod_id': obj_utils.str_or_none,
@@ -32,8 +32,8 @@ class Manager(base.IronicObject):
         'model': obj_utils.str_or_none,
         'firmware_version': obj_utils.str_or_none,
         'graphical_console': obj_utils.str_or_none,
-        'serial_console':  obj_utils.str_or_none,
-        'command_shell':  obj_utils.str_or_none,
+        'serial_console': obj_utils.str_or_none,
+        'command_shell': obj_utils.str_or_none,
         'status': obj_utils.str_or_none,
     }
 
@@ -47,7 +47,9 @@ class Manager(base.IronicObject):
 
     @base.remotable_classmethod
     def get_by_id(cls, context, manager_id):
-        """Find a manager based on its integer id and return a Node details info including cpu memory and disk.
+        """
+        Find a manager based on its integer id and return a Node details
+        info including cpu memory and disk.
 
         :param manager_id: the id of a manager.
         :returns: a :class:`Node` object.
@@ -67,8 +69,10 @@ class Manager(base.IronicObject):
         return manager
 
     @base.remotable_classmethod
-    def list_by_pod(cls, context, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None, ):
-        """Return a list of Node objects.filter_by pod_id
+    def list_by_pod(cls, context, pod_id, limit=None, marker=None,
+                    sort_key=None, sort_dir=None, ):
+        """
+        Return a list of Node objects.filter_by pod_id
 
         :param pod_id: which pod scope
         :param context: Security context.
@@ -81,15 +85,17 @@ class Manager(base.IronicObject):
 
         """
         db_managers = cls.dbapi.get_manager_list(pod_id=pod_id,
-                                                      limit=limit,
-                                                      marker=marker,
-                                                      sort_key=sort_key,
-                                                      sort_dir=sort_dir)
-        return [Manager._from_db_object(cls(context), obj) for obj in db_managers]
+                                                 limit=limit,
+                                                 marker=marker,
+                                                 sort_key=sort_key,
+                                                 sort_dir=sort_dir)
+        return [Manager._from_db_object(cls(context), obj) for obj in
+                db_managers]
 
     @base.remotable
     def create(self, context=None):
-        """Create a Node record in the DB.
+        """
+        Create a Node record in the DB.
 
         Column-wise updates will be made based on the result of
         self.what_changed(). If target_power_state is provided,
@@ -110,7 +116,8 @@ class Manager(base.IronicObject):
 
     @base.remotable
     def save(self, context=None):
-        """Save updates to this Node.
+        """
+        Save updates to this Node.
 
         Column-wise updates will be made based on the result of
         self.what_changed(). If target_power_state is provided,
@@ -130,7 +137,8 @@ class Manager(base.IronicObject):
 
     @base.remotable
     def refresh(self, context=None):
-        """Refresh the object by re-fetching from the DB.
+        """
+        Refresh the object by re-fetching from the DB.
 
         :param context: Security context. NOTE: This should only
                         be used internally by the indirection_api.
@@ -147,7 +155,8 @@ class Manager(base.IronicObject):
 
     @base.remotable_classmethod
     def destroy(cls, pod_id, context=None):
-        """Delete the driver_instance_server from the DB.
+        """
+        Delete the driver_instance_server from the DB.
 
         :param context: Security context. NOTE: This should only
                         be used internally by the indirection_api.
