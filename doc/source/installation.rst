@@ -4,9 +4,9 @@ Installation
 
 At the command line::
 
-    $ pip install plasma
+    $ pip install valence
 
 Or, if you have virtualenvwrapper installed::
 
-    $ mkvirtualenv plasma
-    $ pip install plasma
+    $ mkvirtualenv valence
+    $ pip install valence

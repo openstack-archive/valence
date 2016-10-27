@@ -2,6 +2,6 @@
 Usage
 ========
 
-To use plasma in a project::
+To use valence in a project::
 
-    import plasma
+    import valence
