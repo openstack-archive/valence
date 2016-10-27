@@ -13,8 +13,8 @@
 
 
 from ironic.drivers import base
-from ironic.drivers.modules.rsa_podm import power
 from ironic.drivers.modules.rsa_podm import management
+from ironic.drivers.modules.rsa_podm import power
 from ironic.drivers.modules.rsa_podm import vendor
 
 from oslo_log import log as logging
@@ -29,15 +29,3 @@ class IntelRSAPodmDriver(base.BaseDriver):
         self.power = power.RSAPodmPower()
         self.management = management.RSAManagement()
         self.vendor = vendor.RSAPodmVendorPassthru()
-        # self.deploy = deploy.XClarityDeploy()
-
-        # @base.driver_periodic_task(spacing=60)
-        # def inventory_all_resource(self, context):
-        #     pod_manager_list = objects.PodManager.list(context)
-        #     for pod_manager in pod_manager_list:
-        #         self.vendor.inventory_rsa_nodes(context, refresh=True, pod_id=pod_manager.id, node_type="Logical")
-        #         self.vendor.inventory_rsa_nodes(context, refresh=True, pod_id=pod_manager.id, node_type="Physical")
-        #         self.vendor.inventory_rsa_chassis(context, refresh=True, pod_id=pod_manager.id, chassis_type="Drawer")
-        #         self.vendor.inventory_rsa_chassis(context, refresh=True, pod_id=pod_manager.id, chassis_type="Rack")
-        #         self.vendor.inventory_pcie_switches(context, refresh=True, pod_id=pod_manager.id)
-        #         self.vendor.inventory_volumes(context, refresh=True, pod_id=pod_manager.id)

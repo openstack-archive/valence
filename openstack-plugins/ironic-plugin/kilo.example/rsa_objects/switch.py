@@ -59,92 +59,34 @@ class Switch(base.IronicObject):
         return chassis
 
     @base.remotable_classmethod
-    def list_by_pod_id(cls, context, pod_id, limit=None, marker=None, sort_key=None, sort_dir=None):
-        """Return a list of switch objects.
-
-        :param context: Security context.
-        :param pod_id:
-        :param limit: maximum number of resources to return in a single result.
-        :param marker: pagination marker for large data sets.
-        :param sort_key: column to sort results by.
-        :param sort_dir: direction to sort. "asc" or "desc".
-        :returns: a list of :class:`switch` object.
-
-        """
-        db_switch = cls.dbapi.get_pod_switch_list(pod_id, limit=limit, marker=marker,
-                                                  sort_key=sort_key, sort_dir=sort_dir)
+    def list_by_pod_id(cls, context, pod_id, limit=None, marker=None,
+                       sort_key=None, sort_dir=None):
+        db_switch = cls.dbapi.get_pod_switch_list(pod_id, limit=limit,
+                                                  marker=marker,
+                                                  sort_key=sort_key,
+                                                  sort_dir=sort_dir)
         return [Switch._from_db_object(cls(context), obj) for obj in db_switch]
 
     @base.remotable
     def create(self, context=None):
-        """Create a switch record in the DB.
-
-        Column-wise updates will be made based on the result of
-        self.what_changed(). If target_power_state is provided,
-        it will be checked against the in-database copy of the
-        switch before updates are made.
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: switch(context)
-
-        """
         values = self.obj_get_changes()
         db_switch = self.dbapi.create_switch(values)
         self._from_db_object(self, db_switch)
 
     @base.remotable_classmethod
     def destroy(cls, pod_id, context=None):
-        """Delete the volume from the DB.
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: volume(context)
-        :param pod_id: pod_id
-        """
         cls.dbapi.destroy_switch(pod_id)
 
     @base.remotable
     def save(self, context=None):
-        """Save updates to this switch.
-
-        Updates will be made column by column based on the result
-        of self.what_changed().
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: switch(context)
-        """
         updates = self.obj_get_changes()
         self.dbapi.update_switch(self.url, updates)
         self.obj_reset_changes()
 
     @base.remotable
     def refresh(self, context=None):
-        """Loads and applies updates for this switch.
-
-        Loads a :class:`switch` with the same url from the database and
-        checks for updated attributes. Updates are applied from
-        the loaded switch column by column, if there are any updates.
-
-        :param context: Security context. NOTE: This should only
-                        be used internally by the indirection_api.
-                        Unfortunately, RPC requires context as the first
-                        argument, even though we don't use it.
-                        A context should be set when instantiating the
-                        object, e.g.: switch(context)
-        """
         current = self.__class__.get_by_id(self._context, self.id)
         for field in self.fields:
-            if (hasattr(self, base.get_attrname(field)) and
-                    self[field] != current[field]):
-                self[field] = current[field]
+            if hasattr(self, base.get_attrname(field)):
+                if self[field] != current[field]:
+                    self[field] = current[field]
