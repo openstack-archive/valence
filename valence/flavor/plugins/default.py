@@ -12,10 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from oslo_log import log as logging
+import logging
 from valence.flavor.generatorbase import generatorbase
 
-LOG = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 class defaultGenerator(generatorbase):
@@ -29,14 +29,15 @@ class defaultGenerator(generatorbase):
     def generate(self):
         LOG.info("Default Generator")
         for node in self.nodes:
-            LOG.info("Node ID " + node['nodeid'])
+            LOG.debug("Node ID " + node['id'])
             location = node['location']
+            LOG.debug(location)
             location_lst = location.split("_")
             location_lst = list(filter(None, location_lst))
-            extraspecs = (
-                {l[0]: l[1] for l in (l.split(":") for l in location_lst)})
-            name = self.prepend_name + location
-        return {
+            extraspecs = ({l[0]: l[1]
+                           for l in (l.split(":") for l in location_lst)})
+            name = self.prepend_name + node['id']
+        return [
             self._flavor_template("L_" + name,
                                   node['ram'],
                                   node['cpu']["count"],
@@ -52,4 +53,4 @@ class defaultGenerator(generatorbase):
                                   int(node['cpu']["count"]) / 4,
                                   int(node['storage']) / 4,
                                   extraspecs)
-        }
+        ]

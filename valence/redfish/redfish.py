@@ -14,14 +14,14 @@
 #    under the License.
 
 import json
-from oslo_config import cfg
-from oslo_log import log as logging
+import logging
 import requests
 from requests.auth import HTTPBasicAuth
-from valence.common.redfish import tree
+from valence import config as cfg
+from valence.redfish import tree
+
 
 LOG = logging.getLogger(__name__)
-cfg.CONF.import_group('podm', 'valence.common.redfish.config')
 
 
 def get_rfs_url(serviceext):
@@ -29,17 +29,18 @@ def get_rfs_url(serviceext):
     INDEX = ''
     # '/index.json'
     if REDFISH_BASE_EXT in serviceext:
-        return cfg.CONF.podm.url + serviceext + INDEX
+        return cfg.podm_url + serviceext + INDEX
     else:
-        return cfg.CONF.podm.url + REDFISH_BASE_EXT + serviceext + INDEX
+        return cfg.podm_url + REDFISH_BASE_EXT + serviceext + INDEX
 
 
 def send_request(resource, method="GET", **kwargs):
     # The verify=false param in the request should be removed eventually
     url = get_rfs_url(resource)
-    httpuser = cfg.CONF.podm.user
-    httppwd = cfg.CONF.podm.password
+    httpuser = cfg.podm_user
+    httppwd = cfg.podm_password
     resp = None
+    LOG.debug(url)
     try:
         resp = requests.request(method, url, verify=False,
                                 auth=HTTPBasicAuth(httpuser, httppwd),
@@ -92,57 +93,6 @@ def generic_filter(jsonContent, filterConditions):
     return is_filter_passed
 
 
-def get_details(source):
-    returnJSONObj = []
-    members = source['Members']
-    for member in members:
-        resource = member['@odata.id']
-        resp = send_request(resource)
-        memberJson = resp.json()
-        memberJsonObj = json.loads(memberJson)
-        returnJSONObj[resource] = memberJsonObj
-    return returnJSONObj
-
-
-def systemdetails():
-    returnJSONObj = []
-    parsed = send_request('Systems')
-    members = parsed['Members']
-    for member in members:
-        resource = member['@odata.id']
-        resp = send_request(resource)
-        memberJsonContent = resp.json()
-        memberJSONObj = json.loads(memberJsonContent)
-        returnJSONObj[resource] = memberJSONObj
-    return(json.dumps(returnJSONObj))
-
-
-def nodedetails():
-    returnJSONObj = []
-    parsed = send_request('Nodes')
-    members = parsed['Members']
-    for member in members:
-        resource = member['@odata.id']
-        resp = send_request(resource)
-        memberJSONObj = resp.json()
-        returnJSONObj[resource] = memberJSONObj
-    return(json.dumps(returnJSONObj))
-
-
-def podsdetails():
-    jsonContent = send_request('Chassis')
-    pods = filter_chassis(jsonContent, 'Pod')
-    podsDetails = get_details(pods)
-    return json.dumps(podsDetails)
-
-
-def racksdetails():
-    jsonContent = send_request('Chassis')
-    racks = filter_chassis(jsonContent, 'Rack')
-    racksDetails = get_details(racks)
-    return json.dumps(racksDetails)
-
-
 def racks():
     jsonContent = send_request('Chassis')
     racks = filter_chassis(jsonContent, 'Rack')
@@ -165,36 +115,39 @@ def urls2list(url):
         return []
 
 
-def extract_val(data, path):
+def extract_val(data, path, defaultval=None):
     # function to select value at particularpath
     patharr = path.split("/")
     for p in patharr:
         data = data[p]
+    data = (data if data else defaultval)
     return data
 
 
 def node_cpu_details(nodeurl):
     cpucnt = 0
     cpuarch = ""
+    cpumodel = ""
     cpulist = urls2list(nodeurl + '/Processors')
     for lnk in cpulist:
         LOG.info("Processing CPU %s" % lnk)
         resp = send_request(lnk)
         respdata = resp.json()
-        cpucnt += extract_val(respdata, "TotalCores")
-        cpuarch = extract_val(respdata, "InstructionSet")
-        cpumodel = extract_val(respdata, "Model")
+        # Check if CPU data is populated. It also may have NULL values
+        cpucnt += extract_val(respdata, "TotalCores", 0)
+        cpuarch = extract_val(respdata, "InstructionSet", "")
+        cpumodel = extract_val(respdata, "Model", "")
         LOG.debug(" Cpu details %s: %d: %s: %s "
                   % (nodeurl, cpucnt, cpuarch, cpumodel))
-    return {"count": str(cpucnt), "arch": cpuarch, "model": cpumodel}
+    return {"cores": str(cpucnt), "arch": cpuarch, "model": cpumodel}
 
 
 def node_ram_details(nodeurl):
     # this extracts the RAM and returns as dictionary
     resp = send_request(nodeurl)
     respjson = resp.json()
-    ram = extract_val(respjson, "MemorySummary/TotalSystemMemoryGiB")
-    return str(ram) if ram else "0"
+    ram = extract_val(respjson, "MemorySummary/TotalSystemMemoryGiB", "0")
+    return str(ram)
 
 
 def node_nw_details(nodeurl):
@@ -214,6 +167,8 @@ def node_storage_details(nodeurl):
         resp = send_request(lnk)
         respbody = resp.json()
         hdds = extract_val(respbody, "Devices")
+        if not hdds:
+            continue
         for sd in hdds:
             if "CapacityBytes" in sd:
                 if sd["CapacityBytes"] is not None:
@@ -223,21 +178,17 @@ def node_storage_details(nodeurl):
     return str(storagecnt / 1073741824).split(".")[0]
 
 
-def systems_list(count=None, filters={}):
-    # comment the count value which is set to 2 now..
+def systems_list(filters={}):
     # list of nodes with hardware details needed for flavor creation
-    # count = 2
     lst_systems = []
     systemurllist = urls2list("Systems")
     podmtree = build_hierarchy_tree()
-
-    for lnk in systemurllist[:count]:
+    LOG.info(systemurllist)
+    for lnk in systemurllist:
         filterPassed = True
         resp = send_request(lnk)
         system = resp.json()
 
-        # this below code need to be changed when proper query mechanism
-        # is implemented
         if any(filters):
             filterPassed = generic_filter(system, filters)
         if not filterPassed:
@@ -250,7 +201,7 @@ def systems_list(count=None, filters={}):
         ram = node_ram_details(lnk)
         nw = node_nw_details(lnk)
         storage = node_storage_details(lnk)
-        node = {"nodeid": systemid, "cpu": cpu,
+        node = {"id": systemid, "cpu": cpu,
                 "ram": ram, "storage": storage,
                 "nw": nw, "location": systemlocation,
                 "uuid": systemuuid}
@@ -275,7 +226,6 @@ def systems_list(count=None, filters={}):
 
         if filterPassed:
             lst_systems.append(node)
-        # LOG.info(str(node))
     return lst_systems
 
 
@@ -315,9 +265,12 @@ def get_chassis_list():
     return lst_chassis
 
 
+def get_systembyid(systemid):
+    return systems_list({"Id": systemid})
+
+
 def get_nodebyid(nodeid):
-    resp = send_request("Nodes/" + nodeid)
-    return resp.json()
+    return nodes_list({"Id": nodeid})
 
 
 def build_hierarchy_tree():
@@ -338,18 +291,16 @@ def build_hierarchy_tree():
     return podmtree
 
 
-def compose_node(criteria={}):
+def compose_node(data):
     composeurl = "Nodes/Actions/Allocate"
     headers = {'Content-type': 'application/json'}
+    criteria = data["criteria"]
     if not criteria:
         resp = send_request(composeurl, "POST", headers=headers)
     else:
         resp = send_request(composeurl, "POST", json=criteria, headers=headers)
-    LOG.info(resp.headers)
-    LOG.info(resp.text)
-    LOG.info(resp.status_code)
-    composednode = resp.headers['Location']
 
+    composednode = resp.headers['Location']
     return {"node": composednode}
 
 
@@ -359,14 +310,12 @@ def delete_composednode(nodeid):
     return resp
 
 
-def nodes_list(count=None, filters={}):
-    # comment the count value which is set to 2 now..
+def nodes_list(filters={}):
     # list of nodes with hardware details needed for flavor creation
-    # count = 2
+    LOG.debug(filters)
     lst_nodes = []
     nodeurllist = urls2list("Nodes")
     # podmtree = build_hierarchy_tree()
-    # podmtree.writeHTML("0","/tmp/a.html")
 
     for lnk in nodeurllist:
         filterPassed = True
@@ -376,10 +325,9 @@ def nodes_list(count=None, filters={}):
         else:
             node = resp.json()
 
-            # this below code need to be changed when proper query mechanism
-            # is implemented
             if any(filters):
                 filterPassed = generic_filter(node, filters)
+                LOG.info("FILTER PASSED" + str(filterPassed))
             if not filterPassed:
                 continue
 
@@ -392,25 +340,41 @@ def nodes_list(count=None, filters={}):
             cpu = {}
             ram = 0
             nw = 0
-            localstorage = node_storage_details(nodesystemurl)
-            if "Processors" in node:
-                cpu = {"count": node["Processors"]["Count"],
-                       "model": node["Processors"]["Model"]}
+            storage = node_storage_details(nodesystemurl)
+            cpu = node_cpu_details(lnk)
 
             if "Memory" in node:
                 ram = node["Memory"]["TotalSystemMemoryGiB"]
 
-            if "EthernetInterfaces" in node["Links"] and node[
-                    "Links"]["EthernetInterfaces"]:
+            if ("EthernetInterfaces" in node["Links"] and
+                    node["Links"]["EthernetInterfaces"]):
                 nw = len(node["Links"]["EthernetInterfaces"])
 
             bmcip = "127.0.0.1"  # system['Oem']['Dell_G5MC']['BmcIp']
             bmcmac = "00:00:00:00:00"  # system['Oem']['Dell_G5MC']['BmcMac']
-            node = {"nodeid": nodeid, "cpu": cpu,
-                    "ram": ram, "storage": localstorage,
+            node = {"id": nodeid, "cpu": cpu,
+                    "ram": ram, "storage": storage,
                     "nw": nw, "location": nodelocation,
                     "uuid": nodeuuid, "bmcip": bmcip, "bmcmac": bmcmac}
+
+            # filter based on RAM, CPU, NETWORK..etc
+            if 'ram' in filters:
+                filterPassed = (True
+                                if int(ram) >= int(filters['ram'])
+                                else False)
+
+            # filter based on RAM, CPU, NETWORK..etc
+            if 'nw' in filters:
+                filterPassed = (True
+                                if int(nw) >= int(filters['nw'])
+                                else False)
+
+            # filter based on RAM, CPU, NETWORK..etc
+            if 'storage' in filters:
+                filterPassed = (True
+                                if int(storage) >= int(filters['storage'])
+                                else False)
+
             if filterPassed:
                 lst_nodes.append(node)
-                # LOG.info(str(node))
-        return lst_nodes
+    return lst_nodes
