@@ -89,54 +89,56 @@ const ComposeDisplay = React.createClass({
   },
 
   render: function() {
+    var displayStyle;
     if (this.props.display) {
-      return (
-          <div class="details" styles="inline-block">
-            <form id="inputForm">
-              <table>
-                <tbody>
-                  <tr>
-                    <td align="right">Name:</td>
-                    <td align="left"><input type="text" id="name" /></td>
-                  </tr>
-                  <tr>
-                    <td align="right">Description:</td>
-                    <td align="left"><input type="text" id="description" /></td>
-                  </tr>
-                  <tr>
-                    <td align="right">System Memory GB:</td>
-                    <td align="left"><input type="number" min="0" id="totalMem" /></td>
-                  </tr>
-                  <tr>
-                    <td align="right">Processor Model:</td>
-                    <td align="left"><select id="processorModels" /></td>
-                  </tr>
-                  <tr>
-                    <td align="right">Remote Storage Capacity GB:</td>
-                    <td align="left"><input type="number" min="0" id="storageCapacity" /></td>
-                  </tr>
-                  <tr>
-                    <td align="right">Remote storage IQN:</td>
-                    <td align="left"><input type="text" id="iqn" /></td>
-                  </tr>
-                  <tr>
-                    <td align="right">Remote storage master drive:</td>
-                    <td align="left"><select id="remoteDrives" /></td>
-                  </tr>
-                </tbody>
-              </table>
-            </form>
-            <input type="button"
-             class="compose-button"
-             onClick={() => this.compose()} value="Compose" />
-            <input type="button"
-             class="detail-button"
-             onClick={() => this.props.onHideCompose()} value="Return" />
-          </div>
-      );
+      displayStyle = "inline-block";
     } else {
-      return(<div styles="none" />);
+      displayStyle = "none";
     }
+    return (
+      <div class="details" style={{display: displayStyle}}>
+        <form id="inputForm">
+          <table>
+            <tbody>
+              <tr>
+                <td align="right">Name:</td>
+                <td align="left"><input type="text" id="name" /></td>
+              </tr>
+              <tr>
+                <td align="right">Description:</td>
+                <td align="left"><input type="text" id="description" /></td>
+              </tr>
+              <tr>
+                <td align="right">System Memory GB:</td>
+                <td align="left"><input type="number" min="0" id="totalMem" /></td>
+              </tr>
+              <tr>
+                <td align="right">Processor Model:</td>
+                <td align="left"><select id="processorModels" /></td>
+              </tr>
+              <tr>
+                <td align="right">Remote Storage Capacity GB:</td>
+                <td align="left"><input type="number" min="0" id="storageCapacity" /></td>
+              </tr>
+              <tr>
+                <td align="right">Remote storage IQN:</td>
+                <td align="left"><input type="text" id="iqn" /></td>
+              </tr>
+              <tr>
+                <td align="right">Remote storage master drive:</td>
+                <td align="left"><select id="remoteDrives" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+        <input type="button"
+         class="compose-button"
+         onClick={() => this.compose()} value="Compose" />
+        <input type="button"
+         class="detail-button"
+         onClick={() => this.props.onHideCompose()} value="Return" />
+      </div>
+    );
   }
 
 });

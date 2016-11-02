@@ -131,7 +131,7 @@ const DetailDisplay = React.createClass({
         return this.renderNode(this.props.data);
       }
       return (
-        <div class="details" styles="inline-block">
+        <div class="details" style={{display: "inline-block"}}>
           <h2>Nothing to display!</h2>
           <input type="button"
            class="detail-button"

@@ -56,7 +56,7 @@ const Home = React.createClass({
 
   renderHome: function() {
     return (
-      <div styles="inline-block">
+      <div style={{display: "inline-block"}}>
         <div class="jumbotron">
           <h2>Welcome to RSD Details</h2>
           <p>This is a brief overview of all kinds of resources in this environment. See the <a href="#">User Guide</a> for more information on how to configure them.</p>
