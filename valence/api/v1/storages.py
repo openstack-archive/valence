@@ -12,16 +12,22 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from flask_restful import abort
+from flask_restful import Resource
 import logging
-from valence.flavor.generatorbase import generatorbase
 
 LOG = logging.getLogger(__name__)
 
 
-class exampleGenerator(generatorbase):
-    def __init__(self, nodes):
-        generatorbase.__init__(self, nodes)
+class StoragesList(Resource):
 
-    def generate(self):
-        LOG.info("Example Flavor Generate")
-        return {"Info": "Example Flavor Generator- Not Yet Implemented"}
+    def get(self):
+        LOG.debug("GET /storages")
+        return abort(501)
+
+
+class Storages(Resource):
+
+    def get(self, storageid):
+        LOG.debug("GET /storages" + storageid)
+        return abort(501)

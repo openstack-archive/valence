@@ -1,6 +1,7 @@
-# Copyright (c) 2016 Intel, Inc.
+#!/usr/bin/env python
+
+# copyright (c) 2016 Intel, Inc.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
 #
@@ -13,15 +14,16 @@
 #    under the License.
 
 import logging
-from valence.flavor.generatorbase import generatorbase
+from valence.api.route import app as application
+from valence import config as cfg
 
 LOG = logging.getLogger(__name__)
 
 
-class exampleGenerator(generatorbase):
-    def __init__(self, nodes):
-        generatorbase.__init__(self, nodes)
+def main():
+    application.run(host=cfg.bind_host, port=cfg.bind_port, debug=cfg.debug)
+    LOG.info(("Valence Server on http://%(host)s:%(port)s"),
+             {'host': cfg.bind_host, 'port': cfg.bind_port})
 
-    def generate(self):
-        LOG.info("Example Flavor Generate")
-        return {"Info": "Example Flavor Generator- Not Yet Implemented"}
+if __name__ == '__main__':
+    main()

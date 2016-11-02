@@ -13,19 +13,16 @@
 #    under the License.
 
 
-import pecan
-from valence.api.controllers import base
-from valence.api.controllers import types
+from flask import request
+from valence.api import base
+from valence.api import types
 
 
 def build_url(resource, resource_args, bookmark=False, base_url=None):
     if base_url is None:
-        base_url = pecan.request.host_url
-
+        base_url = request.root_url
+    base_url = base_url.rstrip("//")
     template = '%(url)s/%(res)s' if bookmark else '%(url)s/v1/%(res)s'
-    # FIXME(lucasagomes): I'm getting a 404 when doing a GET on
-    # a nested resource that the URL ends with a  '/'.
-    # https://groups.google.com/forum/#!topic/pecan-dev/QfSeviLg5qs
     template += '%(args)s' if resource_args.startswith('?') else '/%(args)s'
     return template % {'url': base_url, 'res': resource, 'args': resource_args}
 

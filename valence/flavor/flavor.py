@@ -13,13 +13,12 @@
 #    under the License.
 
 from importlib import import_module
-# from valence.flavor.plugins import *
+import logging
 import os
-from oslo_log import log as logging
-from valence.common.redfish import api as rfs
+from valence.redfish import redfish as rfs
 
 FLAVOR_PLUGIN_PATH = os.path.dirname(os.path.abspath(__file__)) + '/plugins'
-logger = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 def get_available_criteria():
@@ -28,27 +27,29 @@ def get_available_criteria():
                    if os.path.isfile(os.path.join(FLAVOR_PLUGIN_PATH, f))
                    and not f.startswith('__') and f.endswith('.py')]
     resp = []
-    for p in pluginfiles:
-        module = import_module("valence.flavor.plugins." + p)
-        myclass = getattr(module, p + 'Generator')
+    for filename in pluginfiles:
+        module = import_module("valence.flavor.plugins." + filename)
+        myclass = getattr(module, filename + 'Generator')
         inst = myclass([])
-        resp.append({'name': p, 'description': inst.description()})
+        resp.append({'name': filename, 'description': inst.description()})
     return {'criteria': resp}
 
 
-def create_flavors(criteria):
+def create_flavors(data):
     """criteria : comma seperated generator names
 
        This should be same as thier file name)
 
     """
+    criteria = data["criteria"]
     respjson = []
-    lst_nodes = rfs.nodes_list()
-    for g in criteria.split(","):
-        if g:
-            logger.info("Calling generator : %s ." % g)
-            module = __import__("valence.flavor.plugins." + g, fromlist=["*"])
-            classobj = getattr(module, g + "Generator")
-            inst = classobj(lst_nodes)
+    lst_systems = rfs.systems_list()
+    for criteria_name in criteria.split(","):
+        if criteria_name:
+            LOG.info("Calling generator : %s ." % criteria_name)
+            module = __import__("valence.flavor.plugins." + criteria_name,
+                                fromlist=["*"])
+            classobj = getattr(module, criteria_name + "Generator")
+            inst = classobj(lst_systems)
             respjson.append(inst.generate())
     return respjson

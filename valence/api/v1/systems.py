@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (c) 2016 Intel, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -13,21 +12,24 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from oslo_config import cfg
+
+from flask import request
+from flask_restful import Resource
+import logging
+from valence.redfish import redfish as rfs
+
+LOG = logging.getLogger(__name__)
 
 
-# Configurations
-podm_opts = [
-    cfg.StrOpt('url',
-               default='http://localhost:80',
-               help=("The complete url string of PODM")),
-    cfg.StrOpt('user',
-               default='admin',
-               help=("User for the PODM")),
-    cfg.StrOpt('password',
-               default='admin',
-               help=("Passoword for PODM"))]
+class SystemsList(Resource):
 
-podm_conf_group = cfg.OptGroup(name='podm', title='RSC PODM options')
-cfg.CONF.register_group(podm_conf_group)
-cfg.CONF.register_opts(podm_opts, group=podm_conf_group)
+    def get(self):
+        LOG.debug("GET /systems")
+        return rfs.systems_list(request.args)
+
+
+class Systems(Resource):
+
+    def get(self, systemid):
+        LOG.debug("GET /systems/" + systemid)
+        return rfs.get_systembyid(systemid)
