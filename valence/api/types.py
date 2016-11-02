@@ -11,9 +11,7 @@
 #    under the License.
 
 import logging
-from oslo_utils import strutils
 import six
-from valence.common import exceptions as exception
 
 LOG = logging.getLogger(__name__)
 
@@ -27,7 +25,7 @@ class Text(object):
             return None
 
         if not isinstance(value, six.string_types):
-            raise exception.InvalidValue(value=value, type=cls.type_name)
+            raise ValueError("An invalid value was provided")
 
         return value
 
@@ -41,12 +39,15 @@ class String(object):
             return None
 
         try:
-            strutils.check_string_length(value, min_length=min_length,
-                                         max_length=max_length)
+            strlen = len(value)
+            if strlen < min_length:
+                raise TypeError('String length is less than' + min_length)
+            if max_length and strlen > max_length:
+                raise TypeError('String length is greater than' + max_length)
         except TypeError:
-            raise exception.InvalidValue(value=value, type=cls.type_name)
+            raise ValueError("An invalid value was provided")
         except ValueError as e:
-            raise exception.InvalidValue(message=str(e))
+            raise ValueError(str(e))
 
         return value
 
@@ -64,12 +65,12 @@ class Integer(object):
                 value = int(value)
             except Exception:
                 LOG.exception('Failed to convert value to int')
-                raise exception.InvalidValue(value=value, type=cls.type_name)
+                raise ValueError("Failed to convert value to int")
 
         if minimum is not None and value < minimum:
             message = _("Integer '%(value)s' is smaller than "
                         "'%(min)d'.") % {'value': value, 'min': minimum}
-            raise exception.InvalidValue(message=message)
+            raise ValueError(message)
 
         return value
 
@@ -84,10 +85,10 @@ class Bool(object):
 
         if not isinstance(value, bool):
             try:
-                value = strutils.bool_from_string(value, strict=True)
+                value = value.lower() in ("yes", "true", "t", "1")
             except Exception:
                 LOG.exception('Failed to convert value to bool')
-                raise exception.InvalidValue(value=value, type=cls.type_name)
+                raise ValueError("Failed to convert value to bool")
 
         return value
 
@@ -107,7 +108,7 @@ class Custom(object):
                 value = self.user_class(**value)
             except Exception:
                 LOG.exception('Failed to validate received value')
-                raise exception.InvalidValue(value=value, type=self.type_name)
+                raise ValueError("Failed to validate received value")
 
         return value
 
@@ -123,10 +124,10 @@ class List(object):
             return None
 
         if not isinstance(value, list):
-            raise exception.InvalidValue(value=value, type=self.type_name)
+            raise ValueError("Failed to validate received value")
 
         try:
             return [self.type.validate(v) for v in value]
         except Exception:
             LOG.exception('Failed to validate received value')
-            raise exception.InvalidValue(value=value, type=self.type_name)
+            raise ValueError("Failed to validate received value")

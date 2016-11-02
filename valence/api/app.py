@@ -10,51 +10,31 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from oslo_config import cfg
-from oslo_service import service
-from pecan import configuration
-from pecan import make_app
-from valence.api import hooks
+from flask import Flask
+import logging
+from logging.handlers import RotatingFileHandler
+from valence import config as cfg
+
+_app = None
 
 
-def setup_app(*args, **kwargs):
-    config = {
-        'server': {
-            'host': cfg.CONF.api.bind_port,
-            'port': cfg.CONF.api.bind_host
-        },
-        'app': {
-            'root': 'valence.api.controllers.root.RootController',
-            'modules': ['valence.api'],
-            'errors': {
-                400: '/error',
-                '__force_dict__': True
-            }
-        }
-    }
-    pecan_config = configuration.conf_from_dict(config)
+def setup_app():
+    """Return Flask application"""
+    app = Flask(cfg.PROJECT_NAME)
+    app.url_map.strict_slashes = False
 
-    app_hooks = [hooks.CORSHook()]
-
-    app = make_app(
-        pecan_config.app.root,
-        hooks=app_hooks,
-        force_canonical=False,
-        logging=getattr(config, 'logging', {})
-    )
+    # Configure logging
+    handler = RotatingFileHandler(cfg.log_file, maxBytes=10000, backupCount=1)
+    handler.setLevel(cfg.log_level)
+    formatter = logging.Formatter(cfg.log_format)
+    handler.setFormatter(formatter)
+    app.logger.setLevel(cfg.log_level)
+    app.logger.addHandler(handler)
     return app
 
 
-_launcher = None
-
-
-def serve(api_service, conf, workers=1):
-    global _launcher
-    if _launcher:
-        raise RuntimeError('serve() can only be called once')
-
-    _launcher = service.launch(conf, api_service, workers=workers)
-
-
-def wait():
-    _launcher.wait()
+def get_app():
+    global _app
+    if not _app:
+        _app = setup_app()
+    return _app

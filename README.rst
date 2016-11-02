@@ -16,45 +16,41 @@ Download and Installation
 
 The following steps capture how to install valence. All installation steps require super user permissions.
 
-********************
-Valence installation
-********************
+*******************************************
+Valence installation in Virtual environment
+*******************************************
 
  1. Install software dependencies
 
-    ``$ sudo apt-get install git python-pip rabbitmq-server libyaml-0-2 python-dev``
+    ``$ sudo apt-get install git python-pip``
 
- 2. Configure RabbitMq Server
+ 2. Clone the Valence code from git repo.
 
-     ``$ sudo rabbitmqctl add_user valence valence	#use this username/pwd in valence.conf``
+    ``$ git clone https://git.openstack.org/openstack/rsc``
 
-     ``$ sudo rabbitmqctl set_user_tags valence administrator``
+ 3. Create and activate python virtual environment (could be in the same directory as  Valence)
 
-     ``$ sudo rabbitmqctl set_permissions valence ".*" ".*" ".*"``
- 
- 3. Clone the Valence code from git repo and change the directory to root Valence folder.
+    ``$ virtualenv -p python3.4 valenceenv``
+    ``$ source valenceenv/bin/activate``
+    ``$ cd rsc``
 
  4. Install all necessary software pre-requisites using the pip requirements file.
 
-    ``$ sudo -E pip install -r requirements.txt``
+    ``$ pip install -r requirements.txt``
 
  5. Execute the 'install_valence.sh' file the Valence root directory.
 
-    ``$ ./install_valence.sh``
+    ``$ sudo -E bash install_valence.sh``
 
  6. Check the values in valence.conf located at /etc/valence/valence.conf
 
-     ``set the ip/credentials of podm for which this Valence will interact``
+    ``set the ip/credentials of podm for which this Valence will interact``
 
-     ``set the rabbitmq user/password to the one given above(Step 2)``
+ 7. Check the PYTHON_HOME and other variables in /etc/init/valence.conf
 
- 7. Check the values in /etc/init/valence-api.conf, /etc/init/valence-controller.conf
+ 8. Start valence service
 
- 8. Start api and controller services
-
-    ``$ sudo service valence-api start``
-
-    ``$ sudo service valence-controller start``
+    ``$ sudo service valence start``
 
  9. Logs are located at /var/logs/valence/
 
