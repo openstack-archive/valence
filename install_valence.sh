@@ -19,21 +19,9 @@ PYHOME=$(python -c "import site; print site.getsitepackages()[0]")
 echo "Detected PYTHON HOME: $PYHOME" >> $install_log
 
 # Copy the config files
-cp $DIR/doc/source/init/valence-api.conf /tmp/valence-api.conf
-sed -i s/\${CHUID}/$USER/  /tmp/valence-api.conf
-#Use alternate sed delimiter because path will
-#have /
-sed -i "s#PYHOME#$PYHOME#" /tmp/valence-api.conf
-mv /tmp/valence-api.conf /etc/init/valence-api.conf
-echo "Setting up valence-api config" >> $install_log
-
-cp $DIR/doc/source/init/valence-controller.conf /tmp/valence-controller.conf
-sed -i s/\${CHUID}/$USER/   /tmp/valence-controller.conf
-#Use alternate sed delimiter because path will
-#have /
-sed -i "s#PYHOME#$PYHOME#"   /tmp/valence-controller.conf
-mv /tmp/valence-controller.conf /etc/init/valence-controller.conf
-echo "Setting up valence-controller config" >> $install_log
+echo "Setting up valence config" >> $install_log
+sed s/\${CHUID}/$USER/  $DIR/doc/source/init/valence.conf > /tmp/valence.conf
+sudo mv /tmp/valence.conf /etc/init/valence.conf
 
 # create conf directory for valence
 mkdir /etc/valence
@@ -52,5 +40,4 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Installation Completed"
-echo "To start api : sudo service valence-api start"
-echo "To start controller : sudo service valence-controller start"
+echo "To start valence : sudo service valence start"

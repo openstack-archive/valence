@@ -1,37 +1,20 @@
 [DEFAULT]
-# Show more verbose log output (sets INFO log level output)
-verbose = True
+#LOG Levels - debug, info, warning, error, critical
+log_level= debug
 
-# Show debugging output in logs (sets DEBUG log level output)
-debug = False
-
-auth_strategy=noauth
+#Server log settings
+debug=True
 
 # Log to this file. Make sure the user running rsc has
 # permissions to write to this file!
+log_file=/var/log/valence/valence.log
 
-
-log_dir=/var/log/valence
-rpc_response_timeout = 300
-
-
-[api]
-#address to bind the server to
+#address and port the server binds too
 bind_host = 0.0.0.0
-
-# Port the bind the server to
 bind_port = 8181
 
-[oslo_messaging_rabbit]
-rabbit_host = localhost
-rabbit_port = 5672
-rabbit_userid = valence
-rabbit_password = valence
-
 [podm]
-#url=http://10.223.197.204
 url=http://<ip address>
-user=<user>
-password=<password>
-
+user=<podm user>
+password=<podm admin>
 
