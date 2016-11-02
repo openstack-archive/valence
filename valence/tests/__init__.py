@@ -1,7 +1,5 @@
-import os
-from pecan import set_config
-from pecan.testing import load_test_app
 from unittest import TestCase
+from valence.api.route import app
 
 __all__ = ['FunctionalTest']
 
@@ -15,10 +13,8 @@ class FunctionalTest(TestCase):
     """
 
     def setUp(self):
-        self.app = load_test_app(os.path.join(
-            os.path.dirname(__file__),
-            'config.py'
-        ))
+        self.app = app.test_client()
+        self.app.testing = True
 
     def tearDown(self):
-        set_config({}, overwrite=True)
+        pass

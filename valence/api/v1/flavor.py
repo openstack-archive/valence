@@ -1,3 +1,5 @@
+# Copyright (c) 2016 Intel, Inc.
+#
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
@@ -10,28 +12,20 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-# Server Specific Configurations
-server = {
-    'port': '8080',
-    'host': '0.0.0.0'
-}
+from flask import request
+from flask_restful import Resource
+import logging
+from valence.flavor import flavor
 
-# Pecan Application Configurations
-app = {
-    'root': 'valence.controllers.root.RootController',
-    'modules': ['valence'],
-    'static_root': '%(confdir)s/../../public',
-    'template_path': '%(confdir)s/../templates',
-    'debug': True,
-    'errors': {
-        '404': '/error/404',
-        '__force_dict__': True
-    }
-}
+LOG = logging.getLogger(__name__)
 
-# Custom Configurations must be in Python dictionary format::
-#
-# foo = {'bar':'baz'}
-#
-# All configurations are accessible at::
-# pecan.conf
+
+class Flavors(Resource):
+
+    def get(self):
+        LOG.debug("GET /flavor")
+        return flavor.get_available_criteria()
+
+    def post(self):
+        LOG.debug("POST /flavor")
+        return flavor.create_flavors(request.get_json())

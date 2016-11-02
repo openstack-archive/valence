@@ -12,26 +12,22 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from oslo_log import log as logging
-from valence.flavor import flavor
+from flask_restful import abort
+from flask_restful import Resource
+import logging
 
 LOG = logging.getLogger(__name__)
 
 
-class Handler(object):
-    """Valence Flavor RPC handler.
+class StoragesList(Resource):
 
-    These are the backend operations. They are executed by the backend ervice.
-    API calls via AMQP (within the ReST API) trigger the handlers to be called.
+    def get(self):
+        LOG.debug("GET /storages")
+        return abort(501)
 
-    """
 
-    def __init__(self):
-        super(Handler, self).__init__()
+class Storages(Resource):
 
-    def flavor_options(self, context):
-        return flavor.get_available_criteria()
-
-    def flavor_generate(self, context, criteria):
-        LOG.debug("Getting flavor options")
-        return flavor.create_flavors(criteria)
+    def get(self, storageid):
+        LOG.debug("GET /storages" + storageid)
+        return abort(501)
