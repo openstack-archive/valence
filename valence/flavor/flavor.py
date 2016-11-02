@@ -13,13 +13,12 @@
 #    under the License.
 
 from importlib import import_module
-# from valence.flavor.plugins import *
+import logging
 import os
-from oslo_log import log as logging
-from valence.common.redfish import api as rfs
+from valence.redfish import redfish as rfs
 
 FLAVOR_PLUGIN_PATH = os.path.dirname(os.path.abspath(__file__)) + '/plugins'
-logger = logging.getLogger()
+LOG = logging.getLogger(__name__)
 
 
 def get_available_criteria():
@@ -36,19 +35,21 @@ def get_available_criteria():
     return {'criteria': resp}
 
 
-def create_flavors(criteria):
+def create_flavors(data):
     """criteria : comma seperated generator names
 
        This should be same as thier file name)
 
     """
+    criteria = data["criteria"]
     respjson = []
-    lst_nodes = rfs.nodes_list()
+    lst_systems = rfs.systems_list()
+    LOG.info("aaaaa")
     for g in criteria.split(","):
         if g:
-            logger.info("Calling generator : %s ." % g)
+            LOG.info("Calling generator : %s ." % g)
             module = __import__("valence.flavor.plugins." + g, fromlist=["*"])
             classobj = getattr(module, g + "Generator")
-            inst = classobj(lst_nodes)
+            inst = classobj(lst_systems)
             respjson.append(inst.generate())
     return respjson
