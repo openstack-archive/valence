@@ -32,6 +32,7 @@ const Layout = React.createClass({
       pods: [],
       racks: [],
       systems: [],
+      systemsInUse: [],
       storage: [],
       nodes: []
     };
@@ -148,6 +149,12 @@ const Layout = React.createClass({
   },
 
   setNodes: function(nodes) {
+    // Update systems in use
+    var usedSystems = [];
+    for (var i = 0; i < nodes.length; i++) {
+      usedSystems.push(nodes[i]["Links"]["ComputerSystem"]["@odata.id"]);
+    }
+    this.setState({systemsInUse: usedSystems});
     this.setState({nodes: nodes});
   },
 
@@ -195,6 +202,7 @@ const Layout = React.createClass({
           podList={this.state.pods}
           rackList={this.state.racks}
           systemList={this.state.systems}
+          usedSystemList={this.state.systemsInUse}
           storageList={this.state.storage}
           nodeList={this.state.nodes}
           onShowDetail={this.displayDetail}
