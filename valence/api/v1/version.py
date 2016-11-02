@@ -12,16 +12,13 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from pecan import abort
-from pecan import expose
-from pecan import request
-from pecan import route
-from valence.api.controllers import base
-from valence.api.controllers import link
-from valence.api.controllers import types
-from valence.api.controllers.v1 import flavor as v1flavor
-from valence.api.controllers.v1 import nodes as v1nodes
-from valence.common.redfish import api as rfsapi
+
+from flask import request
+from flask_restful import Resource
+import json
+from valence.api import base
+from valence.api import link
+from valence.api import types
 
 
 class MediaType(base.APIBase):
@@ -37,7 +34,7 @@ class MediaType(base.APIBase):
     }
 
 
-class V1(base.APIBase):
+class V1Base(base.APIBase):
     """The representation of the version 1 of the API."""
 
     fields = {
@@ -50,16 +47,23 @@ class V1(base.APIBase):
         'links': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
-        'services': {
+        'nodes': {
+            'validate': types.List(types.Custom(link.Link)).validate
+        },
+        'storages': {
+            'validate': types.List(types.Custom(link.Link)).validate
+        },
+        'flavors': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
     }
 
     @staticmethod
     def convert():
-        v1 = V1()
+        v1 = V1Base()
         v1.id = "v1"
-        v1.links = [link.Link.make_link('self', request.host_url,
+        v1_base_url = request.url_root.rstrip('//')
+        v1.links = [link.Link.make_link('self', request.url_root,
                                         'v1', '', bookmark=True),
                     link.Link.make_link('describedby',
                                         'http://docs.openstack.org',
@@ -68,37 +72,29 @@ class V1(base.APIBase):
                                         bookmark=True, type='text/html')]
         v1.media_types = [MediaType(base='application/json',
                           type='application/vnd.openstack.valence.v1+json')]
-        v1.services = [link.Link.make_link('self', request.host_url,
-                                           'services', ''),
+        v1.nodes = [link.Link.make_link('self', v1_base_url + '/nodes',
+                                        'nodes', ''),
+                    link.Link.make_link('bookmark',
+                                        v1_base_url + '/nodes',
+                                        'nodes', '',
+                                        bookmark=True)]
+        v1.storages = [link.Link.make_link('self', v1_base_url,
+                                           'storages', ''),
                        link.Link.make_link('bookmark',
-                                           request.host_url,
-                                           'services', '',
+                                           v1_base_url,
+                                           'storages', '',
                                            bookmark=True)]
+        v1.flavors = [link.Link.make_link('self', v1_base_url,
+                                          'flavors', ''),
+                      link.Link.make_link('bookmark',
+                                          v1_base_url,
+                                          'flavors', '',
+                                          bookmark=True)]
         return v1
 
 
-class V1Controller(object):
-    @expose('json')
-    def index(self):
-        return V1.convert()
+class V1(Resource):
 
-    @expose('json')
-    def _default(self, *args):
-        """Passthrough Proxy for PODM.
-
-        This function byepasses valence controller handlers
-        and calls PODM directly.
-
-        """
-        ext = args[0]
-        filterext = ["Chassis", "Services", "Managers", "Systems",
-                     "EventService", "Nodes", "EthernetSwitches"]
-        if ext in filterext:
-            urlext = '/'.join(args)
-            resp = rfsapi.send_request(urlext)
-            return resp.json()
-        else:
-            abort(404)
-
-route(V1Controller, 'flavor', v1flavor.FlavorController())
-route(V1Controller, 'nodes', v1nodes.NodesController())
+    def get(self):
+        vobj = V1Base.convert()
+        return json.dumps(vobj, default=lambda o: o.as_dict())

@@ -13,13 +13,14 @@
 #    under the License.
 
 
-from pecan import expose
-from pecan import request
-from pecan import route
-from valence.api.controllers import base
-from valence.api.controllers import link
-from valence.api.controllers import types
-from valence.api.controllers.v1 import controller as v1controller
+from flask import abort
+from flask import request
+from flask_restful import Resource
+import json
+from valence.api import base
+from valence.api import link
+from valence.api import types
+from valence.redfish import redfish as rfs
 
 
 class Version(base.APIBase):
@@ -32,18 +33,26 @@ class Version(base.APIBase):
         'links': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
+        'min_version': {
+            'validate': types.Text.validate
+        },
+        'status': {
+            'validate': types.Text.validate
+        },
     }
 
     @staticmethod
-    def convert(id):
+    def convert(id, min_version, current=False):
         version = Version()
         version.id = id
-        version.links = [link.Link.make_link('self', request.host_url,
+        version.status = "CURRENT" if current else "DEPRECTED"
+        version.min_version = min_version
+        version.links = [link.Link.make_link('self', request.url_root,
                                              id, '', bookmark=True)]
         return version
 
 
-class Root(base.APIBase):
+class RootBase(base.APIBase):
 
     fields = {
         'id': {
@@ -62,17 +71,34 @@ class Root(base.APIBase):
 
     @staticmethod
     def convert():
-        root = Root()
+        root = RootBase()
         root.name = "OpenStack Valence API"
-        root.description = ("Valence is an OpenStack project")
-        root.versions = [Version.convert('v1')]
-        root.default_version = Version.convert('v1')
+        root.description = "Valence is an OpenStack project"
+        root.versions = [Version.convert('v1', '1.0', True)]
+        root.default_version = Version.convert('v1', '1.0', True)
         return root
 
 
-class RootController(object):
-    @expose('json')
-    def index(self):
-        return Root.convert()
+class Root(Resource):
 
-route(RootController, 'v1', v1controller.V1Controller())
+    def get(self):
+        obj = RootBase.convert()
+        return json.dumps(obj, default=lambda o: o.as_dict())
+
+
+class PODMProxy(Resource):
+    """Passthrough Proxy for PODM.
+
+    This function byepasses valence processing
+    and calls PODM directly. This function may be temperory
+
+    """
+    def get(self, url):
+        op = url.split("/")[0]
+        filterext = ["Chassis", "Services", "Managers", "Systems",
+                     "EventService", "Nodes", "EthernetSwitches"]
+        if op in filterext:
+            resp = rfs.send_request(url)
+            return resp.json()
+        else:
+            abort(404)
