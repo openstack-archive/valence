@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from oslo_log import log as logging
+import logging
 import re
 from valence.flavor.generatorbase import generatorbase
 
@@ -29,7 +29,7 @@ class assettagGenerator(generatorbase):
     def generate(self):
         LOG.info("Default Generator")
         for node in self.nodes:
-            LOG.info("Node ID " + node['nodeid'])
+            LOG.info("Node ID " + node['id'])
             location = node['location']
             location = location.split('Sled')[0]
             location_lst = re.split("(\d+)", location)
