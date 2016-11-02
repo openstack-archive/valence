@@ -22,13 +22,14 @@ const ResourceList = React.createClass({
   render: function() {
     var inUseResources = this.props.inUseResources;
     var onShowDetail = this.props.onShowDetail;
+    var resourceType = this.props.header;
     var resourceList = this.props.resources.map(function(resource) {
       if (resource.Status != null) {
         if (resource.Status.Health == "Warning") {
           return (
             <div class="warning-resource" key={resource.Id}>
               {resource.Name} | Health Warning
-              <input type="button" class="detail-button" onClick={() => onShowDetail(resource)} value="Show" />
+              <input type="button" class="detail-button" onClick={() => onShowDetail(resource, resourceType)} value="Show" />
               <br />
               {resource.Description}
             </div>
@@ -37,7 +38,7 @@ const ResourceList = React.createClass({
           return (
             <div class="critical-resource" key={resource.Id}>
               {resource.Name} | Health Critical
-              <input type="button" class="detail-button" onClick={() => onShowDetail(resource)} value="Show" />
+              <input type="button" class="detail-button" onClick={() => onShowDetail(resource, resourceType)} value="Show" />
               <br />
               {resource.Description}
             </div>
@@ -48,7 +49,7 @@ const ResourceList = React.createClass({
         return (
           <div class="resource" key={resource.Id}>
             {resource.Name}
-            <input type="button" class="detail-button" onClick={() => onShowDetail(resource)} value="Show" />
+            <input type="button" class="detail-button" onClick={() => onShowDetail(resource, resourceType)} value="Show" />
             <br />
             {resource.Description}
           </div>
@@ -57,7 +58,7 @@ const ResourceList = React.createClass({
         return (
           <div class="in-use-resource" key={resource.Id}>
             {resource.Name} | In Use
-            <input type="button" class="detail-button" onClick={() => onShowDetail(resource)} value="Show" />
+            <input type="button" class="detail-button" onClick={() => onShowDetail(resource, resourceType)} value="Show" />
             <br />
             {resource.Description}
           </div>
