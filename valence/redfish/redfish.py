@@ -154,9 +154,9 @@ def node_nw_details(nodeurl):
     # this extracts the total nw interfaces and returns as a string
     resp = send_request(nodeurl + "/EthernetInterfaces")
     respbody = resp.json()
-    nwi = extract_val(respbody, "Members@odata.count")
-    LOG.debug(" Total NW for node %s : %d " % (nodeurl, nwi))
-    return str(nwi) if nwi else "0"
+    nwi = str(extract_val(respbody, "Members@odata.count", "0"))
+    LOG.debug(" Total NW for node %s : %s " % (nodeurl, nwi))
+    return nwi
 
 
 def node_storage_details(nodeurl):
