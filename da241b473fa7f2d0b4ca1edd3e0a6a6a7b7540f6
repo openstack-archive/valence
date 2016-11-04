@@ -1,0 +1,9 @@
+Code-Review+2: Nate Potter <nathaniel.potter@intel.com>
+Code-Review+2: Lin Yang <lin.a.yang@intel.com>
+Workflow+1: Lin Yang <lin.a.yang@intel.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Fri, 04 Nov 2016 20:11:03 +0000
+Reviewed-on: https://review.openstack.org/392416
+Project: openstack/rsc
+Branch: refs/heads/master
