@@ -19,15 +19,15 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-class StoragesList(Resource):
+class PooledResourcesList(Resource):
 
     def get(self):
-        LOG.debug("GET /storages")
+        LOG.debug("GET /resources")
         return abort(501)
 
 
-class Storages(Resource):
+class PooledResources(Resource):
 
-    def get(self, storageid):
-        LOG.debug("GET /storages" + storageid)
+    def get(self, resourceid):
+        LOG.debug("GET /resources" + resourceid)
         return abort(501)

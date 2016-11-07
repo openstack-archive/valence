@@ -21,8 +21,8 @@ from valence.api.v1.flavor import Flavors as v1Flavors
 from valence.api.v1.nodes import Nodes as v1Nodes
 from valence.api.v1.nodes import NodesList as v1NodesList
 from valence.api.v1.nodes import NodesStorage as v1NodesStorage
-from valence.api.v1.storages import Storages as v1Storages
-from valence.api.v1.storages import StoragesList as v1StoragesList
+from valence.api.v1.resources import PooledResources as v1Resources
+from valence.api.v1.resources import PooledResourcesList as v1ResourcesList
 from valence.api.v1.systems import Systems as v1Systems
 from valence.api.v1.systems import SystemsList as v1SystemsList
 from valence.api.v1.version import V1
@@ -56,9 +56,10 @@ api.add_resource(v1Flavors, '/v1/flavor', endpoint='flavor')
 
 
 # Storage(s) operations
-api.add_resource(v1StoragesList, '/v1/storages', endpoint='storages')
-api.add_resource(v1Storages,
-                 '/v1/storages/<string:storageid>', endpoint='storage')
+api.add_resource(v1ResourcesList, '/v1/resources', endpoint='pooledresources')
+api.add_resource(v1Resources,
+                 '/v1/resources/<string:resourcesid>',
+                 endpoint='pooledresource')
 
 # Proxy to PODM
 api.add_resource(PODMProxy, '/<path:url>', endpoint='podmproxy')
