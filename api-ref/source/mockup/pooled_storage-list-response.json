@@ -1,0 +1,14 @@
+{
+  "pooled_storage": [
+    {
+      "id": "1",
+      "Name": "Logical Drive 1",
+      "Description": "The First drive"
+    }, 
+    {
+      "id": "2",
+      "Name": "Logical Drive 2",
+      "Description": "The Second drive"
+    }
+  ]
+}

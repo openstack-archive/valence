@@ -171,6 +171,38 @@ def fake_chassis_list():
         }
     ]
 
+def fake_services_list():
+    return [
+        {
+            "Description": "Storage Services",
+            "Links": {"ManagedBy": [{"@odata.id": "/redfish/v1/Managers/1"}]},
+            "RemoteTargets": {"@odata.id": "/redfish/v1/Services/1/Targets"},
+            "@odata.id": "/redfish/v1/Services/1",
+            "@odata.context": "/redfish/v1/$metadata#Services/Members/$entity",
+            "Drives": {"@odata.id": "/redfish/v1/Services/1/Drives"},
+            "LogicalDrives": {"@odata.id": "/redfish/v1/Services/1/LogicalDrives"},
+            "Id": "1",
+            "Name": "Storage Service"
+        }
+    ]
+
+
+def fake_drive_list():
+    return [
+        {
+            "Name": "Drive 1",
+            "Description": "Storage Drive",
+            "Id": "1",
+            "CapacityGiB": "1000",
+        },
+        {
+            "Name": "Drive 2",
+            "Description": "Storage Drive",
+            "Id": "2",
+            "CapacityGiB": "500",
+        },
+    ]
+
 
 def fake_processor_list():
     return [

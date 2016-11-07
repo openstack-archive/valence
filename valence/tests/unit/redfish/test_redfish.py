@@ -576,3 +576,34 @@ class TestRedfish(TestCase):
         redfish.node_action("1", {"Reset": {"Type": "On"}})
 
         mock_reset_node.assert_called_once_with("1", {"Reset": {"Type": "On"}})
+
+    @mock.patch('valence.redfish.redfish.send_request')
+    @mock.patch('valence.redfish.redfish.urls2list')
+    @mock.patch('valence.redfish.redfish.storage_services_list')
+    def test_pooled_storage_list(self, mock_storage_services, mock_url_list,
+                                 mock_request):
+        mock_storage_services.return_value = fakes.fake_services_list()
+        mock_url_list.return_value = ["/redfish/v1/Drive/1",
+                                      "/redfish/v1/Drive/2"]
+        fake_drive_list = fakes.fake_drive_list()
+        first_request = fakes.mock_request_get(fake_drive_list[0],
+                                               http_client.OK)
+        second_request = fakes.mock_request_get(fake_drive_list[1],
+                                                http_client.OK)
+        mock_request.side_effect = [first_request, second_request]
+        expected = [
+            {
+                "name": "Drive 1",
+                "description": "Storage Drive",
+                "id": "1",
+                "capacity": "1000",
+            },
+            {
+                "name": "Drive 2",
+                "description": "Storage Drive",
+                "id": "2",
+                "capacity": "500",
+            },
+        ]
+        result = redfish.pooled_storage_list()
+        self.assertEqual(expected, result)
