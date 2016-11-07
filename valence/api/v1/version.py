@@ -50,7 +50,7 @@ class V1Base(base.APIBase):
         'nodes': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
-        'storages': {
+        'pooled_storage': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
         'flavors': {
@@ -78,12 +78,12 @@ class V1Base(base.APIBase):
                                         v1_base_url + '/nodes',
                                         'nodes', '',
                                         bookmark=True)]
-        v1.storages = [link.Link.make_link('self', v1_base_url,
-                                           'storages', ''),
-                       link.Link.make_link('bookmark',
-                                           v1_base_url,
-                                           'storages', '',
-                                           bookmark=True)]
+        v1.pooled_storage = [link.Link.make_link('self', v1_base_url,
+                                                 'pooled_storage', ''),
+                             link.Link.make_link('bookmark',
+                                                 v1_base_url,
+                                                 'pooled_storage', '',
+                                                 bookmark=True)]
         v1.flavors = [link.Link.make_link('self', v1_base_url,
                                           'flavors', ''),
                       link.Link.make_link('bookmark',
