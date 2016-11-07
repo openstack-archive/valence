@@ -1,0 +1,7 @@
+{
+  "health": "OK",
+  "name": "Drive 1",
+  "capacity": 1863,
+  "description": "Storage Drive",
+  "num_logical_drives": "2"
+}
