@@ -671,3 +671,34 @@ class TestRedfish(TestCase):
         ]
         result = redfish.show_rack("2")
         self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish.send_request')
+    @mock.patch('valence.redfish.redfish.urls2list')
+    @mock.patch('valence.redfish.redfish.storage_services_list')
+    def test_list_remote_drives(self, mock_storage_services, mock_url_list,
+                                mock_request):
+        mock_storage_services.return_value = fakes.fake_services_list()
+        mock_url_list.return_value = ["/redfish/v1/Drive/1",
+                                      "/redfish/v1/Drive/2"]
+        fake_drive_list = fakes.fake_drive_list()
+        first_request = fakes.mock_request_get(fake_drive_list[0],
+                                               http_client.OK)
+        second_request = fakes.mock_request_get(fake_drive_list[1],
+                                                http_client.OK)
+        mock_request.side_effect = [first_request, second_request]
+        expected = [
+            {
+                "name": "Drive 1",
+                "description": "Storage Drive",
+                "resource_url": "/redfish/v1/Drive/1",
+                "capacity": "1000",
+            },
+            {
+                "name": "Drive 2",
+                "description": "Storage Drive",
+                "resource_url": "/redfish/v1/Drive/2",
+                "capacity": "500",
+            },
+        ]
+        result = redfish.list_remote_drives()
+        self.assertEqual(expected, result)

@@ -51,7 +51,7 @@ class V1Base(base.ObjectBase):
         'nodes': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
-        'storages': {
+        'storage': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
         'flavors': {
@@ -85,12 +85,12 @@ class V1Base(base.ObjectBase):
                                         v1_base_url,
                                         'nodes', '',
                                         bookmark=True)]
-        v1.storages = [link.Link.make_link('self', v1_base_url,
-                                           'storages', ''),
-                       link.Link.make_link('bookmark',
-                                           v1_base_url,
-                                           'storages', '',
-                                           bookmark=True)]
+        v1.storage = [link.Link.make_link('self', v1_base_url,
+                                          'storage', ''),
+                      link.Link.make_link('bookmark',
+                                          v1_base_url,
+                                          'storage', '',
+                                          bookmark=True)]
         v1.flavors = [link.Link.make_link('self', v1_base_url,
                                           'flavors', ''),
                       link.Link.make_link('bookmark',

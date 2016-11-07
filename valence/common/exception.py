@@ -120,6 +120,17 @@ class NotFound(ValenceError):
         self.detail = detail
 
 
+class BadResourceType(ValenceError):
+
+    def __init__(self, detail='bad resource type', request_id=FAKE_REQUEST_ID,
+                 code=None):
+        self.request_id = request_id
+        self.status = http_client.BAD_REQUEST
+        self.code = code or "BadResourceType"
+        self.title = "Incorrect resource type provided"
+        self.detail = detail
+
+
 class BadRequest(ValenceError):
 
     def __init__(self, detail='bad request', request_id=FAKE_REQUEST_ID,
