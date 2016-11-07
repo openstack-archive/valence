@@ -41,14 +41,14 @@
        "href" : "http://127.0.0.1:8181/flavors/"
     }
   ],
-  "pooled" : [
+  "resources" : [
     {
-        "href" : "http://127.0.0.1:8181/v1/pooled/",
+        "href" : "http://127.0.0.1:8181/v1/resources/",
         "rel" : "self"
     },
     {
         "rel" : "bookmark",
-        "href" : "http://127.0.0.1:8181/pooled/"
+        "href" : "http://127.0.0.1:8181/resources/"
     }
   ],
   "media_types" : [
