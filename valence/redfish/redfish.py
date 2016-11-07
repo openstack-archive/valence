@@ -229,6 +229,32 @@ def systems_list(filters={}):
     return lst_systems
 
 
+def services_list():
+    lst_services = []
+    serviceurllist = urls2list("Services")
+    for lnk in serviceurllist:
+        resp = send_request(lnk)
+        service = resp.json()
+        lst_services.append(service)
+    return lst_services
+
+
+def storage_list(filters={}):
+    logical_drives = []
+    services = services_list()
+    for service in services:
+        filterPassed = True
+        drivesurllist = urls2list(service["LogicalDrives"]["@odata.id"])
+        for lnk in drivesurllist:
+            resp = send_request(lnk)
+            service_drives = resp.json()
+            if any(filters):
+                filterPassed = generic_filter(service_drives, filters)
+            if filterPassed:
+                logical_drives.append(service_drives)
+    return logical_drives
+
+
 def get_chassis_list():
     chassis_lnk_lst = urls2list("Chassis")
     lst_chassis = []
@@ -271,6 +297,10 @@ def get_systembyid(systemid):
 
 def get_nodebyid(nodeid):
     return nodes_list({"Id": nodeid})
+
+
+def get_drivebyid(driveid):
+    return storage_list({"Id": driveid})
 
 
 def build_hierarchy_tree():

@@ -12,9 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from flask_restful import abort
+from flask import request
 from flask_restful import Resource
 import logging
+from valence.redfish import redfish as rfs
 
 LOG = logging.getLogger(__name__)
 
@@ -23,11 +24,11 @@ class StoragesList(Resource):
 
     def get(self):
         LOG.debug("GET /storages")
-        return abort(501)
+        return rfs.storage_list(request.args)
 
 
 class Storages(Resource):
 
     def get(self, storageid):
         LOG.debug("GET /storages" + storageid)
-        return abort(501)
+        return rfs.get_drivebyid(storageid)
