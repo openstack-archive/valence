@@ -1,0 +1,16 @@
+{
+  "pooled_storage": [
+    {
+      "id": "1",
+      "name": "Drive 1",
+      "description": "The First drive",
+      "capacity": "500"
+    },
+    {
+      "id": "2",
+      "name": "Drive 2",
+      "description": "The Second drive",
+      "capacity": "1000"
+    }
+  ]
+}
