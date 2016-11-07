@@ -279,6 +279,49 @@ def systems_list(filters={}):
     return lst_systems
 
 
+def storage_services_list():
+    service_list = []
+    service_url_list = urls2list("Services")
+    for url in service_url_list:
+        resp = send_request(url)
+        service = resp.json()
+        service_list.append(service)
+    return service_list
+
+
+def list_remote_drives():
+    remote_drives = []
+    services = storage_services_list()
+    for service in services:
+        drives_url_list = urls2list(service["Drives"]["@odata.id"])
+        for drive_url in drives_url_list:
+            remote_drives.append(get_remote_drive(drive_url,
+                                                  show_details=False))
+    return remote_drives
+
+
+def get_remote_drive(drive_url, show_details=True):
+    resp = send_request(drive_url)
+    remote_drive = resp.json()
+
+    drive_name = remote_drive["Name"]
+    drive_description = remote_drive["Description"]
+    resource_url = drive_url
+    drive_capacity = remote_drive["CapacityGiB"]
+
+    drive = {"name": drive_name, "description": drive_description,
+             "resource_url": resource_url, "capacity": drive_capacity}
+
+    if show_details:
+        drive_health = remote_drive["Status"]["Health"]
+        num_logical_drives = (
+            len(remote_drive["Links"]["UsedBy"]))
+        drive.update({"num_logical_drives": num_logical_drives,
+                      "health": drive_health})
+
+    return drive
+
+
 def get_chassis_list():
     chassis_url = get_base_resource_url("Chassis")
     chassis_lnk_lst = urls2list(chassis_url)

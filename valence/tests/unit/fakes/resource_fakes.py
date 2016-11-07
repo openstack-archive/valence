@@ -79,3 +79,18 @@ def get_test_node_list(**kwargs):
             'resource_type': kwargs.get('resource_type', 'composed_node')
         }
     ]
+
+
+def get_test_remote_drive(**kwargs):
+    return {
+        'uuid': kwargs.get('uuid', 'c7e1b642-c42f-4fab-a868-6cd0706e09e0'),
+        'podm_uuid': kwargs.get('podm_uuid', 'UPDATE ME'),
+        'resource_url': kwargs.get('resource_url',
+                                   '/redfish/v1/Services/1/Drives/1'),
+        'resource_type': kwargs.get('resource_type', 'remote_drive'),
+        'name': kwargs.get('name', 'fake_name'),
+        'description': kwargs.get('description', 'fake_description'),
+        'capacity': kwargs.get('capacity', 'fake_capacity'),
+        'num_logical_drives': kwargs.get('num_logical_drives', 'fake_num'),
+        'health': kwargs.get('health', 'fake_health')
+    }

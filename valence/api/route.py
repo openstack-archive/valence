@@ -25,12 +25,11 @@ import valence.api.v1.flavors as v1_flavors
 import valence.api.v1.nodes as v1_nodes
 import valence.api.v1.podmanagers as v1_podmanagers
 import valence.api.v1.racks as v1_racks
-import valence.api.v1.storages as v1_storages
+import valence.api.v1.storage as v1_storage
 import valence.api.v1.systems as v1_systems
 import valence.api.v1.version as v1_version
 from valence.common import exception
 from valence.common import utils
-
 
 LOG = logging.getLogger(__name__)
 app = flaskapp.get_app()
@@ -81,8 +80,8 @@ api.add_resource(v1_nodes.NodeAction,
 api.add_resource(v1_nodes.NodeManage, '/v1/nodes/manage',
                  endpoint='node_manage')
 api.add_resource(v1_nodes.NodesStorage,
-                 '/v1/nodes/<string:nodeid>/storages',
-                 endpoint='nodes_storages')
+                 '/v1/nodes/<string:nodeid>/storage',
+                 endpoint='nodes_storage')
 api.add_resource(v1_nodes.NodeRegister,
                  '/v1/nodes/<string:node_uuid>/register',
                  endpoint='node_register')
@@ -97,10 +96,12 @@ api.add_resource(v1_flavors.Flavors, '/v1/flavors', endpoint='flavors')
 api.add_resource(v1_flavors.Flavor, '/v1/flavors/<string:flavorid>',
                  endpoint='flavor')
 
-# Storage(s) operations
-api.add_resource(v1_storages.StoragesList, '/v1/storages', endpoint='storages')
-api.add_resource(v1_storages.Storages,
-                 '/v1/storages/<string:storageid>', endpoint='storage')
+# Storage operations
+api.add_resource(v1_storage.StorageList, '/v1/storage',
+                 endpoint='storage')
+api.add_resource(v1_storage.Storage,
+                 '/v1/storage/<string:drive_id>',
+                 endpoint='storage_drive')
 
 # PodManager(s) operations
 api.add_resource(v1_podmanagers.PodManager,

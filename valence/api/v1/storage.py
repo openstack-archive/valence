@@ -12,21 +12,18 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import logging
-
-from flask_restful import abort
 from flask_restful import Resource
 
-LOG = logging.getLogger(__name__)
+from valence.controller import storage
 
 
-class StoragesList(Resource):
+class StorageList(Resource):
 
     def get(self):
-        return abort(501)
+        return storage.list_storage_resources()
 
 
-class Storages(Resource):
+class Storage(Resource):
 
-    def get(self, storageid):
-        return abort(501)
+    def get(self, drive_uuid):
+        return storage.get_storage_resource_by_uuid(drive_uuid)

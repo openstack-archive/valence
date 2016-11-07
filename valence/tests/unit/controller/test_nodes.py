@@ -20,7 +20,7 @@ from valence.common import exception
 from valence.controller import nodes
 from valence.tests.unit.db import utils as test_utils
 from valence.tests.unit.fakes import flavor_fakes
-from valence.tests.unit.fakes import node_fakes
+from valence.tests.unit.fakes import resource_fakes
 
 
 class TestAPINodes(unittest.TestCase):
@@ -62,9 +62,9 @@ class TestAPINodes(unittest.TestCase):
     @mock.patch("valence.redfish.redfish.get_node_by_id")
     def test_manage_node(self, mock_get_node, mock_list_nodes,
                          mock_generate_uuid, mock_db_create_podm_resource):
-        manage_node = node_fakes.get_test_composed_node()
+        manage_node = resource_fakes.get_test_composed_node()
         mock_get_node.return_value = manage_node
-        node_list = node_fakes.get_test_node_list()
+        node_list = resource_fakes.get_test_node_list()
         # Change the url of node 1 so that the node to manage
         # doesn't appear in the list of nodes already managed by Valence.
         node_list[0]["resource_url"] = '/redfish/v1/Nodes/4'
@@ -84,12 +84,12 @@ class TestAPINodes(unittest.TestCase):
     @mock.patch("valence.controller.nodes.Node.list_composed_nodes")
     @mock.patch("valence.redfish.redfish.get_node_by_id")
     def test_manage_already_managed_node(self, mock_get_node, mock_list_nodes):
-        manage_node = node_fakes.get_test_composed_node()
+        manage_node = resource_fakes.get_test_composed_node()
         mock_get_node.return_value = manage_node
         # Leave the index of node 1 as '1' so that it conflicts with the node
         # being managed, meaning we're trying to manage a node that already
         # exists in the Valence DB.
-        node_list = node_fakes.get_test_node_list()
+        node_list = resource_fakes.get_test_node_list()
         mock_list_nodes.return_value = node_list
 
         self.assertRaises(exception.ResourceExists,
@@ -102,7 +102,7 @@ class TestAPINodes(unittest.TestCase):
     def test_compose_node(self, mock_redfish_compose_node, mock_generate_uuid,
                           mock_db_create_podm_resource):
         """Test compose node successfully"""
-        node_hw = node_fakes.get_test_composed_node()
+        node_hw = resource_fakes.get_test_composed_node()
         node_db = {"uuid": node_hw["uuid"],
                    "podm_uuid": node_hw["podm_uuid"],
                    "resource_url": node_hw["resource_url"],
@@ -129,7 +129,7 @@ class TestAPINodes(unittest.TestCase):
                                       mock_generate_uuid,
                                       mock_db_create_podm_resource):
         """Test node composition using a flavor for requirements"""
-        node_hw = node_fakes.get_test_composed_node()
+        node_hw = resource_fakes.get_test_composed_node()
         node_db = {"uuid": node_hw["uuid"],
                    "podm_uuid": node_hw["podm_uuid"],
                    "resource_url": node_hw["resource_url"],
@@ -157,7 +157,7 @@ class TestAPINodes(unittest.TestCase):
     def test_get_composed_node_by_uuid(
             self, mock_db_get_podm_resource, mock_redfish_get_node):
         """Test get composed node detail"""
-        node_hw = node_fakes.get_test_composed_node()
+        node_hw = resource_fakes.get_test_composed_node()
         node_db = test_utils.get_test_podm_resource()
 
         mock_db_model = mock.MagicMock()
