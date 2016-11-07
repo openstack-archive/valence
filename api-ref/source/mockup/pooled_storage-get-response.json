@@ -1,0 +1,9 @@
+{
+  "health": "OK",
+  "Name": "Logical Drive",
+  "capacity": 1863,
+  "mode": "LVG",
+  "type": "LVM",
+  "id": "9",
+  "Description": "Logical drive"
+}
