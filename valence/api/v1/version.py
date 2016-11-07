@@ -50,10 +50,13 @@ class V1Base(base.APIBase):
         'nodes': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
-        'storages': {
+        'systems': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
         'flavors': {
+            'validate': types.List(types.Custom(link.Link)).validate
+        },
+        'resources': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
     }
@@ -78,18 +81,24 @@ class V1Base(base.APIBase):
                                         v1_base_url + '/nodes',
                                         'nodes', '',
                                         bookmark=True)]
-        v1.storages = [link.Link.make_link('self', v1_base_url,
-                                           'storages', ''),
-                       link.Link.make_link('bookmark',
-                                           v1_base_url,
-                                           'storages', '',
-                                           bookmark=True)]
+        v1.systems = [link.Link.make_link('self', v1_base_url,
+                                          'systems', ''),
+                      link.Link.make_link('bookmark',
+                                          v1_base_url,
+                                          'systems', '',
+                                          bookmark=True)]
         v1.flavors = [link.Link.make_link('self', v1_base_url,
                                           'flavors', ''),
                       link.Link.make_link('bookmark',
                                           v1_base_url,
                                           'flavors', '',
                                           bookmark=True)]
+        v1.resources = [link.Link.make_link('self', v1_base_url,
+                                            'resources', ''),
+                        link.Link.make_link('bookmark',
+                                            v1_base_url,
+                                            'resources', '',
+                                            bookmark=True)]
         return v1
 
 
@@ -97,4 +106,6 @@ class V1(Resource):
 
     def get(self):
         vobj = V1Base.convert()
-        return json.dumps(vobj, default=lambda o: o.as_dict())
+        result = json.dumps(vobj, default=lambda o: o.as_dict())
+        result = json.loads(result)
+        return result
