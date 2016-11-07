@@ -244,6 +244,52 @@ def systems_list(filters={}):
     return lst_systems
 
 
+def storage_services_list():
+    service_list = []
+    service_url_list = urls2list("Services")
+    for url in service_url_list:
+        resp = send_request(url)
+        service = resp.json()
+        service_list.append(service)
+    return service_list
+
+
+def pooled_storage_list(filters=None, show_details=False):
+    if filters is None:
+        filters = {}
+    pooled_storage_drives = []
+    services = storage_services_list()
+    for service in services:
+        filterPassed = True
+        drives_url_list = urls2list(service["Drives"]["@odata.id"])
+        for url in drives_url_list:
+            resp = send_request(url)
+            pooled_storage_drive = resp.json()
+            if any(filters):
+                filterPassed = utils.match_conditions(pooled_storage_drive,
+                                                      filters)
+            if not filterPassed:
+                continue
+
+            drive_name = pooled_storage_drive["Name"]
+            drive_description = pooled_storage_drive["Description"]
+            drive_id = pooled_storage_drive["Id"]
+            drive_capacity = pooled_storage_drive["CapacityGiB"]
+
+            drive = {"name": drive_name, "description": drive_description,
+                     "id": drive_id, "capacity": drive_capacity}
+
+            if show_details:
+                drive_health = pooled_storage_drive["Status"]["Health"]
+                num_logical_drives = (
+                    len(pooled_storage_drive["Links"]["UsedBy"]))
+                drive.update({"num_logical_drives": num_logical_drives,
+                              "health": drive_health})
+
+            pooled_storage_drives.append(drive)
+    return pooled_storage_drives
+
+
 def get_chassis_list():
     chassis_url = get_base_resource_url("Chassis")
     chassis_lnk_lst = urls2list(chassis_url)
@@ -422,6 +468,10 @@ def get_node_by_id(node_index, show_detail=True):
         })
 
     return node_detail
+
+
+def get_drive_by_id(driveid):
+    return pooled_storage_list({"Id": driveid}, True)
 
 
 def build_hierarchy_tree():
