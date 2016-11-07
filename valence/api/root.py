@@ -36,6 +36,9 @@ class Version(base.APIBase):
         'min_version': {
             'validate': types.Text.validate
         },
+        'max_version': {
+            'validate': types.Text.validate
+        },
         'status': {
             'validate': types.Text.validate
         },
@@ -61,11 +64,11 @@ class RootBase(base.APIBase):
         'description': {
             'validate': types.Text.validate
         },
+        'name': {
+            'validate': types.Text.validate
+        },
         'versions': {
             'validate': types.List(types.Custom(Version)).validate
-        },
-        'default_version': {
-            'validate': types.Custom(Version).validate
         },
     }
 
@@ -73,9 +76,10 @@ class RootBase(base.APIBase):
     def convert():
         root = RootBase()
         root.name = "OpenStack Valence API"
-        root.description = "Valence is an OpenStack project"
-        root.versions = [Version.convert('v1', '1.0', True)]
-        root.default_version = Version.convert('v1', '1.0', True)
+        root.description = "Valence aims to provide node composition "
+        root.description += "based on Redfish(R) API."
+        root.name = "OpenStack Valence API"
+        root.versions = [Version.convert('v1', '', True)]
         return root
 
 
@@ -83,7 +87,9 @@ class Root(Resource):
 
     def get(self):
         obj = RootBase.convert()
-        return json.dumps(obj, default=lambda o: o.as_dict())
+        result = json.dumps(obj, default=lambda o: o.as_dict())
+        result = json.loads(result)
+        return result
 
 
 class PODMProxy(Resource):
