@@ -279,6 +279,52 @@ def systems_list(filters={}):
     return lst_systems
 
 
+def storage_services_list():
+    service_list = []
+    service_url_list = urls2list("Services")
+    for url in service_url_list:
+        resp = send_request(url)
+        service = resp.json()
+        service_list.append(service)
+    return service_list
+
+
+def remote_drive_list(filters=None, show_details=False):
+    if filters is None:
+        filters = {}
+    remote_drives = []
+    services = storage_services_list()
+    for service in services:
+        filterPassed = True
+        drives_url_list = urls2list(service["Drives"]["@odata.id"])
+        for url in drives_url_list:
+            resp = send_request(url)
+            remote_drive = resp.json()
+            if any(filters):
+                filterPassed = utils.match_conditions(remote_drive,
+                                                      filters)
+            if not filterPassed:
+                continue
+
+            drive_name = remote_drive["Name"]
+            drive_description = remote_drive["Description"]
+            drive_id = remote_drive["Id"]
+            drive_capacity = remote_drive["CapacityGiB"]
+
+            drive = {"name": drive_name, "description": drive_description,
+                     "id": drive_id, "capacity": drive_capacity}
+
+            if show_details:
+                drive_health = remote_drive["Status"]["Health"]
+                num_logical_drives = (
+                    len(remote_drive["Links"]["UsedBy"]))
+                drive.update({"num_logical_drives": num_logical_drives,
+                              "health": drive_health})
+
+            remote_drives.append(drive)
+    return remote_drives
+
+
 def get_chassis_list():
     chassis_url = get_base_resource_url("Chassis")
     chassis_lnk_lst = urls2list(chassis_url)
@@ -461,6 +507,10 @@ def get_node_by_id(node_index, show_detail=True):
         })
 
     return node_detail
+
+
+def get_drive_by_id(driveid):
+    return remote_drive_list({"Id": driveid}, True)
 
 
 def build_hierarchy_tree():
