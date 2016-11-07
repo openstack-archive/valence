@@ -12,21 +12,19 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import logging
-
-from flask_restful import abort
+from flask import request
 from flask_restful import Resource
 
-LOG = logging.getLogger(__name__)
+from valence.redfish import redfish as rfs
 
 
-class StoragesList(Resource):
+class PooledStorageList(Resource):
 
     def get(self):
-        return abort(501)
+        return rfs.remote_drive_list(request.args)
 
 
-class Storages(Resource):
+class PooledStorage(Resource):
 
-    def get(self, storageid):
-        return abort(501)
+    def get(self, drive_id):
+        return rfs.get_drive_by_id(drive_id)
