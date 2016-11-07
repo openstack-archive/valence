@@ -41,7 +41,7 @@ class TestRoute(unittest.TestCase):
         self.assertEqual(self.api.owns_endpoint('racks'), True)
         self.assertEqual(self.api.owns_endpoint('nodes'), True)
         self.assertEqual(self.api.owns_endpoint('node'), True)
-        self.assertEqual(self.api.owns_endpoint('nodes_storages'), True)
+        self.assertEqual(self.api.owns_endpoint('nodes_storage'), True)
         self.assertEqual(self.api.owns_endpoint('node_register'), True)
         self.assertEqual(self.api.owns_endpoint('systems'), True)
         self.assertEqual(self.api.owns_endpoint('system'), True)
