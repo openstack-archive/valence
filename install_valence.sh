@@ -45,5 +45,8 @@ if [ $? -ne 0 ]; then
 	exit
 fi
 
+echo "Installing dependencies from requirements.txt" >> $install_log
+pip install -r requirements.txt
+
 echo "Installation Completed"
 echo "To start valence : sudo service valence start"
