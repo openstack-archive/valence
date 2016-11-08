@@ -28,10 +28,6 @@ Valence installation
 
     ``$ git clone https://git.openstack.org/openstack/rsc``
 
- 3. Install all necessary software pre-requisites using the pip requirements file.
-
-    ``$ pip install -r requirements.txt``
-
  5. Execute the 'install_valence.sh' file the Valence root directory.
 
     ``$ sudo bash install_valence.sh``

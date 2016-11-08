@@ -38,6 +38,9 @@ cp etc/valence/valence.conf.sample /etc/valence/valence.conf
 mkdir /var/log/valence
 chown ${USER}:${USER} /var/log/valence
 
+echo "Installing dependencies from requirements.txt" >> $install_log
+pip install -r requirements.txt
+
 echo "Invoking setup.py" >> $install_log
 python setup.py install
 if [ $? -ne 0 ]; then
