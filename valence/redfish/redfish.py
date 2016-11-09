@@ -15,6 +15,7 @@
 
 import json
 import logging
+import os
 import requests
 from requests.auth import HTTPBasicAuth
 from valence import config as cfg
@@ -26,12 +27,11 @@ LOG = logging.getLogger(__name__)
 
 def get_rfs_url(serviceext):
     REDFISH_BASE_EXT = "/redfish/v1/"
-    INDEX = ''
-    # '/index.json'
     if REDFISH_BASE_EXT in serviceext:
-        return cfg.podm_url + serviceext + INDEX
+        relative_url = serviceext
     else:
-        return cfg.podm_url + REDFISH_BASE_EXT + serviceext + INDEX
+        relative_url = os.path.join(REDFISH_BASE_EXT, serviceext)
+    return requests.compat.urljoin(cfg.podm_url, relative_url)
 
 
 def send_request(resource, method="GET", **kwargs):
