@@ -16,6 +16,16 @@ Contents:
    usage
    contributing
 
+Developers Documentation
+========================
+.. toctree::
+   :maxdepth: 2
+
+   add_flavor_criteria
+   add_new_api
+   add_new_functional_testing
+
+
 Indices and tables
 ==================
 
