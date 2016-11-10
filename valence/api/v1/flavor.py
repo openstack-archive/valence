@@ -12,9 +12,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import logging
+
 from flask import request
 from flask_restful import Resource
-import logging
+
 from valence.flavor import flavor
 
 LOG = logging.getLogger(__name__)

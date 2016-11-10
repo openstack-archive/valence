@@ -16,8 +16,10 @@
 import json
 import logging
 import os
+
 import requests
 from requests.auth import HTTPBasicAuth
+
 from valence import config as cfg
 from valence.redfish import tree
 

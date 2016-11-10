@@ -14,6 +14,7 @@
 #    under the License.
 
 import logging
+
 from valence.api.route import app as application
 from valence import config as cfg
 
