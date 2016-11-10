@@ -14,6 +14,7 @@
 
 from flask_cors import CORS
 from flask_restful import Api
+
 from valence.api import app as flaskapp
 from valence.api.root import PODMProxy
 from valence.api.root import Root
