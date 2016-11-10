@@ -12,10 +12,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import json
+
 from flask import abort
 from flask import request
 from flask_restful import Resource
-import json
+
 from valence.api import base
 from valence.api import link
 from valence.api import types
