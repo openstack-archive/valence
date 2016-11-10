@@ -16,7 +16,14 @@ Contents:
    usage
    contributing
 
-Indices and tables
+Developers Documentation
+========================
+.. toctree::
+   :maxdepth: 2
+
+   developer-guide/*
+
+Indicestables
 ==================
 
 * :ref:`genindex`
