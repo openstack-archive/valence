@@ -28,25 +28,22 @@ Valence installation
 
     ``$ git clone https://git.openstack.org/openstack/rsc``
 
- 3. Install all necessary software pre-requisites using the pip requirements file.
-
-    ``$ pip install -r requirements.txt``
-
- 5. Execute the 'install_valence.sh' file the Valence root directory.
+ 3. Execute the 'install_valence.sh' file present in the Valence root directory.
+ The install script will automatically install the dependencies listed in the requirements.txt file.
 
     ``$ sudo bash install_valence.sh``
 
- 6. Check the values in valence.conf located at /etc/valence/valence.conf
+ 4. Check the values in valence.conf located at /etc/valence/valence.conf
 
     ``set the ip/credentials of podm for which this Valence will interact``
 
- 7. Check the PYTHON_HOME and other variables in /etc/init/valence.conf
+ 5. Check the PYTHON_HOME and other variables in /etc/init/valence.conf
 
- 8. Start valence service
+ 6. Start valence service
 
     ``$ sudo service valence start``
 
- 9. Logs are located at /var/logs/valence/
+ 7. Logs are located at /var/logs/valence/
 
 ****************
 GUI installation

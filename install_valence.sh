@@ -38,10 +38,14 @@ cp etc/valence/valence.conf.sample /etc/valence/valence.conf
 mkdir /var/log/valence
 chown ${USER}:${USER} /var/log/valence
 
+echo "Installing dependencies from requirements.txt" >> $install_log
+pip install -r requirements.txt
+
 echo "Invoking setup.py" >> $install_log
 python setup.py install
 if [ $? -ne 0 ]; then
-	echo "ERROR: setup.py failed. Please fix the error and retry."
+	echo "ERROR: setup.py failed. Please check $install_log for details.
+          Please fix the error and retry."
 	exit
 fi
 
