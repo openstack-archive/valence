@@ -1,0 +1,10 @@
+Code-Review+2: Seenivasan Gunabalan <agsnivas@gmail.com>
+Code-Review+2: Ananth Narayan S <ananth.narayan@gmail.com>
+Workflow+1: Ananth Narayan S <ananth.narayan@gmail.com>
+Workflow+1: Seenivasan Gunabalan <agsnivas@gmail.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Thu, 10 Nov 2016 10:38:54 +0000
+Reviewed-on: https://review.openstack.org/394744
+Project: openstack/rsc
+Branch: refs/heads/master
