@@ -14,16 +14,43 @@
 #    under the License.
 
 import logging
+
+import gunicorn.app.base
+from gunicorn.six import iteritems
+
 from valence.api.route import app as application
 from valence import config as cfg
+
 
 LOG = logging.getLogger(__name__)
 
 
+class StandaloneApplication(gunicorn.app.base.BaseApplication):
+
+    def __init__(self, app, options=None):
+        self.options = options or {}
+        self.application = app
+        super(StandaloneApplication, self).__init__()
+
+    def load_config(self):
+        config = dict([(key, value) for key, value in iteritems(self.options)
+                       if key in self.cfg.settings and value is not None])
+        for key, value in iteritems(config):
+            self.cfg.set(key.lower(), value)
+
+    def load(self):
+        return self.application
+
+
 def main():
-    application.run(host=cfg.bind_host, port=cfg.bind_port, debug=cfg.debug)
+    options = {
+        'bind': '%s:%s' % (cfg.bind_host, cfg.bind_port)
+    }
+    StandaloneApplication(application, options).run()
     LOG.info(("Valence Server on http://%(host)s:%(port)s"),
              {'host': cfg.bind_host, 'port': cfg.bind_port})
 
+
 if __name__ == '__main__':
     main()
+
