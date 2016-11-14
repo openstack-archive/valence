@@ -12,7 +12,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-
 from flask import abort
 from flask import request
 from flask_restful import Resource
@@ -89,16 +88,51 @@ class Root(Resource):
 class PODMProxy(Resource):
     """Passthrough Proxy for PODM.
 
-    This function byepasses valence processing
-    and calls PODM directly. This function may be temperory
+    This function bypasses valence processing
+    and calls PODM directly. This function may be temporary
 
     """
-    def get(self, url):
-        op = url.split("/")[0]
+    @staticmethod
+    def check_url(url):
+        # The url will be routed to PODMProxy resource if it didn't match
+        # others. So filter out these incorrect url.
+        # Only support proxy request of below podm API
+        resource = url.split("/")[0]
         filterext = ["Chassis", "Services", "Managers", "Systems",
                      "EventService", "Nodes", "EthernetSwitches"]
-        if op in filterext:
-            resp = rfs.send_request(url)
-            return resp.json()
-        else:
+        if resource not in filterext:
             abort(404)
+
+    def get(self, url):
+        self.check_url(url)
+        resp = rfs.send_request(url)
+        return (resp.json() if resp.text else resp.text,
+                resp.status_code,
+                resp.headers.items())
+
+    def post(self, url):
+        self.check_url(url)
+        resp = rfs.send_request(url,
+                                "POST",
+                                headers={'Content-type': 'application/json'},
+                                data=request.data)
+        return (resp.json() if resp.text else resp.text,
+                resp.status_code,
+                resp.headers.items())
+
+    def delete(self, url):
+        self.check_url(url)
+        resp = rfs.send_request(url, "DELETE")
+        return (resp.json() if resp.text else resp.text,
+                resp.status_code,
+                resp.headers.items())
+
+    def patch(self, url):
+        self.check_url(url)
+        resp = rfs.send_request(url,
+                                "PATCH",
+                                headers={'Content-type': 'application/json'},
+                                data=request.data)
+        return (resp.json() if resp.text else resp.text,
+                resp.status_code,
+                resp.headers.items())
