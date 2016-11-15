@@ -55,11 +55,14 @@ const DetailDisplay = React.createClass({
         <hr class="separator" />
         <p>Name: {data.Name}</p>
         <p>Description: {data.Description}</p>
-        <p>State: {data.Status.State}</p>
-        <p>Health: {data.Status.Health}</p>
-        <p>Processor Count: {data.ProcessorSummary.Count}</p>
-        <p>Processor Model: {data.ProcessorSummary.Model}</p>
-        <p>Total Memory: {data.MemorySummary.TotalSystemMemoryGiB} GiB</p>
+        <p>ID: {data.id}</p>
+        <p>Health: {data.health}</p>
+        <p>System Storage: {data.storage}</p>
+        <p>Processor Count: {data.cpu.cores}</p>
+        <p>Processor Model: {data.cpu.model}</p>
+        <p>Total Memory: {data.ram} GiB</p>
+        <p>Network Interfaces: {data.network}</p>
+        <p>System Location: {data.location}</p>
         <input type="button"
          class="detail-button"
          onClick={() => this.props.onHideDetail()} value="Return" />
