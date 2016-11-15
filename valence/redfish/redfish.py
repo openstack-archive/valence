@@ -291,10 +291,10 @@ def build_hierarchy_tree():
     return podmtree
 
 
-def compose_node(data):
+def compose_node(criteria):
     composeurl = "Nodes/Actions/Allocate"
     headers = {'Content-type': 'application/json'}
-    criteria = data["criteria"]
+    LOG.debug("Node composition criteria: %s", criteria)
     if not criteria:
         resp = send_request(composeurl, "POST", headers=headers)
     else:

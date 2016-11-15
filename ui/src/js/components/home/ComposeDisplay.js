@@ -22,7 +22,7 @@ const ComposeDisplay = React.createClass({
 
   compose: function() {
     var data = this.prepareRequest();
-    var url = config.url + '/Nodes/Actions/Allocate';
+    var url = config.url + '/v1/nodes';
     $.ajax({
       url: url,
       type: 'POST',

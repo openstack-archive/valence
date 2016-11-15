@@ -21,7 +21,7 @@ var util = require('../../util.js');
 const NodeList = React.createClass({
 
   delete: function(nodeId) {
-    var url = config.url + '/Nodes/' + nodeId;
+    var url = config.url + '/v1/nodes/' + nodeId;
     $.ajax({
       url: url,
       type: 'DELETE',

@@ -29,7 +29,7 @@ class NodesList(Resource):
         return rfs.nodes_list(request.args)
 
     def post(self):
-        LOG.debug("POST /nodes/")
+        LOG.debug("POST /nodes")
         return rfs.compose_node(request.get_json())
 
 

@@ -28,7 +28,7 @@ const Home = React.createClass({
      *
      * TODO(ntpttr): Remove this once the compose menu is fully flushed out.
      */
-    var url = config.url + '/Nodes/Actions/Allocate';
+    var url = config.url + '/v1/nodes';
     $.ajax({
       url: url,
       type: 'POST',
