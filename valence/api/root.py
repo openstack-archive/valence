@@ -14,6 +14,7 @@
 
 from flask import abort
 from flask import request
+from flask import Response
 from flask_restful import Resource
 import json
 from valence.api import base
@@ -106,9 +107,7 @@ class PODMProxy(Resource):
     def get(self, url):
         self.check_url(url)
         resp = rfs.send_request(url)
-        return (resp.json() if resp.text else resp.text,
-                resp.status_code,
-                resp.headers.items())
+        return Response(resp.text, resp.status_code, resp.headers.items())
 
     def post(self, url):
         self.check_url(url)
@@ -116,16 +115,12 @@ class PODMProxy(Resource):
                                 "POST",
                                 headers={'Content-type': 'application/json'},
                                 data=request.data)
-        return (resp.json() if resp.text else resp.text,
-                resp.status_code,
-                resp.headers.items())
+        return Response(resp.text, resp.status_code, resp.headers.items())
 
     def delete(self, url):
         self.check_url(url)
         resp = rfs.send_request(url, "DELETE")
-        return (resp.json() if resp.text else resp.text,
-                resp.status_code,
-                resp.headers.items())
+        return Response(resp.text, resp.status_code, resp.headers.items())
 
     def patch(self, url):
         self.check_url(url)
@@ -133,6 +128,4 @@ class PODMProxy(Resource):
                                 "PATCH",
                                 headers={'Content-type': 'application/json'},
                                 data=request.data)
-        return (resp.json() if resp.text else resp.text,
-                resp.status_code,
-                resp.headers.items())
+        return Response(resp.text, resp.status_code, resp.headers.items())
