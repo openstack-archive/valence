@@ -179,17 +179,21 @@ def systems_list(filters={}):
         if not filterPassed:
             continue
 
-        systemid = lnk.split("/")[-1]
-        systemuuid = system['UUID']
-        systemlocation = podmtree.getPath(lnk)
-        cpu = system_cpu_details(lnk)
-        ram = system_ram_details(lnk)
-        nw = system_network_details(lnk)
-        storage = system_storage_details(lnk)
-        system = {"id": systemid, "cpu": cpu,
-                  "ram": ram, "storage": storage,
-                  "nw": nw, "location": systemlocation,
-                  "uuid": systemuuid}
+        system_id = lnk.split("/")[-1]
+        system_uuid = system['UUID']
+        system_name = system['Name']
+        system_description = system['Description']
+        system_health = system['Status']['Health']
+        system_location = podmtree.getPath(lnk)
+        cpu = node_cpu_details(lnk)
+        ram = node_ram_details(lnk)
+        network = node_network_details(lnk)
+        storage = node_storage_details(lnk)
+        system = {"Name": system_name, "id": system_id,
+                  "Description": system_description,
+                  "cpu": cpu, "ram": ram, "storage": storage,
+                  "network": network, "location": system_location,
+                  "uuid": system_uuid, "health": system_health}
 
         # filter based on RAM, CPU, NETWORK..etc
         if 'ram' in filters:
@@ -200,7 +204,7 @@ def systems_list(filters={}):
         # filter based on RAM, CPU, NETWORK..etc
         if 'nw' in filters:
             filterPassed = (True
-                            if int(nw) >= int(filters['nw'])
+                            if int(network) >= int(filters['network'])
                             else False)
 
         # filter based on RAM, CPU, NETWORK..etc
