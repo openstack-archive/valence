@@ -307,7 +307,7 @@ def compose_node(data):
 def delete_composednode(nodeid):
     deleteurl = "Nodes/" + str(nodeid)
     resp = send_request(deleteurl, "DELETE")
-    return resp
+    return resp.text
 
 
 def nodes_list(filters={}):
