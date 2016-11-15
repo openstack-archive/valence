@@ -150,7 +150,7 @@ def node_ram_details(nodeurl):
     return str(ram)
 
 
-def node_nw_details(nodeurl):
+def node_network_details(nodeurl):
     # this extracts the total nw interfaces and returns as a string
     resp = send_request(nodeurl + "/EthernetInterfaces")
     respbody = resp.json()
@@ -188,23 +188,28 @@ def systems_list(filters={}):
         filterPassed = True
         resp = send_request(lnk)
         system = resp.json()
+        LOG.debug(system)
 
         if any(filters):
             filterPassed = generic_filter(system, filters)
         if not filterPassed:
             continue
 
-        systemid = lnk.split("/")[-1]
-        systemuuid = system['UUID']
-        systemlocation = podmtree.getPath(lnk)
+        system_id = lnk.split("/")[-1]
+        system_uuid = system['UUID']
+        system_name = system['Name']
+        system_description = system['Description']
+        system_health = system['Status']['Health']
+        system_location = podmtree.getPath(lnk)
         cpu = node_cpu_details(lnk)
         ram = node_ram_details(lnk)
-        nw = node_nw_details(lnk)
+        network = node_network_details(lnk)
         storage = node_storage_details(lnk)
-        system = {"id": systemid, "cpu": cpu,
-                  "ram": ram, "storage": storage,
-                  "nw": nw, "location": systemlocation,
-                  "uuid": systemuuid}
+        system = {"Name": system_name, "id": system_id,
+                  "Description": system_description,
+                  "cpu": cpu, "ram": ram, "storage": storage,
+                  "network": network, "location": system_location,
+                  "uuid": system_uuid, "health": system_health}
 
         # filter based on RAM, CPU, NETWORK..etc
         if 'ram' in filters:
