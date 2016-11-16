@@ -73,6 +73,6 @@ valence-ui provides a GUI interface to invoke Valence APIs.
 Features
 ==========
 Please refer the Valence blueprints for supported and in-the-pipeline features.
-``https://blueprints.launchpad.net/plasma``
+``https://blueprints.launchpad.net/openstack-valence``
 
 
