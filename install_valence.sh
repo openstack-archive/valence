@@ -14,7 +14,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 cd $DIR
 echo "Current directory: $DIR" >> $install_log
-if [ "$USER" != 'root' ]; then
+if [ `whoami` != 'root' ]; then
 	echo "You must be root to install."
 	exit
 fi
@@ -24,19 +24,23 @@ echo "Detected PYTHON HOME: $PYHOME" >> $install_log
 
 # Copy the config files
 echo "Setting up valence config" >> $install_log
-sed s/\${CHUID}/$USER/  $DIR/doc/source/init/valence.conf > /tmp/valence.conf
+sed s/\${CHUID}/`whoami`/  $DIR/doc/source/init/valence.conf > /tmp/valence.conf
 #Use alternate sed delimiter because path will have /
 sed -i "s#PYHOME#$PYHOME#" /tmp/valence.conf
 mv /tmp/valence.conf /etc/init/valence.conf
 
-# create conf directory for valence
-mkdir /etc/valence
-chown ${USER}:${USER} /etc/valence
+# create conf directory for valence if it doesn't exist
+if [ ! -d "/etc/valence" ]; then
+    mkdir /etc/valence
+fi
+chown `whoami`:`whoami` /etc/valence
 cp etc/valence/valence.conf.sample /etc/valence/valence.conf
 
-# create log directory for valence
-mkdir /var/log/valence
-chown ${USER}:${USER} /var/log/valence
+# create log directory for valence if it doesn't exist
+if [ ! -d "/var/log/valence" ]; then
+    mkdir /var/log/valence
+fi
+chown `whoami`:`whoami` /var/log/valence
 
 echo "Installing dependencies from requirements.txt" >> $install_log
 pip install -r requirements.txt
