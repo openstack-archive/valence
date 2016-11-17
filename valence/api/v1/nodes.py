@@ -14,6 +14,7 @@
 
 
 from flask import request
+from flask import jsonify
 from flask_restful import abort
 from flask_restful import Resource
 import logging
@@ -30,7 +31,10 @@ class NodesList(Resource):
 
     def post(self):
         LOG.debug("POST /nodes/")
-        return rfs.compose_node(request.get_json())
+        content, status = rfs.compose_node(request.get_json())
+        resp = jsonify(content)
+        resp.status_code = status
+        return resp
 
 
 class Nodes(Resource):
