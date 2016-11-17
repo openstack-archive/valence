@@ -34,6 +34,13 @@ def get_rfs_url(serviceext):
     return requests.compat.urljoin(cfg.podm_url, relative_url)
 
 
+def __parse_error(message):
+    return {"error": message["error"]["message"],
+            "detail": " ".join(
+                [i['Message']
+                    for i in message['error']['@Message.ExtendedInfo']])}
+
+
 def send_request(resource, method="GET", **kwargs):
     # The verify=false param in the request should be removed eventually
     url = get_rfs_url(resource)
@@ -270,7 +277,7 @@ def get_systembyid(systemid):
 
 
 def get_nodebyid(nodeid):
-    return nodes_list({"Id": nodeid})
+    return nodes_list({"Id": nodeid})[0]
 
 
 def build_hierarchy_tree():
@@ -291,17 +298,16 @@ def build_hierarchy_tree():
     return podmtree
 
 
-def compose_node(data):
+def compose_node(criteria):
     composeurl = "Nodes/Actions/Allocate"
     headers = {'Content-type': 'application/json'}
-    criteria = data["criteria"]
-    if not criteria:
-        resp = send_request(composeurl, "POST", headers=headers)
-    else:
-        resp = send_request(composeurl, "POST", json=criteria, headers=headers)
+    resp = send_request(composeurl, "POST", json=criteria, headers=headers)
 
-    composednode = resp.headers['Location']
-    return {"node": composednode}
+    if resp.status_code == 201:
+        node_id = resp.headers["Location"].split("/")[-1]
+        return get_nodebyid(node_id), resp.status_code
+    elif resp.status_code == 409:
+        return __parse_error(resp.json()), resp.status_code
 
 
 def delete_composednode(nodeid):
