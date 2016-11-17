@@ -12,7 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-
+from flask import jsonify
 from flask import request
 from flask_restful import abort
 from flask_restful import Resource
@@ -30,7 +30,10 @@ class NodesList(Resource):
 
     def post(self):
         LOG.debug("POST /nodes/")
-        return rfs.compose_node(request.get_json())
+        content, status = rfs.compose_node(request.get_json())
+        resp = jsonify(content)
+        resp.status_code = status
+        return resp
 
 
 class Nodes(Resource):
