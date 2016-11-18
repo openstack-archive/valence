@@ -24,12 +24,12 @@ LOG = logging.getLogger(__name__)
 class SystemsList(Resource):
 
     def get(self):
-        LOG.debug("GET /systems")
+        LOG.debug("GET /Systems")
         return rfs.systems_list(request.args)
 
 
 class Systems(Resource):
 
     def get(self, systemid):
-        LOG.debug("GET /systems/" + systemid)
+        LOG.debug("GET /Systems/" + systemid)
         return rfs.get_systembyid(systemid)

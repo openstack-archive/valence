@@ -12,6 +12,7 @@ log_file=/var/log/valence/valence.log
 #address and port the server binds too
 bind_host = 0.0.0.0
 bind_port = 8181
+connection_timeout = 60
 
 [podm]
 url=http://<ip address>

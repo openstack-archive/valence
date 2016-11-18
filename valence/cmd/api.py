@@ -45,7 +45,8 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 def main():
     options = {
         'bind': '%s:%s' % (cfg.bind_host, cfg.bind_port),
-        'reload': cfg.debug
+        'reload': cfg.debug,
+        'timeout': cfg.connection_timeout
     }
     StandaloneApplication(application, options).run()
     LOG.info(("Valence Server on http://%(host)s:%(port)s"),

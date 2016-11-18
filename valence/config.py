@@ -61,6 +61,7 @@ log_format = get_option("DEFAULT", "log_format", log_default_format)
 bind_port = get_option("DEFAULT", "bind_port", 8181, int)
 bind_host = get_option("DEFAULT", "bind_host", "0.0.0.0")
 debug = get_option("DEFAULT", "debug", False, bool)
+connection_timeout = get_option("DEFAULT", "connection_timeout", 60, int)
 
 # PODM Settings
 podm_url = get_option("podm", "url", "http://127.0.0.1")
