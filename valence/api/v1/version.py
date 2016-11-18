@@ -56,6 +56,9 @@ class V1Base(base.APIBase):
         'flavors': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
+        'systems': {
+            'validate': types.List(types.Custom(link.Link)).validate
+        },
     }
 
     @staticmethod
@@ -72,10 +75,10 @@ class V1Base(base.APIBase):
                                         bookmark=True, type='text/html')]
         v1.media_types = [MediaType(base='application/json',
                           type='application/vnd.openstack.valence.v1+json')]
-        v1.nodes = [link.Link.make_link('self', v1_base_url + '/nodes',
+        v1.nodes = [link.Link.make_link('self', v1_base_url,
                                         'nodes', ''),
                     link.Link.make_link('bookmark',
-                                        v1_base_url + '/nodes',
+                                        v1_base_url,
                                         'nodes', '',
                                         bookmark=True)]
         v1.storages = [link.Link.make_link('self', v1_base_url,
@@ -90,6 +93,12 @@ class V1Base(base.APIBase):
                                           v1_base_url,
                                           'flavors', '',
                                           bookmark=True)]
+        v1.systems = [link.Link.make_link('self', v1_base_url,
+                                          'systems', ''),
+                      link.Link.make_link('bookmark',
+                                          v1_base_url,
+                                          'systems', '',
+                                          bookmark=True)]
         return v1
 
 
@@ -97,4 +106,4 @@ class V1(Resource):
 
     def get(self):
         vobj = V1Base.convert()
-        return json.dumps(vobj, default=lambda o: o.as_dict())
+        return json.loads(json.dumps(vobj, default=lambda o: o.as_dict()))
