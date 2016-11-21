@@ -1,0 +1,9 @@
+Code-Review+2: Seenivasan Gunabalan <agsnivas@gmail.com>
+Workflow+1: Nate Potter <nathaniel.potter@intel.com>
+Code-Review+2: Nate Potter <nathaniel.potter@intel.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Mon, 21 Nov 2016 18:27:23 +0000
+Reviewed-on: https://review.openstack.org/399143
+Project: openstack/rsc
+Branch: refs/heads/master
