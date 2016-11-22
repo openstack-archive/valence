@@ -369,3 +369,12 @@ def nodes_list(filters={}):
             if filterPassed:
                 lst_nodes.append(node)
     return lst_nodes
+
+
+def rest_node(nodeid, action):
+    # reset the node with the specified action
+    headers = {"Content-type": "application/json"}
+    data = "{'ResetType':'%s'}" % action
+    url = "Nodes/%s/Actions/ComposedNode.Reset" % nodeid
+    resp = send_request(url, method="POST", data=data, headers=headers)
+    return resp
