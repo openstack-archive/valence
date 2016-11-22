@@ -14,7 +14,7 @@
 
 import logging
 
-from flask import request
+from flask import request, jsonify, make_response
 from flask_restful import abort
 from flask_restful import Resource
 
@@ -32,6 +32,48 @@ class NodesList(Resource):
     def post(self):
         LOG.debug("POST /nodes/")
         return rfs.compose_node(request.get_json())
+
+
+class NodesActionController(Resource):
+
+    _VALID_POWER_ACTION = ["On", "ForceOff", "GracefulRestart",
+                           "ForceRestart", "Nmi", "ForceOn",
+                           "PushPowerButton", "GracefulShutdown"
+                           ]
+
+    # HTTP POST /nodes/
+    def post(self, nodeid):
+        # create a node management action such as ForceOff, On
+        params = request.get_json()
+        power_action = None
+        if params:
+            reset_section = params.get("reset")
+            if reset_section:
+                power_action = reset_section.get('type')
+
+        if power_action not in self._VALID_POWER_ACTION:
+            reason = "unsupported action: '%s', the valid action is in:" \
+                     " %s" % (power_action, self._VALID_POWER_ACTION)
+            return make_response(jsonify(message=reason), 400)
+        # make sure that the node exist, and get node detail
+        node = None
+        try:
+            node = rfs.get_nodebyid(nodeid)
+        except Exception as error:
+            LOG.info(error)
+
+        if not node:
+            reason = 'unable to find the specified node: %s' % nodeid
+            return make_response(jsonify(message=reason), 404)
+
+        # TODO(yufei):Here we need to decide whether to accept the request
+        # by the node's power status, for example, refuse to ForceOn a node
+        # inruning state
+        resp = rfs.rest_node(nodeid, power_action)
+        # rfs only return null when it get http exception
+        if not resp:
+            resp = make_response(jsonify(message='Internal Server Error'), 500)
+        return resp
 
 
 class Nodes(Resource):
