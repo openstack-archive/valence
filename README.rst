@@ -2,7 +2,9 @@
 Openstack Valence Project
 =========================
 
-Valence is a service for lifecycle management of pooled bare-metal hardware infrastructure such as Intel(R) Rack Scale architecture which uses Redfish(TM) as one of the management protocols.
+Valence is a service for lifecycle management of pooled bare-metal hardware
+infrastructure such as Intel(R) Rack Scale architecture which uses Redfish(TM)
+as one of the management protocols.
 
 :Free software: Apache license
 :Wiki: https://wiki.openstack.org/wiki/Valence
@@ -14,7 +16,8 @@ Valence is a service for lifecycle management of pooled bare-metal hardware infr
 Download and Installation
 ===========================
 
-The following steps capture how to install valence. All installation steps require super user permissions.
+The following steps capture how to install valence. All installation steps
+require super user permissions.
 
 *******************************************
 Valence installation
@@ -29,7 +32,8 @@ Valence installation
     ``$ git clone https://git.openstack.org/openstack/rsc``
 
  3. Execute the 'install_valence.sh' file present in the Valence root directory.
- The install script will automatically install the dependencies listed in the requirements.txt file.
+ The install script will automatically install the dependencies listed in the
+ requirements.txt file.
 
     ``$ sudo bash install_valence.sh``
 
@@ -55,15 +59,18 @@ Please refer to the installation steps in the ui/README file.
 Components
 **********
 
-Valence follows the typical OpenStack project setup. The components are listed below:
+Valence follows the typical OpenStack project setup. The components are listed
+below:
 
 valence-api
 -----------
-A pecan based daemon to expose Valence REST APIs. The api service communicates to the controller through AMQP.
+A pecan based daemon to expose Valence REST APIs. The api service communicates
+to the controller through AMQP.
 
 valence-controller
 --------------
-The controller implements all the handlers for Plasma-api. It reads requests from the AMQP queue, process it and send the reponse back to the caller.
+The controller implements all the handlers for Plasma-api. It reads requests
+from the AMQP queue, process it and send the reponse back to the caller.
 
 valence-ui
 --------
@@ -74,5 +81,3 @@ Features
 ==========
 Please refer the Valence blueprints for supported and in-the-pipeline features.
 ``https://blueprints.launchpad.net/openstack-valence``
-
-
