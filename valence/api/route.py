@@ -20,6 +20,7 @@ from valence.api.root import PODMProxy
 from valence.api.root import Root
 from valence.api.v1.flavor import Flavors as v1Flavors
 from valence.api.v1.nodes import Nodes as v1Nodes
+from valence.api.v1.nodes import NodesActionController as v1NodesAction
 from valence.api.v1.nodes import NodesList as v1NodesList
 from valence.api.v1.nodes import NodesStorage as v1NodesStorage
 from valence.api.v1.storages import Storages as v1Storages
@@ -44,6 +45,8 @@ api.add_resource(V1, '/v1', endpoint='v1')
 # Node(s) operations
 api.add_resource(v1NodesList, '/v1/nodes', endpoint='nodes')
 api.add_resource(v1Nodes, '/v1/nodes/<string:nodeid>', endpoint='node')
+api.add_resource(v1NodesAction, '/v1/nodes/<string:nodeid>/action',
+                 endpoint='node_action')
 api.add_resource(v1NodesStorage,
                  '/v1/nodes/<string:nodeid>/storages',
                  endpoint='nodes_storages')
