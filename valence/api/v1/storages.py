@@ -12,9 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import logging
+
 from flask_restful import abort
 from flask_restful import Resource
-import logging
 
 LOG = logging.getLogger(__name__)
 

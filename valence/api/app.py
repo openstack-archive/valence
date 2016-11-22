@@ -10,9 +10,11 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-from flask import Flask
 import logging
 from logging.handlers import RotatingFileHandler
+
+from flask import Flask
+
 from valence import config as cfg
 
 _app = None
