@@ -64,6 +64,7 @@ class TestRedfish(TestCase):
         result = redfish.filter_chassis(chassis, "Rack")
         self.assertEqual(expected, result)
 
+<<<<<<< HEAD
     def test_generic_filter(self):
         filter_condition = {"Id": "1"}
         json_content_pass = {"Name": "Pass",
@@ -81,6 +82,8 @@ class TestRedfish(TestCase):
                                         filter_condition)
         self.assertFalse(result)
 
+=======
+>>>>>>> 539286c... Added common module for shared functions
     @mock.patch('valence.redfish.redfish.send_request')
     def test_urls2list_no_members(self, mock_request):
         resp = {"Name": "NoMembers", "Id": 1}
