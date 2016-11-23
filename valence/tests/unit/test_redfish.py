@@ -64,23 +64,6 @@ class TestRedfish(TestCase):
         result = redfish.filter_chassis(chassis, "Rack")
         self.assertEqual(expected, result)
 
-    def test_generic_filter(self):
-        filter_condition = {"Id": "1"}
-        json_content_pass = {"Name": "Pass",
-                             "Id": "1"}
-        result = redfish.generic_filter(json_content_pass,
-                                        filter_condition)
-        self.assertTrue(result)
-        json_content_fail = {"Name": "Fail",
-                             "Id": "2"}
-        result = redfish.generic_filter(json_content_fail,
-                                        filter_condition)
-        self.assertFalse(result)
-        json_content_fail_2 = {"Name": "Fail2"}
-        result = redfish.generic_filter(json_content_fail_2,
-                                        filter_condition)
-        self.assertFalse(result)
-
     @mock.patch('valence.redfish.redfish.send_request')
     def test_urls2list_no_members(self, mock_request):
         resp = {"Name": "NoMembers", "Id": 1}
