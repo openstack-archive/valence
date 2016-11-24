@@ -8,7 +8,7 @@ as one of the management protocols.
 
 :Free software: Apache license
 :Wiki: https://wiki.openstack.org/wiki/Valence
-:Source: http://git.openstack.org/cgit/openstack/rsc
+:Source: http://git.openstack.org/cgit/openstack/valence
 :Bugs: http://bugs.launchpad.net/openstack-valence
 
 
@@ -29,7 +29,7 @@ Valence installation
 
  2. Clone the Valence code from git repo.
 
-    ``$ git clone https://git.openstack.org/openstack/rsc``
+    ``$ git clone https://git.openstack.org/openstack/valence``
 
  3. Execute the 'install_valence.sh' file present in the Valence root directory.
  The install script will automatically install the dependencies listed in the
@@ -69,7 +69,7 @@ to the controller through AMQP.
 
 valence-controller
 --------------
-The controller implements all the handlers for Plasma-api. It reads requests
+The controller implements all the handlers for valence-api. It reads requests
 from the AMQP queue, process it and send the reponse back to the caller.
 
 valence-ui
