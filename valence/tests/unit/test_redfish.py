@@ -11,6 +11,7 @@
 #    under the License.
 
 import mock
+from requests.compat import urljoin
 from unittest import TestCase
 
 from valence import config as cfg
@@ -20,14 +21,64 @@ from valence.tests.unit import fakes
 
 class TestRedfish(TestCase):
 
-    def test_get_rfs_url_no_service_ext(self):
-        expected = cfg.podm_url + "/redfish/v1/Systems/1"
+    def test_get_rfs_url(self):
+        cfg.podm_url = "https://127.0.0.1:8443"
+        expected = urljoin(cfg.podm_url, "redfish/v1/Systems/1")
+
+        # test without service_ext
+        result = redfish.get_rfs_url("/Systems/1/")
+        self.assertEqual(expected, result)
+
+        result = redfish.get_rfs_url("/Systems/1")
+        self.assertEqual(expected, result)
+
+        result = redfish.get_rfs_url("Systems/1/")
+        self.assertEqual(expected, result)
+
         result = redfish.get_rfs_url("Systems/1")
         self.assertEqual(expected, result)
 
-    def test_get_rfs_url_with_service_ext(self):
-        expected = cfg.podm_url + "/redfish/v1/Systems/1"
+        # test with service_ext
+        result = redfish.get_rfs_url("/redfish/v1/Systems/1/")
+        self.assertEqual(expected, result)
+
         result = redfish.get_rfs_url("/redfish/v1/Systems/1")
+        self.assertEqual(expected, result)
+
+        result = redfish.get_rfs_url("redfish/v1/Systems/1/")
+        self.assertEqual(expected, result)
+
+        result = redfish.get_rfs_url("redfish/v1/Systems/1")
+        self.assertEqual(expected, result)
+
+    def test_get_rfs_url_with_tailing_slash(self):
+        cfg.podm_url = "https://127.0.0.1:8443/"
+        expected = urljoin(cfg.podm_url, "redfish/v1/Systems/1")
+
+        # test without service_ext
+        result = redfish.get_rfs_url("/Systems/1/")
+        self.assertEqual(expected, result)
+
+        result = redfish.get_rfs_url("/Systems/1")
+        self.assertEqual(expected, result)
+
+        result = redfish.get_rfs_url("Systems/1/")
+        self.assertEqual(expected, result)
+
+        result = redfish.get_rfs_url("Systems/1")
+        self.assertEqual(expected, result)
+
+        # test with service_ext
+        result = redfish.get_rfs_url("/redfish/v1/Systems/1/")
+        self.assertEqual(expected, result)
+
+        result = redfish.get_rfs_url("/redfish/v1/Systems/1")
+        self.assertEqual(expected, result)
+
+        result = redfish.get_rfs_url("redfish/v1/Systems/1/")
+        self.assertEqual(expected, result)
+
+        result = redfish.get_rfs_url("redfish/v1/Systems/1")
         self.assertEqual(expected, result)
 
     @mock.patch('valence.redfish.redfish.send_request')

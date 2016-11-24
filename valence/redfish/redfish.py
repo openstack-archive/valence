@@ -36,10 +36,13 @@ def update_service_root():
 
 
 def get_rfs_url(serviceext):
-    if cfg.redfish_base_ext in serviceext:
+    redfish_base_ext = cfg.redfish_base_ext.strip("/")
+    serviceext = serviceext.strip("/")
+    if serviceext.startswith(redfish_base_ext):
         relative_url = serviceext
     else:
-        relative_url = os.path.join(cfg.redfish_base_ext, serviceext)
+        relative_url = os.path.normpath(
+            "/".join([redfish_base_ext, serviceext]))
     return requests.compat.urljoin(cfg.podm_url, relative_url)
 
 
