@@ -27,15 +27,32 @@ from valence.api.v1.storages import StoragesList as v1StoragesList
 from valence.api.v1.systems import Systems as v1Systems
 from valence.api.v1.systems import SystemsList as v1SystemsList
 from valence.api.v1.version import V1
+from valence.common import exception
 
 app = flaskapp.get_app()
 cors = CORS(app)
-api = Api(app)
+
+
+class ValenceService(Api):
+    """Overriding Flask Restful Error handler"""
+
+    def handle_error(self, error):
+
+        if issubclass(error.__class__, exception.ValenceError):
+            return self.make_response(error.as_dict(), error.status_code)
+        elif hasattr(error, 'code'):
+            return self.make_response(exception.httpexception(error),
+                                      error.code)
+        else:
+            return self.make_response(exception.generalexception(error, 500),
+                                      500)
+
+api = ValenceService(app)
+
 
 """API V1.0 Operations"""
 
-
-# API Root operation
+# Root Operations
 api.add_resource(Root, '/', endpoint='root')
 
 # V1 Root operations
