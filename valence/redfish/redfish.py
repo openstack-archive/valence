@@ -28,7 +28,8 @@ LOG = logging.getLogger(__name__)
 
 
 def get_rfs_url(serviceext):
-    REDFISH_BASE_EXT = "/redfish/v1/"
+    REDFISH_BASE_EXT = "redfish/v1/"
+    serviceext = serviceext.strip("/")
     if REDFISH_BASE_EXT in serviceext:
         relative_url = serviceext
     else:
