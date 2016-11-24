@@ -21,6 +21,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 from valence import config as cfg
+from valence.common import exception
 from valence.redfish import tree
 
 
@@ -272,7 +273,10 @@ def get_systembyid(systemid):
 
 
 def get_nodebyid(nodeid):
-    return nodes_list({"Id": nodeid})
+    node = nodes_list({"Id": nodeid})
+    if not node:
+        raise exception.NotFound()
+    return node[0]
 
 
 def build_hierarchy_tree():
@@ -297,19 +301,23 @@ def compose_node(data):
     composeurl = "Nodes/Actions/Allocate"
     headers = {'Content-type': 'application/json'}
     criteria = data["criteria"]
-    if not criteria:
-        resp = send_request(composeurl, "POST", headers=headers)
+    resp = send_request(composeurl, "POST", json=criteria, headers=headers)
+    if resp.status_code == 201:
+        composednode = resp.headers['Location']
+        return {"node": composednode}
     else:
-        resp = send_request(composeurl, "POST", json=criteria, headers=headers)
-
-    composednode = resp.headers['Location']
-    return {"node": composednode}
+        raise exception.RedfishException(resp.json(),
+                                         status_code=resp.status_code)
 
 
 def delete_composednode(nodeid):
     deleteurl = "Nodes/" + str(nodeid)
     resp = send_request(deleteurl, "DELETE")
-    return resp
+    if resp.status_code == 204:
+        return exception.confirmation("", "DELETED"), resp.status_code
+    else:
+        raise exception.RedfishException(resp.json(),
+                                         status_code=resp.status_code)
 
 
 def nodes_list(filters={}):
