@@ -45,13 +45,48 @@ class TestRedfish(TestCase):
         mock_request.side_effect = [first_request,
                                     second_request,
                                     third_request]
-        chassis = ('{"Members":'
-                   '[{"@odata.id": "1"},'
-                   '{"@odata.id": "2"},'
-                   '{"@odata.id": "3"}]}')
+        chassis = {"Members":
+                   [{"@odata.id": "1"},
+                    {"@odata.id": "2"},
+                    {"@odata.id": "3"}]}
         expected = {'Members': [
             {u'@odata.id': u'2'},
             {u'@odata.id': u'3'}
         ], 'Members@odata.count': 2}
         result = redfish.filter_chassis(chassis, "Rack")
+        self.assertEqual(expected, result)
+
+    def test_generic_filter(self):
+        filter_condition = {"Id": "1"}
+        json_content_pass = {"Name": "Pass",
+                             "Id": "1"}
+        result = redfish.generic_filter(json_content_pass,
+                                        filter_condition)
+        self.assertTrue(result)
+        json_content_fail = {"Name": "Fail",
+                             "Id": "2"}
+        result = redfish.generic_filter(json_content_fail,
+                                        filter_condition)
+        self.assertFalse(result)
+        json_content_fail_2 = {"Name": "Fail2"}
+        result = redfish.generic_filter(json_content_fail_2,
+                                        filter_condition)
+        self.assertFalse(result)
+
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_urls2list_no_members(self, mock_request):
+        resp = {"Name": "NoMembers", "Id": 1}
+        mock_request.return_value = fakes.mock_request_get(resp, "200")
+        result = redfish.urls2list('/redfish/v1/test')
+        self.assertEqual([], result)
+
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_urls2list_members(self, mock_request):
+        resp = {"Name": "Members", "Id": 1,
+                "Members":
+                [{"@odata.id": "/redfish/v1/Member/1"},
+                 {"@odata.id": "/redfish/v1/Member/2"}]}
+        mock_request.return_value = fakes.mock_request_get(resp, "200")
+        expected = ["/redfish/v1/Member/1", "/redfish/v1/Member/2"]
+        result = redfish.urls2list('/redfish/v1/test')
         self.assertEqual(expected, result)

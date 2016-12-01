@@ -10,8 +10,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
-
 
 def mock_request_get(json_data, status_code):
 
@@ -21,7 +19,7 @@ def mock_request_get(json_data, status_code):
             self.status_code = status_code
 
         def json(self):
-            return json.dumps(self.json_data)
+            return self.json_data
 
     return MockResponse(json_data, status_code)
 
