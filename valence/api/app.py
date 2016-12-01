@@ -11,6 +11,8 @@
 #    limitations under the License.
 
 import logging
+import os.path
+
 from logging.handlers import RotatingFileHandler
 
 from flask import Flask
@@ -26,12 +28,13 @@ def setup_app():
     app.url_map.strict_slashes = False
 
     # Configure logging
-    handler = RotatingFileHandler(cfg.log_file, maxBytes=10000, backupCount=1)
-    handler.setLevel(cfg.log_level)
-    formatter = logging.Formatter(cfg.log_format)
-    handler.setFormatter(formatter)
+    if os.path.isfile(cfg.log_file):
+        handler = RotatingFileHandler(cfg.log_file, maxBytes=10000, backupCount=1)
+        handler.setLevel(cfg.log_level)
+        formatter = logging.Formatter(cfg.log_format)
+        handler.setFormatter(formatter)
+        app.logger.addHandler(handler)
     app.logger.setLevel(cfg.log_level)
-    app.logger.addHandler(handler)
     return app
 
 
