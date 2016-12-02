@@ -13,7 +13,7 @@
 #    under the License.
 
 import logging
-from valence.flavor.generatorbase import generatorbase
+from valence.flavors.generatorbase import generatorbase
 
 LOG = logging.getLogger(__name__)
 

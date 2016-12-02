@@ -29,7 +29,7 @@ def get_available_criteria():
                    and not f.startswith('__') and f.endswith('.py')]
     resp = []
     for filename in pluginfiles:
-        module = import_module("valence.flavor.plugins." + filename)
+        module = import_module("valence.flavors.plugins." + filename)
         myclass = getattr(module, filename + 'Generator')
         inst = myclass([])
         resp.append({'name': filename, 'description': inst.description()})
@@ -48,7 +48,7 @@ def create_flavors(data):
     for criteria_name in criteria.split(","):
         if criteria_name:
             LOG.info("Calling generator : %s ." % criteria_name)
-            module = __import__("valence.flavor.plugins." + criteria_name,
+            module = __import__("valence.flavors.plugins." + criteria_name,
                                 fromlist=["*"])
             classobj = getattr(module, criteria_name + "Generator")
             inst = classobj(lst_systems)
