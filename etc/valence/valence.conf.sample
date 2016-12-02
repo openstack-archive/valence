@@ -18,3 +18,7 @@ url=https://<ip address>:<port>
 user=<podm user>
 password=<podm admin>
 redfish_base_ext=/redfish/v1/
+
+[database_etcd]
+host = localhost
+port = 2379
