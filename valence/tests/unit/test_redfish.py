@@ -30,6 +30,14 @@ class TestRedfish(TestCase):
         result = redfish.get_rfs_url("/redfish/v1/Systems/1")
         self.assertEqual(expected, result)
 
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_get_base_resource_url_chassis(self, mock_request):
+        fake_resp = fakes.mock_request_get(fakes.fake_service_root(), "200")
+        mock_request.return_value = fake_resp
+        expected = "/redfish/v1/Chassis"
+        result = redfish.get_base_resource_url("Chassis")
+        self.assertEqual(expected, result)
+
     @mock.patch('requests.request')
     def test_send_request(self, mock_request):
         mock_request.return_value = "fake_node"

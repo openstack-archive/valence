@@ -24,6 +24,33 @@ def mock_request_get(json_data, status_code):
     return MockResponse(json_data, status_code)
 
 
+def fake_service_root():
+    return {
+        "@odata.id": "/redfish/v1",
+        "Id": "ServiceRoot",
+        "Name": "Service root",
+        "RedfishVersion": "1.0.0",
+        "Chassis": {
+            "@odata.id": "/redfish/v1/Chassis"
+        },
+        "Services": {
+            "@odata.id": "/redfish/v1/Services"
+        },
+        "Systems": {
+            "@odata.id": "/redfish/v1/Systems"
+        },
+        "Managers": {
+            "@odata.id": "/redfish/v1/Managers"
+        },
+        "Nodes": {
+            "@odata.id": "/redfish/v1/Nodes"
+        },
+        "EthernetSwitches": {
+            "@odata.id": "/redfish/v1/EthernetSwitches"
+        }
+    }
+
+
 def fake_chassis_list():
     return [
         {
