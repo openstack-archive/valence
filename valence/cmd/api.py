@@ -20,6 +20,7 @@ from gunicorn.six import iteritems
 
 from valence.api.route import app as application
 from valence import config as cfg
+from valence.db.etcd_db import init_db
 
 
 LOG = logging.getLogger(__name__)
@@ -47,6 +48,7 @@ def main():
         'bind': '%s:%s' % (cfg.bind_host, cfg.bind_port),
         'reload': cfg.debug
     }
+    init_db()
     StandaloneApplication(application, options).run()
     LOG.info(("Valence Server on http://%(host)s:%(port)s"),
              {'host': cfg.bind_host, 'port': cfg.bind_port})
