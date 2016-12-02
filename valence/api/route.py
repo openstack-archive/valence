@@ -18,7 +18,7 @@ from flask_restful import Api
 from valence.api import app as flaskapp
 from valence.api.root import PODMProxy
 from valence.api.root import Root
-from valence.api.v1.flavor import Flavors as v1Flavors
+from valence.api.v1.flavors import Flavors as v1Flavors
 from valence.api.v1.nodes import Nodes as v1Nodes
 from valence.api.v1.nodes import NodesList as v1NodesList
 from valence.api.v1.nodes import NodesStorage as v1NodesStorage
@@ -53,7 +53,7 @@ api.add_resource(v1SystemsList, '/v1/systems', endpoint='systems')
 api.add_resource(v1Systems, '/v1/systems/<string:systemid>', endpoint='system')
 
 # Flavor(s) operations
-api.add_resource(v1Flavors, '/v1/flavor', endpoint='flavor')
+api.add_resource(v1Flavors, '/v1/flavors', endpoint='flavors')
 
 
 # Storage(s) operations
