@@ -4,7 +4,7 @@
 Flavors
 ============
 
-List, Searching of Flavors through the ``/v1/flavor``
+List, Searching of Flavors through the ``/v1/flavors``
 
 
 List Flavor
@@ -35,7 +35,7 @@ Response
 Generate Flavor
 ===============
 
-.. rest_method:: POST /v1/flavor
+.. rest_method:: POST /v1/flavors
 
 Normal response codes: 200
 
@@ -64,7 +64,7 @@ Response
 List Flavor criteria
 =====================
 
-.. rest_method::  GET /v1/flavor/criteria
+.. rest_method::  GET /v1/flavors/criteria
 
 Get all supported flavor generation criteria along with their description.
 
