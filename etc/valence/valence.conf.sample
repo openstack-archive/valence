@@ -17,4 +17,4 @@ bind_port = 8181
 url=http://<ip address>
 user=<podm user>
 password=<podm admin>
-
+redfish_base_ext=/redfish/v1/
