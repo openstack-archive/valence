@@ -66,3 +66,7 @@ debug = get_option("DEFAULT", "debug", False, bool)
 podm_url = get_option("podm", "url", "http://127.0.0.1")
 podm_user = get_option("podm", "user", "admin")
 podm_password = get_option("podm", "password", "admin")
+
+# Database etcd Settings
+etcd_host = get_option("db_etcd", "host", "localhost")
+etcd_port = get_option("db_etcd", "port", 2379)

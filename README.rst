@@ -20,6 +20,16 @@ The following steps capture how to install valence. All installation steps
 require super user permissions.
 
 *******************************************
+Database etcd installation
+*******************************************
+
+ Single node installation reference: https://github.com/coreos/etcd/releases
+
+ Distributed installation reference: https://github.com/coreos/etcd/blob/master/Documentation/op-guide/clustering.md
+
+ For development, single node installation is recommended practice.
+
+*******************************************
 Valence installation
 *******************************************
 
