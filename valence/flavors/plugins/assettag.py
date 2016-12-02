@@ -13,44 +13,43 @@
 #    under the License.
 
 import logging
-from valence.flavor.generatorbase import generatorbase
+import re
+from valence.flavors.generatorbase import generatorbase
 
-LOG = logging.getLogger(__name__)
+LOG = logging.getLogger()
 
 
-class defaultGenerator(generatorbase):
+class assettagGenerator(generatorbase):
     def __init__(self, nodes):
         generatorbase.__init__(self, nodes)
 
     def description(self):
-        return ("Generates 3 flavors(Tiny, Medium, Large) for "
-                "each node considering all cpu cores, ram and storage")
+        return "Demo only: Generates location based on assettag"
 
     def generate(self):
         LOG.info("Default Generator")
         for node in self.nodes:
-            LOG.debug("Node ID " + node['id'])
+            LOG.info("Node ID " + node['id'])
             location = node['location']
-            LOG.debug(location)
-            location_lst = location.split("_")
+            location = location.split('Sled')[0]
+            location_lst = re.split("(\d+)", location)
+            LOG.info(str(location_lst))
             location_lst = list(filter(None, location_lst))
-            extraspecs = ({l[0]: l[1]
-                           for l in (l.split(":") for l in location_lst)})
-            name = self.prepend_name + node['id']
-        return [
+            LOG.info(str(location_lst))
+            extraspecs = {location_lst[i]: location_lst[i + 1]
+                          for i in range(0, len(location_lst), 2)}
+            name = self.prepend_name + location
+        return {
             self._flavor_template("L_" + name,
                                   node['ram'],
                                   node['cpu']["count"],
-                                  node['storage'],
-                                  extraspecs),
+                                  node['storage'], extraspecs),
             self._flavor_template("M_" + name,
                                   int(node['ram']) / 2,
                                   int(node['cpu']["count"]) / 2,
-                                  int(node['storage']) / 2,
-                                  extraspecs),
+                                  int(node['storage']) / 2, extraspecs),
             self._flavor_template("S_" + name,
                                   int(node['ram']) / 4,
                                   int(node['cpu']["count"]) / 4,
-                                  int(node['storage']) / 4,
-                                  extraspecs)
-        ]
+                                  int(node['storage']) / 4, extraspecs)
+        }
