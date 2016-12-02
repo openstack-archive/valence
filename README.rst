@@ -20,6 +20,16 @@ The following steps capture how to install valence. All installation steps
 require super user permissions.
 
 *******************************************
+Database etcd installation
+*******************************************
+
+ Single node installation reference: https://github.com/coreos/etcd/releases
+
+ Distributed installation reference: https://github.com/coreos/etcd/blob/master/Documentation/op-guide/clustering.md
+
+ For development, single node installation is recommended practice.
+
+*******************************************
 Valence installation
 *******************************************
 
@@ -43,7 +53,11 @@ Valence installation
 
  5. Check the PYTHON_HOME and other variables in /etc/init/valence.conf
 
- 6. Start valence service
+ 6. Initialize etcd database
+
+    ``$ python valence\cmd\db_manager.py``
+
+ 7. Start valence service
 
     ``$ sudo service valence start``
 
