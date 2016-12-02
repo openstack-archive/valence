@@ -18,3 +18,8 @@ url=http://<ip address>
 user=<podm user>
 password=<podm admin>
 
+[db_etcd]
+host = localhost
+port = 2379
+
+
