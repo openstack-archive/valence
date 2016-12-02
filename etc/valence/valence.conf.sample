@@ -18,3 +18,7 @@ url=http://<ip address>
 user=<podm user>
 password=<podm admin>
 redfish_base_ext=/redfish/v1/
+
+# Database etcd Settings
+etcd_host = get_option("db_etcd", "host", "localhost")
+etcd_port = get_option("db_etcd", "port", 2379)

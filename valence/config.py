@@ -67,3 +67,7 @@ podm_url = get_option("podm", "url", "http://127.0.0.1")
 podm_user = get_option("podm", "user", "admin")
 podm_password = get_option("podm", "password", "admin")
 redfish_base_ext = get_option("podm", "redfish_base_ext", "/redfish/v1/")
+
+# Database etcd Settings
+etcd_host = get_option("db_etcd", "host", "localhost")
+etcd_port = get_option("db_etcd", "port", 2379)
