@@ -21,12 +21,10 @@ from gunicorn.six import iteritems
 from valence.api.route import app as application
 from valence import config as cfg
 
-
 LOG = logging.getLogger(__name__)
 
 
 class StandaloneApplication(gunicorn.app.base.BaseApplication):
-
     def __init__(self, app, options=None):
         self.options = options or {}
         self.application = app
