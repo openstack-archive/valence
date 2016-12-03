@@ -55,12 +55,11 @@ def send_request(resource, method="GET", **kwargs):
 def filter_chassis(jsonContent, filterCondition):
     returnJSONObj = {}
     returnMembers = []
-    parsed = json.loads(jsonContent)
-    members = parsed['Members']
+    members = jsonContent['Members']
     for member in members:
         resource = member['@odata.id']
         resp = send_request(resource)
-        memberJsonObj = json.loads(resp.json())
+        memberJsonObj = resp.json()
         chassisType = memberJsonObj['ChassisType']
         if chassisType == filterCondition:
             returnMembers.append(member)
@@ -96,13 +95,15 @@ def generic_filter(jsonContent, filterConditions):
 
 
 def racks():
-    jsonContent = send_request('Chassis')
+    resp = send_request('Chassis')
+    jsonContent = resp.json()
     racks = filter_chassis(jsonContent, 'Rack')
     return json.dumps(racks)
 
 
 def pods():
-    jsonContent = send_request('Chassis')
+    resp = send_request('Chassis')
+    jsonContent = resp.json()
     pods = filter_chassis(jsonContent, 'Pod')
     return json.dumps(pods)
 
