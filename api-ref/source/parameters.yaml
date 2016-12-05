@@ -277,6 +277,13 @@ system_chassis_id:
   in: body
   required: true
   type: string
+system_health:
+  description: |
+    The current Compute System health state including "On","Off"
+    "PoweredOn", "PoweredOff"
+  in: body
+  required: true
+  type: array
 system_memory_object:
   description: |
     The memory (object) inventory of Compute system
@@ -297,8 +304,8 @@ system_network_object:
   type: array
 system_power_state:
   description: |
-    The current Compute System power state including "On","Off"
-    "PoweredOn", "PoweredOff"
+    The current Compute System power state including "OK","Warning"
+    "Critical"
   in: body
   required: true
   type: array
