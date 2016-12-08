@@ -20,6 +20,7 @@ from flask_restful import Resource
 from valence.api import base
 from valence.api import link
 from valence.api import types
+from valence.common import utils
 
 
 class MediaType(base.APIBase):
@@ -107,4 +108,6 @@ class V1(Resource):
 
     def get(self):
         vobj = V1Base.convert()
-        return json.loads(json.dumps(vobj, default=lambda o: o.as_dict()))
+        return utils.make_response(
+            200,
+            json.loads(json.dumps(vobj, default=lambda o: o.as_dict())))
