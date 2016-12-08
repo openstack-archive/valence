@@ -22,6 +22,7 @@ from flask_restful import Resource
 from valence.api import base
 from valence.api import link
 from valence.api import types
+from valence.common import utils
 from valence.redfish import redfish as rfs
 
 
@@ -87,7 +88,8 @@ class Root(Resource):
 
     def get(self):
         obj = RootBase.convert()
-        return json.loads(json.dumps(obj, default=lambda o: o.as_dict()))
+        return utils.make_response(
+            json.loads(json.dumps(obj, default=lambda o: o.as_dict())))
 
 
 class PODMProxy(Resource):
