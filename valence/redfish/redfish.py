@@ -25,15 +25,29 @@ from valence.redfish import tree
 
 
 LOG = logging.getLogger(__name__)
+SERVICE_ROOT = None
+
+
+def update_service_root():
+    global SERVICE_ROOT
+    resp = send_request(cfg.redfish_base_ext)
+    SERVICE_ROOT = resp.json()
 
 
 def get_rfs_url(serviceext):
-    REDFISH_BASE_EXT = "/redfish/v1/"
-    if REDFISH_BASE_EXT in serviceext:
+    if cfg.redfish_base_ext in serviceext:
         relative_url = serviceext
     else:
-        relative_url = os.path.join(REDFISH_BASE_EXT, serviceext)
+        relative_url = os.path.join(cfg.redfish_base_ext, serviceext)
     return requests.compat.urljoin(cfg.podm_url, relative_url)
+
+
+def get_base_resource_url(resource, update_services=False):
+    if update_services or not SERVICE_ROOT:
+        LOG.debug("Updating service root...")
+        update_service_root()
+    resource_url = SERVICE_ROOT[resource]["@odata.id"]
+    return resource_url
 
 
 def send_request(resource, method="GET", **kwargs):
@@ -95,16 +109,16 @@ def generic_filter(jsonContent, filterConditions):
 
 
 def racks():
-    resp = send_request('Chassis')
-    jsonContent = resp.json()
-    racks = filter_chassis(jsonContent, 'Rack')
+    chassis_url = get_base_resource_url("Chassis")
+    jsonContent = send_request(chassis_url)
+    racks = filter_chassis(jsonContent, "Rack")
     return json.dumps(racks)
 
 
 def pods():
-    resp = send_request('Chassis')
-    jsonContent = resp.json()
-    pods = filter_chassis(jsonContent, 'Pod')
+    chassis_url = get_base_resource_url("Chassis")
+    jsonContent = send_request(chassis_url)
+    pods = filter_chassis(jsonContent, "Pod")
     return json.dumps(pods)
 
 
@@ -184,7 +198,8 @@ def node_storage_details(nodeurl):
 def systems_list(filters={}):
     # list of nodes with hardware details needed for flavor creation
     lst_systems = []
-    systemurllist = urls2list("Systems")
+    systems_url = get_base_resource_url("Systems")
+    systemurllist = urls2list(systems_url)
     podmtree = build_hierarchy_tree()
     LOG.info(systemurllist)
     for lnk in systemurllist:
@@ -233,7 +248,8 @@ def systems_list(filters={}):
 
 
 def get_chassis_list():
-    chassis_lnk_lst = urls2list("Chassis")
+    chassis_url = get_base_resource_url("Chassis")
+    chassis_lnk_lst = urls2list(chassis_url)
     lst_chassis = []
 
     for clnk in chassis_lnk_lst:
@@ -295,21 +311,24 @@ def build_hierarchy_tree():
 
 
 def compose_node(data):
-    composeurl = "Nodes/Actions/Allocate"
+    nodes_url = get_base_resource_url("Nodes")
+    compose_url = nodes_url + "/Actions/Allocate"
     headers = {'Content-type': 'application/json'}
     criteria = data["criteria"]
     if not criteria:
-        resp = send_request(composeurl, "POST", headers=headers)
+        resp = send_request(compose_url, "POST", headers=headers)
     else:
-        resp = send_request(composeurl, "POST", json=criteria, headers=headers)
+        resp = send_request(compose_url, "POST", json=criteria,
+                            headers=headers)
 
-    composednode = resp.headers['Location']
-    return {"node": composednode}
+    composed_node = resp.headers['Location']
+    return {"node": composed_node}
 
 
 def delete_composednode(nodeid):
-    deleteurl = "Nodes/" + str(nodeid)
-    resp = send_request(deleteurl, "DELETE")
+    nodes_url = get_base_resource_url("Nodes")
+    delete_url = nodes_url + str(nodeid)
+    resp = send_request(delete_url, "DELETE")
     return resp
 
 
@@ -317,7 +336,8 @@ def nodes_list(filters={}):
     # list of nodes with hardware details needed for flavor creation
     LOG.debug(filters)
     lst_nodes = []
-    nodeurllist = urls2list("Nodes")
+    nodes_url = get_base_resource_url("Nodes")
+    nodeurllist = urls2list(nodes_url)
     # podmtree = build_hierarchy_tree()
     # podmtree.writeHTML("0","/tmp/a.html")
 
