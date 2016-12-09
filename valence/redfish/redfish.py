@@ -141,11 +141,11 @@ def extract_val(data, path, defaultval=None):
     return data
 
 
-def node_cpu_details(nodeurl):
+def system_cpu_details(system_url):
     cpucnt = 0
     cpuarch = ""
     cpumodel = ""
-    cpulist = urls2list(nodeurl + '/Processors')
+    cpulist = urls2list(system_url + '/Processors')
     for lnk in cpulist:
         LOG.info("Processing CPU %s" % lnk)
         resp = send_request(lnk)
@@ -154,43 +154,43 @@ def node_cpu_details(nodeurl):
         cpucnt += extract_val(respdata, "TotalCores", 0)
         cpuarch = extract_val(respdata, "InstructionSet", "")
         cpumodel = extract_val(respdata, "Model", "")
-        LOG.debug(" Cpu details %s: %d: %s: %s "
-                  % (nodeurl, cpucnt, cpuarch, cpumodel))
+        LOG.debug(" CPU details %s: %d: %s: %s "
+                  % (system_url, cpucnt, cpuarch, cpumodel))
     return {"cores": str(cpucnt), "arch": cpuarch, "model": cpumodel}
 
 
-def node_ram_details(nodeurl):
+def system_ram_details(system_url):
     # this extracts the RAM and returns as dictionary
-    resp = send_request(nodeurl)
+    resp = send_request(system_url)
     respjson = resp.json()
-    ram = extract_val(respjson, "MemorySummary/TotalSystemMemoryGiB", "0")
+    ram = extract_val(respjson, "MemorySummary/TotalSystemMemoryGiB", '0')
     return str(ram)
 
 
-def node_nw_details(nodeurl):
+def system_network_details(system_url):
     # this extracts the total nw interfaces and returns as a string
-    resp = send_request(nodeurl + "/EthernetInterfaces")
+    resp = send_request(system_url + "/EthernetInterfaces")
     respbody = resp.json()
     nwi = str(extract_val(respbody, "Members@odata.count", "0"))
-    LOG.debug(" Total NW for node %s : %s " % (nodeurl, nwi))
+    LOG.debug(" Total NW for node %s : %s " % (system_url, nwi))
     return nwi
 
 
-def node_storage_details(nodeurl):
+def system_storage_details(system_url):
     # this extracts the RAM and returns as dictionary
     storagecnt = 0
-    hddlist = urls2list(nodeurl + "/SimpleStorage")
+    hddlist = urls2list(system_url + "/SimpleStorage")
     for lnk in hddlist:
         resp = send_request(lnk)
         respbody = resp.json()
-        hdds = extract_val(respbody, "Devices")
-        if not hdds:
+        devices = extract_val(respbody, "Devices")
+        if not devices:
             continue
-        for sd in hdds:
-            if "CapacityBytes" in sd:
-                if sd["CapacityBytes"] is not None:
-                    storagecnt += sd["CapacityBytes"]
-    LOG.debug("Total storage for node %s : %d " % (nodeurl, storagecnt))
+        for device in devices:
+            if "CapacityBytes" in device:
+                if device["CapacityBytes"] is not None:
+                    storagecnt += device["CapacityBytes"]
+    LOG.debug("Total storage for system %s : %d " % (system_url, storagecnt))
     # to convert Bytes in to GB. Divide by 1073741824
     return str(storagecnt / 1073741824).split(".")[0]
 
@@ -215,10 +215,10 @@ def systems_list(filters={}):
         systemid = lnk.split("/")[-1]
         systemuuid = system['UUID']
         systemlocation = podmtree.getPath(lnk)
-        cpu = node_cpu_details(lnk)
-        ram = node_ram_details(lnk)
-        nw = node_nw_details(lnk)
-        storage = node_storage_details(lnk)
+        cpu = system_cpu_details(lnk)
+        ram = system_ram_details(lnk)
+        nw = system_network_details(lnk)
+        storage = system_storage_details(lnk)
         system = {"id": systemid, "cpu": cpu,
                   "ram": ram, "storage": storage,
                   "nw": nw, "location": systemlocation,
@@ -364,8 +364,8 @@ def nodes_list(filters={}):
             cpu = {}
             ram = 0
             nw = 0
-            storage = node_storage_details(nodesystemurl)
-            cpu = node_cpu_details(lnk)
+            storage = system_storage_details(nodesystemurl)
+            cpu = system_cpu_details(nodesystemurl)
 
             if "Memory" in node:
                 ram = node["Memory"]["TotalSystemMemoryGiB"]

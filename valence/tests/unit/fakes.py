@@ -69,3 +69,80 @@ def fake_chassis_list():
             "Name": "Rack 2"
         }
     ]
+
+
+def fake_processor_list():
+    return [
+        {
+            "Id": "1",
+            "TotalCores": 1,
+            "InstructionSet": "x86",
+            "Model": "Intel Xeon"
+        },
+        {
+            "Id": "2",
+            "TotalCores": 2,
+            "InstructionSet": "x86",
+            "Model": "Intel Xeon"
+        }
+    ]
+
+
+def fake_detailed_system():
+    return {
+        "@odata.id": "/redfish/v1/Systems/1",
+        "Id": "1",
+        "Name": "Fake System",
+        "SystemType": "Physical",
+        "Status": {
+            "State": "Enabled",
+            "Health": "OK"
+        },
+        "PowerState": "On",
+        "ProcessorSummary": {
+            "Count": "1",
+            "Model": "Intel Xeon",
+            "Status": {
+                "State": "Enabled",
+                "Health": "OK"
+            }
+        },
+        "MemorySummary": {
+            "TotalSystemMemoryGiB": 8,
+            "Status": {
+                "State": "Enabled",
+                "Health": "OK"
+            }
+        }
+    }
+
+
+def fake_simple_storage():
+    return {
+        "@odata.id": "/redfish/v1/Systems/1/SimpleStorage/1",
+        "Id": "1",
+        "Name": "Simple Storage Controller",
+        "Devices": [
+            {
+                "Name": "Drive 1",
+                "CapacityBytes": 322122547200
+            },
+            {
+                "Name": "Drive 2",
+                "CapacityBytes": 322122547200
+            }
+        ]
+    }
+
+
+def fake_system_ethernet_interfaces():
+    return {
+        "@odata.id": "/redfish/v1/Systems/1/EthernetInterfaces",
+        "Name": "Ethernet Interface Collection",
+        "Members@odata.count": 2,
+        "Members": [
+            {"@odata.id": "/redfish/v1/Systems/1/EthernetInterfaces/1"},
+            {"@odata.id": "/redfish/v1/Systems/1/EthernetInterfaces/2"}
+        ]
+    }
+
