@@ -20,6 +20,7 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth
 
+from valence.common import utils
 from valence import config as cfg
 from valence.redfish import tree
 
@@ -82,32 +83,6 @@ def filter_chassis(jsonContent, filterCondition):
     return returnJSONObj
 
 
-def generic_filter(jsonContent, filterConditions):
-    # returns boolean based on filters..its generic filter
-    is_filter_passed = False
-    for fc in filterConditions:
-        if fc in jsonContent:
-            if jsonContent[fc].lower() == filterConditions[fc].lower():
-                is_filter_passed = True
-            else:
-                is_filter_passed = False
-            break
-        elif "/" in fc:
-            querylst = fc.split("/")
-            tmp = jsonContent
-            for q in querylst:
-                tmp = tmp[q]
-            if tmp.lower() == filterConditions[fc].lower():
-                is_filter_passed = True
-            else:
-                is_filter_passed = False
-            break
-        else:
-            LOG.warn(" Filter string mismatch ")
-    LOG.info(" JSON CONTENT " + str(is_filter_passed))
-    return is_filter_passed
-
-
 def racks():
     chassis_url = get_base_resource_url("Chassis")
     jsonContent = send_request(chassis_url)
@@ -132,15 +107,6 @@ def urls2list(url):
         return []
 
 
-def extract_val(data, path, defaultval=None):
-    # function to select value at particularpath
-    patharr = path.split("/")
-    for p in patharr:
-        data = data[p]
-    data = (data if data else defaultval)
-    return data
-
-
 def node_cpu_details(nodeurl):
     cpucnt = 0
     cpuarch = ""
@@ -151,9 +117,9 @@ def node_cpu_details(nodeurl):
         resp = send_request(lnk)
         respdata = resp.json()
         # Check if CPU data is populated. It also may have NULL values
-        cpucnt += extract_val(respdata, "TotalCores", 0)
-        cpuarch = extract_val(respdata, "InstructionSet", "")
-        cpumodel = extract_val(respdata, "Model", "")
+        cpucnt += utils.extract_val(respdata, "TotalCores", 0)
+        cpuarch = utils.extract_val(respdata, "InstructionSet", "")
+        cpumodel = utils.extract_val(respdata, "Model", "")
         LOG.debug(" Cpu details %s: %d: %s: %s "
                   % (nodeurl, cpucnt, cpuarch, cpumodel))
     return {"cores": str(cpucnt), "arch": cpuarch, "model": cpumodel}
@@ -163,7 +129,8 @@ def node_ram_details(nodeurl):
     # this extracts the RAM and returns as dictionary
     resp = send_request(nodeurl)
     respjson = resp.json()
-    ram = extract_val(respjson, "MemorySummary/TotalSystemMemoryGiB", "0")
+    ram = utils.extract_val(respjson,
+                            "MemorySummary/TotalSystemMemoryGiB", "0")
     return str(ram)
 
 
@@ -171,7 +138,7 @@ def node_nw_details(nodeurl):
     # this extracts the total nw interfaces and returns as a string
     resp = send_request(nodeurl + "/EthernetInterfaces")
     respbody = resp.json()
-    nwi = str(extract_val(respbody, "Members@odata.count", "0"))
+    nwi = str(utils.extract_val(respbody, "Members@odata.count", "0"))
     LOG.debug(" Total NW for node %s : %s " % (nodeurl, nwi))
     return nwi
 
@@ -183,7 +150,7 @@ def node_storage_details(nodeurl):
     for lnk in hddlist:
         resp = send_request(lnk)
         respbody = resp.json()
-        hdds = extract_val(respbody, "Devices")
+        hdds = utils.extract_val(respbody, "Devices")
         if not hdds:
             continue
         for sd in hdds:
@@ -208,7 +175,7 @@ def systems_list(filters={}):
         system = resp.json()
 
         if any(filters):
-            filterPassed = generic_filter(system, filters)
+            filterPassed = utils.match_conditions(system, filters)
         if not filterPassed:
             continue
 
@@ -350,7 +317,7 @@ def nodes_list(filters={}):
             node = resp.json()
 
             if any(filters):
-                filterPassed = generic_filter(node, filters)
+                filterPassed = utils.match_conditions(node, filters)
                 LOG.info("FILTER PASSED" + str(filterPassed))
             if not filterPassed:
                 continue
