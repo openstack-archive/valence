@@ -11,9 +11,12 @@
 #    under the License.
 
 import mock
+import requests
+from requests.auth import HTTPBasicAuth
 from requests.compat import urljoin
 from unittest import TestCase
 
+from valence.common import constance
 from valence import config as cfg
 from valence.redfish import redfish
 from valence.tests.unit.fakes import redfish_fakes as fakes
@@ -171,3 +174,19 @@ class TestRedfish(TestCase):
         expected = '600'
         result = redfish.system_storage_details("/redfish/v1/Systems/test")
         self.assertEqual(expected, result)
+
+    @mock.patch('requests.get')
+    def test_get_podm_status_Offline(self, mock_get):
+        mock_get.side_effect = requests.ConnectionError
+        self.assertEqual(redfish.pod_status('url', 'username', 'password'),
+                         constance.PODM_STATUS_OFFLINE)
+        mock_get.asset_called_once_with('url', auth=HTTPBasicAuth('username',
+                                                                  'password'))
+
+    @mock.patch('requests.get')
+    def test_get_podm_status_Online(self, mock_get):
+        mock_get.return_value = 'ok'
+        self.assertEqual(redfish.pod_status('url', 'username', 'password'),
+                         constance.PODM_STATUS_ONLINE)
+        mock_get.asset_called_once_with('url', auth=HTTPBasicAuth('username',
+                                                                  'password'))
