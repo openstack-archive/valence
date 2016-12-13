@@ -13,17 +13,17 @@
 #    under the License.
 
 import json
-from unittest import TestCase
+import unittest
 
-from flask import Flask
+import flask
 
 from valence.common import utils
 
 
-class TestMakeResponse(TestCase):
+class TestMakeResponse(unittest.TestCase):
 
     def setUp(self):
-        app = Flask(__name__)
+        app = flask.Flask(__name__)
         self.app_context = app.test_request_context()
         self.app_context.push()
 
@@ -53,3 +53,38 @@ class TestMakeResponse(TestCase):
     def test_make_response_with_wrong_headers(self):
         with self.assertRaises(ValueError):
             utils.make_response(200, headers=("header", "header_value"))
+
+
+class TestUtils(unittest.TestCase):
+
+    def test_match_conditions(self):
+        filter_condition = {"Id": "1"}
+        json_content_pass = {"Name": "Pass",
+                             "Id": "1"}
+        result = utils.match_conditions(json_content_pass,
+                                        filter_condition)
+        self.assertTrue(result)
+        json_content_fail = {"Name": "Fail",
+                             "Id": "2"}
+        result = utils.match_conditions(json_content_fail,
+                                        filter_condition)
+        self.assertFalse(result)
+        json_content_fail_2 = {"Name": "Fail2"}
+        result = utils.match_conditions(json_content_fail_2,
+                                        filter_condition)
+        self.assertFalse(result)
+
+    def test_extract_val(self):
+        data = {"Name": "NoMembers", "Id": 1, "Path": {
+                "Level1": {"Level2": "L2"}}}
+        result = utils.extract_val(data, "Id")
+        self.assertEqual(result, 1)
+
+        result = utils.extract_val(data, "Id1")
+        self.assertEqual(result, None)
+
+        result = utils.extract_val(data, "Path/Level1/Level2")
+        self.assertEqual(result, "L2")
+
+        result = utils.extract_val(data, "Id1", "DEFAULTID")
+        self.assertEqual(result, "DEFAULTID")
