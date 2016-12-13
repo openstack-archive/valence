@@ -60,9 +60,6 @@ ChangeLog
 .*sw?
 *.DS_Store
 
-# generated config file
-etc/magnum/magnum.conf.sample
-
 # Files created by releasenotes build
 releasenotes/build
 
