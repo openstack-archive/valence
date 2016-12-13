@@ -90,6 +90,10 @@ class NotFound(Exception):
     status = http_client.NOT_FOUND
 
 
+class BadRequest(Exception):
+    status = http_client.BAD_REQUEST
+
+
 def _error(error_code, http_status, error_title, error_detail,
            request_id=FAKE_REQUEST_ID):
     # responseobj - the response object of Requests framework
