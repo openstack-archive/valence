@@ -26,6 +26,8 @@ from valence.api.v1.storages import Storages as v1Storages
 from valence.api.v1.storages import StoragesList as v1StoragesList
 from valence.api.v1.systems import Systems as v1Systems
 from valence.api.v1.systems import SystemsList as v1SystemsList
+from valence.api.v1.podmanagers import PodManager as v1PodManager
+from valence.api.v1.podmanagers import PodManagersList as v1PodManagerList
 from valence.api.v1.version import V1
 
 app = flaskapp.get_app()
@@ -60,6 +62,10 @@ api.add_resource(v1Flavors, '/v1/flavors', endpoint='flavors')
 api.add_resource(v1StoragesList, '/v1/storages', endpoint='storages')
 api.add_resource(v1Storages,
                  '/v1/storages/<string:storageid>', endpoint='storage')
+
+# PodManager(s) operations
+api.add_resource(v1PodManager, '/v1/pod_managers/<string:podm_uuid>', endpoint='podmanager')
+api.add_resource(v1PodManagerList, '/v1/pod_managers', endpoint='podmanagers')
 
 # Proxy to PODM
 api.add_resource(PODMProxy, '/<path:url>', endpoint='podmproxy')
