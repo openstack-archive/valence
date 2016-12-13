@@ -18,6 +18,11 @@ Base API interface for Database
 from valence.db import etcd_driver
 
 
+def get_connection():
+    """Return a database connection instance"""
+    return Connection()
+
+
 def _get_driver():
     """Return a DB Driver instance."""
     return etcd_driver.get_driver()
