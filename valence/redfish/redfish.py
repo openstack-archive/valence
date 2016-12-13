@@ -268,7 +268,7 @@ def get_systembyid(systemid):
 def get_nodebyid(nodeid):
     node = nodes_list({"Id": nodeid})
     if not node:
-        raise exception.NotFound()
+        raise exception.NotFound(detail='Node:%s not found' % nodeid)
     return node[0]
 
 
