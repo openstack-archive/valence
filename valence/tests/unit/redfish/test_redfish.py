@@ -13,9 +13,12 @@
 from unittest import TestCase
 
 import mock
+import requests
+from requests.auth import HTTPBasicAuth
 from requests.compat import urljoin
 from six.moves import http_client
 
+from valence.common import constance
 from valence.common import exception
 from valence import config as cfg
 from valence.redfish import redfish
@@ -218,3 +221,19 @@ class TestRedfish(TestCase):
         self.assertRaises(exception.RedfishException,
                           redfish.delete_composednode, 101)
         self.assertFalse(mock_make_response.called)
+
+    @mock.patch('requests.get')
+    def test_get_podm_status_Offline(self, mock_get):
+        mock_get.side_effect = requests.ConnectionError
+        self.assertEqual(redfish.pod_status('url', 'username', 'password'),
+                         constance.PODM_STATUS_OFFLINE)
+        mock_get.asset_called_once_with('url', auth=HTTPBasicAuth('username',
+                                                                  'password'))
+
+    @mock.patch('requests.get')
+    def test_get_podm_status_Online(self, mock_get):
+        mock_get.return_value = 'ok'
+        self.assertEqual(redfish.pod_status('url', 'username', 'password'),
+                         constance.PODM_STATUS_ONLINE)
+        mock_get.asset_called_once_with('url', auth=HTTPBasicAuth('username',
+                                                                  'password'))
