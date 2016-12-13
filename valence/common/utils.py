@@ -85,7 +85,7 @@ def make_response(status_code, content="", headers=None):
     """Wrapper function to create flask http response.
 
     :param status_code: status code of http response, set default to 200
-    :param content: content of http response, should be dict object
+    :param content: content of http response, should be json object
     :param headers: additional headers of http response, should be dict
     :returns: return_type -- flask Response object
     """
