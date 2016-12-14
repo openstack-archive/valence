@@ -1,0 +1,34 @@
+{
+  "pod_managers" : [
+    {
+      "uuid" : "666d7b54-3844-4eb8-938f-458e5ede920f",
+      "name" : "pod-1" ,
+      "status" : "online" ,
+      "links": [
+        {
+          "rel" : "self",
+          "href" : "https://127.0.0.1/v1/pod_managers/666d7b54-3844-4eb8-938f-458e5ede920f"
+        },
+        {
+          "href" : "https://127.0.0.1/pod_managers/666d7b54-3844-4eb8-938f-458e5ede920f",
+          "rel" : "bookmark"
+        }
+      ]
+    },
+    {
+      "uuid" : "0afc92d3-8846-4f48-89b6-c6dd29309331",
+      "name" : "pod-2" ,
+      "status" : "offline" ,
+      "links": [
+        {
+          "rel" : "self",
+          "href" : "https://127.0.0.1/v1/pod_managers/0afc92d3-8846-4f48-89b6-c6dd29309331"
+        },
+        {
+          "href" : "https://127.0.0.1/pod_managers/0afc92d3-8846-4f48-89b6-c6dd29309331",
+          "rel" : "bookmark"
+        }
+      ]
+    }
+  ]
+}
