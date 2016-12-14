@@ -18,3 +18,11 @@ url=http://<ip address>
 user=<podm user>
 password=<podm admin>
 redfish_base_ext=/redfish/v1/
+
+[keystone]
+keystone_auth_url=http://127.0.0.1:5000
+
+[ironic]
+ironic_username=admin
+ironic_password=password
+ironic_tenant_name=admin
