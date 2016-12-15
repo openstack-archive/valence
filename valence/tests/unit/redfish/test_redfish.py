@@ -81,3 +81,42 @@ class TestRedfish(TestCase):
         expected = ["/redfish/v1/Member/1", "/redfish/v1/Member/2"]
         result = redfish.urls2list('/redfish/v1/test')
         self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish.urls2list')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_system_cpu_details(self, mock_request, mock_url_list):
+        fake_processor_list = fakes.fake_processor_list()
+        mock_url_list.return_value = ["/redfish/v1/Systems/1",
+                                      "/redfish/v1/Systems/2"]
+        first_request = fakes.mock_request_get(fake_processor_list[0], "200")
+        second_request = fakes.mock_request_get(fake_processor_list[1], "200")
+        mock_request.side_effect = [first_request, second_request]
+        expected = {"cores": "3", "arch": "x86", "model": "Intel Xeon"}
+        result = redfish.system_cpu_details("/redfish/v1/Systems/test")
+        self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_system_ram_details(self, mock_request):
+        resp = fakes.fake_detailed_system()
+        mock_request.return_value = fakes.mock_request_get(resp, "200")
+        expected = '8'
+        result = redfish.system_ram_details("/redfish/v1/Systems/test")
+        self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_system_network_details(self, mock_request):
+        resp = fakes.fake_system_ethernet_interfaces()
+        mock_request.return_value = fakes.mock_request_get(resp, "200")
+        expected = '2'
+        result = redfish.system_network_details("/redfish/v1/Systems/test")
+        self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish.urls2list')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_system_storage_details(self, mock_request, mock_url_list):
+        mock_url_list.return_value = ["/redfish/v1/Systems/1/SimpleStorage/1"]
+        resp = fakes.fake_simple_storage()
+        mock_request.return_value = fakes.mock_request_get(resp, "200")
+        expected = '600'
+        result = redfish.system_storage_details("/redfish/v1/Systems/test")
+        self.assertEqual(expected, result)
