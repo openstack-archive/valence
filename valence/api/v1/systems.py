@@ -17,7 +17,7 @@ import logging
 from flask import request
 from flask_restful import Resource
 
-from valence.redfish import redfish as rfs
+from valence.redfish import redfish
 
 LOG = logging.getLogger(__name__)
 
@@ -26,11 +26,11 @@ class SystemsList(Resource):
 
     def get(self):
         LOG.debug("GET /systems")
-        return rfs.systems_list(request.args)
+        return redfish.systems_list(request.args)
 
 
 class Systems(Resource):
 
     def get(self, systemid):
         LOG.debug("GET /systems/" + systemid)
-        return rfs.get_systembyid(systemid)
+        return redfish.get_systembyid(systemid)
