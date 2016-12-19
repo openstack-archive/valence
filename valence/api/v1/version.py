@@ -17,13 +17,13 @@ import json
 from flask import request
 from flask_restful import Resource
 
-from valence.api import base
 from valence.api import link
 from valence.api import types
+from valence.common import base
 from valence.common import utils
 
 
-class MediaType(base.APIBase):
+class MediaType(base.ObjectBase):
     """A media type representation."""
 
     fields = {
@@ -36,7 +36,7 @@ class MediaType(base.APIBase):
     }
 
 
-class V1Base(base.APIBase):
+class V1Base(base.ObjectBase):
     """The representation of the version 1 of the API."""
 
     fields = {

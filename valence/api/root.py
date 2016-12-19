@@ -19,14 +19,14 @@ from flask import request
 from flask import Response
 from flask_restful import Resource
 
-from valence.api import base
 from valence.api import link
 from valence.api import types
+from valence.common import base
 from valence.common import utils
 from valence.redfish import redfish as rfs
 
 
-class Version(base.APIBase):
+class Version(base.ObjectBase):
     """An API version representation."""
 
     fields = {
@@ -58,7 +58,7 @@ class Version(base.APIBase):
         return version
 
 
-class RootBase(base.APIBase):
+class RootBase(base.ObjectBase):
 
     fields = {
         'id': {

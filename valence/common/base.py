@@ -11,7 +11,7 @@
 #    limitations under the License.
 
 
-class APIBase(object):
+class ObjectBase(object):
 
     def __init__(self, **kwargs):
         for field in self.fields:
@@ -23,7 +23,15 @@ class APIBase(object):
         if field in self.fields:
             validator = self.fields[field]['validate']
             value = validator(value)
-            super(APIBase, self).__setattr__(field, value)
+            super(ObjectBase, self).__setattr__(field, value)
+
+    def __getitem__(self, key):
+        return getattr(self, key)
+
+    def update(self, values):
+        """Make the object behave like a dict."""
+        for key, value in values.items():
+            setattr(self, key, value)
 
     def as_dict(self):
         """Render this object as a dict of its fields."""
