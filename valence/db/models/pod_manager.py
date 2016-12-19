@@ -14,11 +14,12 @@
 #    under the License.
 
 import json
-from valence.api import base
+
 from valence.api import types
+from valence.common import base
 
 
-class PodManager(base.APIBase):
+class PodManager(base.ObjectBase):
 
     fields = {
         'name': {
