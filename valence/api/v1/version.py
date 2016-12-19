@@ -12,18 +12,16 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
-
 from flask import request
 from flask_restful import Resource
 
-from valence.api import base
 from valence.api import link
 from valence.api import types
+from valence.common import base
 from valence.common import utils
 
 
-class MediaType(base.APIBase):
+class MediaType(base.ObjectBase):
     """A media type representation."""
 
     fields = {
@@ -36,7 +34,7 @@ class MediaType(base.APIBase):
     }
 
 
-class V1Base(base.APIBase):
+class V1Base(base.ObjectBase):
     """The representation of the version 1 of the API."""
 
     fields = {
@@ -108,6 +106,4 @@ class V1(Resource):
 
     def get(self):
         vobj = V1Base.convert()
-        return utils.make_response(
-            200,
-            json.loads(json.dumps(vobj, default=lambda o: o.as_dict())))
+        return utils.make_response(200, vobj.as_dict())
