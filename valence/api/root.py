@@ -12,21 +12,19 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
-
 from flask import abort
 from flask import request
 from flask import Response
 from flask_restful import Resource
 
-from valence.api import base
 from valence.api import link
 from valence.api import types
+from valence.common import base
 from valence.common import utils
 from valence.redfish import redfish as rfs
 
 
-class Version(base.APIBase):
+class Version(base.ObjectBase):
     """An API version representation."""
 
     fields = {
@@ -58,7 +56,7 @@ class Version(base.APIBase):
         return version
 
 
-class RootBase(base.APIBase):
+class RootBase(base.ObjectBase):
 
     fields = {
         'id': {
@@ -88,9 +86,7 @@ class Root(Resource):
 
     def get(self):
         obj = RootBase.convert()
-        return utils.make_response(
-            200,
-            json.loads(json.dumps(obj, default=lambda o: o.as_dict())))
+        return utils.make_response(200, obj.as_dict())
 
 
 class PODMProxy(Resource):
