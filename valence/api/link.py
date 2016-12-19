@@ -15,8 +15,8 @@
 
 from flask import request
 
-from valence.api import base
 from valence.api import types
+from valence.common import base
 
 
 def build_url(resource, resource_args, bookmark=False, base_url=None):
@@ -28,7 +28,7 @@ def build_url(resource, resource_args, bookmark=False, base_url=None):
     return template % {'url': base_url, 'res': resource, 'args': resource_args}
 
 
-class Link(base.APIBase):
+class Link(base.ObjectBase):
     """A link representation."""
 
     fields = {

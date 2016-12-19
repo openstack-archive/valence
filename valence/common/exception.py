@@ -14,11 +14,11 @@
 
 from six.moves import http_client
 
-from valence.api import base
 from valence.api import types
+from valence.common import base
 
 
-class ValenceError(Exception, base.APIBase):
+class ValenceError(Exception, base.ObjectBase):
     """Valence Error representation.
 
        As per openstack Error Schema
@@ -45,7 +45,7 @@ class ValenceError(Exception, base.APIBase):
     }
 
 
-class ValenceConfirmation(base.APIBase):
+class ValenceConfirmation(base.ObjectBase):
     """Valence Confirmation Message representation.
 
        Whenever confirmation response needs to send back to client

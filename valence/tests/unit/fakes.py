@@ -10,6 +10,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from valence.api import types
+from valence.common import base
+
 
 def mock_request_get(json_data, status_code):
 
@@ -22,6 +25,21 @@ def mock_request_get(json_data, status_code):
             return self.json_data
 
     return MockResponse(json_data, status_code)
+
+
+class FakeObject(base.ObjectBase):
+
+    fields = {
+        'text': {
+            'validate': types.Text.validate
+        },
+        'integer': {
+            'validate': types.Integer.validate
+        },
+        'bool': {
+            'validate': types.Bool.validate
+        },
+    }
 
 
 def fake_service_root():
