@@ -16,10 +16,11 @@
 import etcd
 
 from valence import config
+from valence.db import models
 
 
 etcd_directories = [
-    "/v1/pod_managers"
+    models.PodManager.base_path()
 ]
 
 etcd_client = etcd.Client(config.etcd_host, config.etcd_port)
