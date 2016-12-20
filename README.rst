@@ -78,7 +78,7 @@ below:
 
 valence-api
 -----------
-A pecan based daemon to expose Valence REST APIs. The api service communicates
+A flask based daemon to expose Valence REST APIs. The api service communicates
 to the controller through AMQP.
 
 valence-controller
