@@ -19,7 +19,9 @@ import os
 
 import requests
 from requests.auth import HTTPBasicAuth
+from six.moves import http_client
 
+from valence.common import exception
 from valence.common import utils
 from valence import config as cfg
 from valence.redfish import tree
@@ -256,7 +258,10 @@ def get_systembyid(systemid):
 
 
 def get_nodebyid(nodeid):
-    return nodes_list({"Id": nodeid})
+    node = nodes_list({"Id": nodeid})
+    if not node:
+        raise exception.NotFound()
+    return node[0]
 
 
 def build_hierarchy_tree():
@@ -277,26 +282,44 @@ def build_hierarchy_tree():
     return podmtree
 
 
-def compose_node(data):
+def compose_node(request_body):
     nodes_url = get_base_resource_url("Nodes")
-    compose_url = nodes_url + "/Actions/Allocate"
+    allocate_url = nodes_url + "/Actions/Allocate"
     headers = {'Content-type': 'application/json'}
-    criteria = data["criteria"]
-    if not criteria:
-        resp = send_request(compose_url, "POST", headers=headers)
+    resp = send_request(allocate_url, "POST", headers=headers,
+                        json=request_body)
+    if resp.status_code == http_client.CREATED:
+        allocated_node = resp.headers['Location']
+        node_resp = send_request(allocated_node, "GET", headers=headers)
+        LOG.debug('Successfully allocated node:' + allocated_node)
+        node_json = json.loads(node_resp.content)
+        assemble_url = node_json['Actions']['#ComposedNode.Assemble']['target']
+        LOG.debug('Assembling Node: ' + assemble_url)
+        assemble_resp = send_request(assemble_url, "POST", headers=headers)
+        LOG.debug(assemble_resp.status_code)
+        if assemble_resp.status_code == http_client.NO_CONTENT:
+            LOG.debug('Successfully assembled node: ' + allocated_node)
+            return {"node": allocated_node}
+        else:
+            parts = allocated_node.split('/')
+            node_id = parts[-1]
+            delete_composednode(node_id)
+            raise exception.RedfishException(assemble_resp.json(),
+                                             status_code=resp.status_code)
     else:
-        resp = send_request(compose_url, "POST", json=criteria,
-                            headers=headers)
-
-    composed_node = resp.headers['Location']
-    return {"node": composed_node}
+        raise exception.RedfishException(resp.json(),
+                                         status_code=resp.status_code)
 
 
 def delete_composednode(nodeid):
     nodes_url = get_base_resource_url("Nodes")
     delete_url = nodes_url + str(nodeid)
     resp = send_request(delete_url, "DELETE")
-    return resp
+    if resp.status_code == 204:
+        return exception.confirmation("", "DELETED"), resp.status_code
+    else:
+        raise exception.RedfishException(resp.json(),
+                                         status_code=resp.status_code)
 
 
 def nodes_list(filters={}):
