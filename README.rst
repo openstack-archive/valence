@@ -78,13 +78,9 @@ below:
 
 valence-api
 -----------
-A pecan based daemon to expose Valence REST APIs. The api service communicates
-to the controller through AMQP.
-
-valence-controller
---------------
-The controller implements all the handlers for valence-api. It reads requests
-from the AMQP queue, process it and send the reponse back to the caller.
+A flask based daemon to expose Valence REST APIs. The api service communicates
+to the podm.
+For adding new api please refer https://github.com/openstack/valence/blob/master/doc/source/developer-guide/add_new_api.rst
 
 valence-ui
 --------
