@@ -70,4 +70,4 @@ redfish_base_ext = get_option("podm", "redfish_base_ext", "/redfish/v1/")
 
 # Database etcd Settings
 etcd_host = get_option("database_etcd", "host", "localhost")
-etcd_port = get_option("database_etcd", "port", 2379)
+etcd_port = get_option("database_etcd", "port", 2379, int)
