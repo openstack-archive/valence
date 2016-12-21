@@ -22,7 +22,7 @@ etcd_directories = [
     "/v1/pod_managers"
 ]
 
-etcd_client = etcd.Client(config.etcd_host, int(config.etcd_port))
+etcd_client = etcd.Client(config.etcd_host, config.etcd_port)
 
 
 def init_etcd_db():
