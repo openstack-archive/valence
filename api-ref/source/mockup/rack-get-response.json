@@ -1,0 +1,15 @@
+[
+  {
+    "description": "Rack created by PODM", 
+    "id": "1", 
+    "manufacturer": "Intel", 
+    "model": "RSD_1", 
+    "name": "Rack 1", 
+    "serial_number": "12345", 
+    "systems": [
+      "2cd33e50-0e7a-11e7-8c14-c5fab3f6ca28", 
+      "2a911680-0e7a-11e7-8c14-c5fab3f6ca28", 
+      "4cadbee1-fe07-11e6-8c14-c5fab3f6ca28"
+    ]
+  }
+]
