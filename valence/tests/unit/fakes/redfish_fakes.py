@@ -341,3 +341,39 @@ def fake_assemble_node_failed():
             }]
         }
     }
+
+
+def fake_rack_list():
+    return [
+        {
+            "Description": "Rack created by PODM",
+            "Id": "2",
+            "Manufacturer": "Intel",
+            "Model": "RSD_1",
+            "Name": "Rack 1",
+            "SerialNumber": "12345",
+            "Links": {
+                "Contains": [],
+                "ComputerSystems": [
+                    {"@odata.id": "/redfish/v1/Systems/1"},
+                    {"@odata.id": "/redfish/v1/Systems/2"},
+                    {"@odata.id": "/redfish/v1/Systems/3"}
+                ]
+            }
+        },
+        {
+            "Description": "Rack created by PODM",
+            "Id": "3",
+            "Manufacturer": "Intel",
+            "Model": "RSD_1",
+            "Name": "Rack 2",
+            "SerialNumber": "12346",
+            "Links": {
+                "Contains": [],
+                "ComputerSystems": [
+                    {"@odata.id": "/redfish/v1/Systems/4"},
+                    {"@odata.id": "/redfish/v1/Systems/5"}
+                ]
+            }
+        }
+    ]

@@ -1,0 +1,19 @@
+[
+  {
+    "id": "1", 
+    "name": "Rack 1", 
+    "systems": [
+      "2cd33e50-0e7a-11e7-8c14-c5fab3f6ca28", 
+      "2a911680-0e7a-11e7-8c14-c5fab3f6ca28", 
+      "4cadbee1-fe07-11e6-8c14-c5fab3f6ca28"
+    ]
+  },
+  {
+    "id": "2",
+    "name": "Rack 2",
+    "systems": [
+      "7ac441b3-a4a1-44f4-8b38-469492cbfb61",
+      "3bf332e4-100c-11e7-93ae-92361f002671"
+    ]
+  }
+]
