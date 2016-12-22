@@ -341,3 +341,40 @@ def fake_assemble_node_failed():
             }]
         }
     }
+
+
+def fake_rack_list():
+    return [
+        {
+            "Id": "2",
+            "Name": "Rack 1",
+            "Description": "Rack",
+            "Manufacturer": "Intel",
+            "Model": "Intel",
+            "SerialNumber": "12345",
+            "Oem": {
+                "Intel_RackScale": {
+                    "Location": {
+                        "Id": "Rack1",
+                        "ParentId": "Pod1"
+                    }
+                }
+            }
+        },
+        {
+            "Id": "3",
+            "Name": "Rack 2",
+            "Description": "Rack",
+            "Manufacturer": "Intel",
+            "Model": "Intel",
+            "SerialNumber": "12346",
+            "Oem": {
+                "Intel_RackScale": {
+                    "Location": {
+                        "Id": "Rack2",
+                        "ParentId": "Pod1"
+                    }
+                }
+            }
+        }
+    ]

@@ -119,10 +119,18 @@ class TestRedfish(TestCase):
                    [{"@odata.id": "1"},
                     {"@odata.id": "2"},
                     {"@odata.id": "3"}]}
-        expected = {'Members': [
-            {u'@odata.id': u'2'},
-            {u'@odata.id': u'3'}
-        ], 'Members@odata.count': 2}
+        expected = [
+            {
+                "ChassisType": "Rack",
+                "Name": "Rack 1",
+                "Id": "2"
+            },
+            {
+                "ChassisType": "Rack",
+                "Name": "Rack 2",
+                "Id": "3"
+            }
+        ]
         result = redfish.filter_chassis(chassis, "Rack")
         self.assertEqual(expected, result)
 
@@ -502,3 +510,53 @@ class TestRedfish(TestCase):
         redfish.node_action("1", {"Reset": {"Type": "On"}})
 
         mock_reset_node.assert_called_once_with("1", {"Reset": {"Type": "On"}})
+
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    @mock.patch('valence.redfish.redfish.filter_chassis')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_list_racks(self, mock_request, mock_filter, mock_base_url):
+        mock_base_url.return_value = "/redfish/v1/Chassis"
+        fake_chassis_list = fakes.fake_chassis_list()
+        mock_request.return_value = (
+            fakes.mock_request_get(fake_chassis_list, "200"))
+        mock_filter.return_value = fakes.fake_rack_list()
+        expected = [
+            {
+                "id": "2",
+                "name": "Rack 1",
+                "location_id": "Rack1",
+                "parent_location_id": "Pod1"
+            },
+            {
+                "id": "3",
+                "name": "Rack 2",
+                "location_id": "Rack2",
+                "parent_location_id": "Pod1"
+            }
+        ]
+        result = redfish.list_racks()
+        self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    @mock.patch('valence.redfish.redfish.filter_chassis')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_show_rack(self, mock_request, mock_filter, mock_base_url):
+        mock_base_url.return_value = "/redfish/v1/Chassis"
+        fake_chassis_list = fakes.fake_chassis_list()
+        mock_request.return_value = (
+            fakes.mock_request_get(fake_chassis_list, "200"))
+        mock_filter.return_value = fakes.fake_rack_list()
+        expected = [
+            {
+                "id": "2",
+                "name": "Rack 1",
+                "location_id": "Rack1",
+                "parent_location_id": "Pod1",
+                "manufacturer": "Intel",
+                "model": "Intel",
+                "description": "Rack",
+                "serial_number": "12345"
+            }
+        ]
+        result = redfish.show_rack("2")
+        self.assertEqual(expected, result)
