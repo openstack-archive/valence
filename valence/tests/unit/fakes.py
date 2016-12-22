@@ -71,6 +71,84 @@ def fake_chassis_list():
     ]
 
 
+def fake_rack_list():
+    return [
+        {
+            "Id": "2",
+            "Name": "Rack 1",
+            "Description": "Rack",
+            "Manufacturer": "Intel",
+            "Model": "Intel",
+            "SerialNumber": "12345",
+            "Oem": {
+                "Intel_RackScale": {
+                    "Location": {
+                        "Id": "Rack1",
+                        "ParentId": "Pod1"
+                    }
+                }
+            }
+        },
+        {
+            "Id": "3",
+            "Name": "Rack 2",
+            "Description": "Rack",
+            "Manufacturer": "Intel",
+            "Model": "Intel",
+            "SerialNumber": "12346",
+            "Oem": {
+                "Intel_RackScale": {
+                    "Location": {
+                        "Id": "Rack2",
+                        "ParentId": "Pod1"
+                    }
+                }
+            }
+        }
+    ]
+
+
+def fake_pod_list():
+    return [
+        {
+            "Id": "1",
+            "Name": "Pod 1",
+            "Description": "Pod",
+            "Manufacturer": "Intel",
+            "Model": "Intel",
+            "SerialNumber": "10000",
+            "Status": {
+                "Health": "OK"
+            },
+            "Oem": {
+                "Intel_RackScale": {
+                    "Location": {
+                        "Id": "Pod1"
+                    }
+                }
+            }
+        },
+        {
+            "Id": "4",
+            "Name": "Pod 2",
+            "Description": "Pod",
+            "Manufacturer": "Intel",
+            "Model": "Intel",
+            "SerialNumber": "10001",
+            "Status": {
+                "Health": "Warning"
+            },
+            "Oem": {
+                "Intel_RackScale": {
+                    "Location": {
+                        "Id": "Pod2"
+                    }
+                }
+            }
+        }
+    ]
+
+
 def fake_processor_list():
     return [
         {
