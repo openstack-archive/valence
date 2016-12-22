@@ -119,10 +119,18 @@ class TestRedfish(TestCase):
                    [{"@odata.id": "1"},
                     {"@odata.id": "2"},
                     {"@odata.id": "3"}]}
-        expected = {'Members': [
-            {u'@odata.id': u'2'},
-            {u'@odata.id': u'3'}
-        ], 'Members@odata.count': 2}
+        expected = [
+            {
+                "ChassisType": "Rack",
+                "Name": "Rack 1",
+                "Id": "2"
+            },
+            {
+                "ChassisType": "Rack",
+                "Name": "Rack 2",
+                "Id": "3"
+            }
+        ]
         result = redfish.filter_chassis(chassis, "Rack")
         self.assertEqual(expected, result)
 
@@ -576,3 +584,81 @@ class TestRedfish(TestCase):
         redfish.node_action("1", {"Reset": {"Type": "On"}})
 
         mock_reset_node.assert_called_once_with("1", {"Reset": {"Type": "On"}})
+
+    @mock.patch('valence.redfish.redfish.get_systems_in_chassis')
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    @mock.patch('valence.redfish.redfish.filter_chassis')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_list_racks(self, mock_request, mock_filter, mock_base_url,
+                        mock_system_list):
+        mock_base_url.return_value = "/redfish/v1/Chassis"
+        fake_chassis_list = fakes.fake_chassis_list()
+        mock_request.return_value = (
+            fakes.mock_request_get(fake_chassis_list, "200"))
+        mock_filter.return_value = fakes.fake_rack_list()
+        mock_system_list.side_effect = [
+            [
+                "2cd33e50-0e7a-11e7-8c14-c5fab3f6ca28",
+                "2a911680-0e7a-11e7-8c14-c5fab3f6ca28",
+                "4cadbee1-fe07-11e6-8c14-c5fab3f6ca28"
+            ],
+            [
+                "7ac441b3-a4a1-44f4-8b38-469492cbfb61",
+                "3bf332e4-100c-11e7-93ae-92361f002671"
+            ]
+        ]
+        expected = [
+            {
+                "id": "2",
+                "name": "Rack 1",
+                "systems": [
+                    "2cd33e50-0e7a-11e7-8c14-c5fab3f6ca28",
+                    "2a911680-0e7a-11e7-8c14-c5fab3f6ca28",
+                    "4cadbee1-fe07-11e6-8c14-c5fab3f6ca28"
+                ]
+            },
+            {
+                "id": "3",
+                "name": "Rack 2",
+                "systems": [
+                    "7ac441b3-a4a1-44f4-8b38-469492cbfb61",
+                    "3bf332e4-100c-11e7-93ae-92361f002671"
+                ]
+            }
+        ]
+        result = redfish.list_racks()
+        self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish.get_systems_in_chassis')
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    @mock.patch('valence.redfish.redfish.filter_chassis')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_show_rack(self, mock_request, mock_filter, mock_base_url,
+                       mock_system_list):
+        mock_base_url.return_value = "/redfish/v1/Chassis"
+        fake_chassis_list = fakes.fake_chassis_list()
+        mock_request.return_value = (
+            fakes.mock_request_get(fake_chassis_list, "200"))
+        mock_filter.return_value = fakes.fake_rack_list()
+        mock_system_list.return_value = [
+            "2cd33e50-0e7a-11e7-8c14-c5fab3f6ca28",
+            "2a911680-0e7a-11e7-8c14-c5fab3f6ca28",
+            "4cadbee1-fe07-11e6-8c14-c5fab3f6ca28"
+        ]
+        expected = [
+            {
+                "description": "Rack created by PODM",
+                "id": "2",
+                "manufacturer": "Intel",
+                "model": "RSD_1",
+                "name": "Rack 1",
+                "serial_number": "12345",
+                "systems": [
+                    "2cd33e50-0e7a-11e7-8c14-c5fab3f6ca28",
+                    "2a911680-0e7a-11e7-8c14-c5fab3f6ca28",
+                    "4cadbee1-fe07-11e6-8c14-c5fab3f6ca28"
+                ]
+            }
+        ]
+        result = redfish.show_rack("2")
+        self.assertEqual(expected, result)

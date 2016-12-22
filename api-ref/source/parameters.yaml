@@ -285,6 +285,45 @@ pod_redfish_link:
 pod_status:
   description: |
     Pod manager status
+rack_id:
+  description: |
+    The ID of a hardware rack.
+    in: body
+    required: true
+    type: string
+rack_name:
+  description: |
+    Name of a hardware rack.
+  in: body
+  required: true
+  type: string
+rack_systems:
+  description: |
+    Compute systems contained by a rack.
+  in: body
+  required: true
+  type: string
+rack_manufacturer:
+  description: |
+    The manufacturer for a rack.
+  in: body
+  required: true
+  type: string
+rack_model:
+  description: |
+    The model for a rack.
+  in: body
+  required: true
+  type: string
+rack_description:
+  description: |
+    The description of a rack.
+  in: body
+  required: true
+  type: string
+rack_serial_number:
+  description: |
+    The serial number of a rack.
   in: body
   required: true
   type: string
