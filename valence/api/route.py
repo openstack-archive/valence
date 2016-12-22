@@ -22,6 +22,10 @@ from valence.api.v1.flavors import Flavors as v1Flavors
 from valence.api.v1.nodes import Nodes as v1Nodes
 from valence.api.v1.nodes import NodesList as v1NodesList
 from valence.api.v1.nodes import NodesStorage as v1NodesStorage
+from valence.api.v1.pods import Pod as v1Pod
+from valence.api.v1.pods import PodList as v1PodList
+from valence.api.v1.racks import Rack as v1Rack
+from valence.api.v1.racks import RackList as v1RackList
 from valence.api.v1.storages import Storages as v1Storages
 from valence.api.v1.storages import StoragesList as v1StoragesList
 from valence.api.v1.systems import Systems as v1Systems
@@ -41,6 +45,14 @@ api.add_resource(Root, '/', endpoint='root')
 # V1 Root operations
 api.add_resource(V1, '/v1', endpoint='v1')
 
+# Pod operations
+api.add_resource(v1PodList, '/v1/pods', endpoint='pods')
+api.add_resource(v1Pod, '/v1/pods/<string:pod_id>', endpoint='pod')
+
+# Rack operations
+api.add_resource(v1RackList, '/v1/racks', endpoint='racks')
+api.add_resource(v1Rack, '/v1/racks/<string:rack_id>', endpoint='rack')
+
 # Node(s) operations
 api.add_resource(v1NodesList, '/v1/nodes', endpoint='nodes')
 api.add_resource(v1Nodes, '/v1/nodes/<string:nodeid>', endpoint='node')
@@ -54,7 +66,6 @@ api.add_resource(v1Systems, '/v1/systems/<string:systemid>', endpoint='system')
 
 # Flavor(s) operations
 api.add_resource(v1Flavors, '/v1/flavors', endpoint='flavors')
-
 
 # Storage(s) operations
 api.add_resource(v1StoragesList, '/v1/storages', endpoint='storages')

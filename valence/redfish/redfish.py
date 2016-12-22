@@ -13,7 +13,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 import logging
 import os
 
@@ -68,33 +67,98 @@ def send_request(resource, method="GET", **kwargs):
 
 
 def filter_chassis(jsonContent, filterCondition):
-    returnJSONObj = {}
     returnMembers = []
     members = jsonContent['Members']
     for member in members:
         resource = member['@odata.id']
         resp = send_request(resource)
-        memberJsonObj = resp.json()
-        chassisType = memberJsonObj['ChassisType']
+        member_detail = resp.json()
+        chassisType = member_detail['ChassisType']
         if chassisType == filterCondition:
-            returnMembers.append(member)
-        returnJSONObj["Members"] = returnMembers
-        returnJSONObj["Members@odata.count"] = len(returnMembers)
-    return returnJSONObj
+            returnMembers.append(member_detail)
+    return returnMembers
 
 
-def racks():
+def list_racks(filters={}, show_detail=False):
     chassis_url = get_base_resource_url("Chassis")
-    jsonContent = send_request(chassis_url)
-    racks = filter_chassis(jsonContent, "Rack")
-    return json.dumps(racks)
+    resp = send_request(chassis_url)
+    json_content = resp.json()
+    raw_racks = filter_chassis(json_content, "Rack")
+    racks = []
+    filterPassed = True
+
+    for rack in raw_racks:
+
+        if any(filters):
+            filterPassed = utils.match_conditions(rack, filters)
+        if not filterPassed:
+            continue
+
+        rack_info = {}
+
+        rack_id = rack["Id"]
+        rack_name = rack["Name"]
+        rack_location_id = rack["Oem"]["Intel_RackScale"]["Location"]["Id"]
+        parent_location_id = (
+            rack["Oem"]["Intel_RackScale"]["Location"]["ParentId"])
+        rack_info.update({"id": rack_id, "name": rack_name,
+                          "location_id": rack_location_id,
+                          "parent_location_id": parent_location_id})
+        if show_detail:
+            manufacturer = rack["Manufacturer"]
+            model = rack["Model"]
+            description = rack["Description"]
+            serial_number = rack["SerialNumber"]
+            rack_info.update({"manufacturer": manufacturer,
+                              "model": model,
+                              "description": description,
+                              "serial_number": serial_number})
+        racks.append(rack_info)
+    return racks
 
 
-def pods():
+def list_pods(filters={}, show_detail=False):
     chassis_url = get_base_resource_url("Chassis")
-    jsonContent = send_request(chassis_url)
-    pods = filter_chassis(jsonContent, "Pod")
-    return json.dumps(pods)
+    resp = send_request(chassis_url)
+    json_content = resp.json()
+    raw_pods = filter_chassis(json_content, "Pod")
+    pods = []
+    filterPassed = True
+
+    for pod in raw_pods:
+
+        if any(filters):
+            filterPassed = utils.match_conditions(pod, filters)
+        if not filterPassed:
+            continue
+
+        pod_info = {}
+
+        pod_id = pod["Id"]
+        pod_name = pod["Name"]
+        pod_health = pod["Status"]["Health"]
+        pod_location_id = pod["Oem"]["Intel_RackScale"]["Location"]["Id"]
+        pod_info.update({"id": pod_id, "name": pod_name, "health": pod_health,
+                         "location_id": pod_location_id})
+        if show_detail:
+            manufacturer = pod["Manufacturer"]
+            model = pod["Model"]
+            description = pod["Description"]
+            serial_number = pod["SerialNumber"]
+            pod_info.update({"manufacturer": manufacturer,
+                             "model": model,
+                             "description": description,
+                             "serial_number": serial_number})
+        pods.append(pod_info)
+    return pods
+
+
+def show_rack(rack_id):
+    return list_racks({"Id": rack_id}, show_detail=True)
+
+
+def show_pod(pod_id):
+    return list_pods({"Id": pod_id}, show_detail=True)
 
 
 def urls2list(url):
