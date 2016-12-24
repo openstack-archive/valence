@@ -16,6 +16,7 @@ import mock
 import unittest
 
 import etcd
+import freezegun
 
 from valence.db import api as db_api
 from valence.tests.unit.db import utils
@@ -23,10 +24,14 @@ from valence.tests.unit.db import utils
 
 class TestDBAPI(unittest.TestCase):
 
+    @freezegun.freeze_time("2017-01-01")
     @mock.patch('etcd.Client.write')
     @mock.patch('etcd.Client.read')
     def test_create_podmanager(self, mock_etcd_read, mock_etcd_write):
         podmanager = utils.get_test_image()
+        fake_utcnow = '2017-01-01 00:00:00 UTC'
+        podmanager['created_at'] = fake_utcnow
+        podmanager['updated_at'] = fake_utcnow
 
         # Mark this uuid don't exist in etcd db
         mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
@@ -56,6 +61,7 @@ class TestDBAPI(unittest.TestCase):
         mock_etcd_delete.assert_called_with(
             '/pod_managers/' + podmanager['uuid'])
 
+    @freezegun.freeze_time("2017-01-01")
     @mock.patch('etcd.Client.write')
     @mock.patch('etcd.Client.read')
     def test_update_podmanager(self, mock_etcd_read, mock_etcd_write):
@@ -64,7 +70,10 @@ class TestDBAPI(unittest.TestCase):
         mock_etcd_read.return_value = utils.get_etcd_read_result(
             podmanager['uuid'], json.dumps(podmanager))
 
+        fake_utcnow = '2017-01-01 00:00:00 UTC'
+        podmanager['updated_at'] = fake_utcnow
         podmanager.update({'url': 'new_url'})
+
         result = db_api.Connection.update_podmanager(
             podmanager['uuid'], {'url': 'new_url'})
 

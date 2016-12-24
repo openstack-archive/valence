@@ -53,6 +53,6 @@ def get_test_image(**kwargs):
         'location': kwargs.get('location', 'fake_location'),
         'redfish_link': kwargs.get('redfish_link', 'fake_redfish_link'),
         'bookmark_link': kwargs.get('bookmark_link', 'fake_bookmark_link'),
-        'created_at': kwargs.get('created_at', '2017-01-01 00:0:00'),
-        'updated_at': kwargs.get('updated_at', '2017-01-01 00:0:00'),
+        'created_at': kwargs.get('created_at', '2016-01-01 00:00:00 UTC'),
+        'updated_at': kwargs.get('updated_at', '2016-01-01 00:00:00 UTC'),
     }
