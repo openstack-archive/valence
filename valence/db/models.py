@@ -11,6 +11,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import datetime
 import json
 import os
 
@@ -80,7 +81,47 @@ class ModelBase(base.ObjectBase):
         client.delete(path)
 
 
-class PodManager(ModelBase):
+class ModelBaseWithTimeStamp(ModelBase):
+
+    def __init__(self, *args, **kwargs):
+        """Inject 'created_at' and 'updated_at' fields"""
+        timestamp_fields = {
+            'created_at': {
+                'validate': types.Text.validate
+            },
+            'updated_at': {
+                'validate': types.Text.validate
+            }
+        }
+        self.fields.update(timestamp_fields)
+
+        super(ModelBaseWithTimeStamp, self).__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        """Update all timestamp fields when save new object
+
+        Set current utc time to 'created_at' and 'updated_at' fields when
+        save this key-value pair at the first time.
+        """
+        utcnow = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+        self.created_at = utcnow
+        self.updated_at = utcnow
+
+        super(ModelBaseWithTimeStamp, self).save(*args, **kwargs)
+
+    def update(self, *args, **kwargs):
+        """Update 'updated_at' timestamp when update object
+
+        Set current utc time to 'updated_at' field when update this
+        key-value pair.
+        """
+        utcnow = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+        self.updated_at = utcnow
+
+        super(ModelBaseWithTimeStamp, self).update(*args, **kwargs)
+
+
+class PodManager(ModelBaseWithTimeStamp):
 
     path = "/pod_managers"
 
@@ -110,12 +151,6 @@ class PodManager(ModelBase):
             'validate': types.Text.validate
         },
         'bookmark_link': {
-            'validate': types.Text.validate
-        },
-        'created_at': {
-            'validate': types.Text.validate
-        },
-        'updated_at': {
             'validate': types.Text.validate
         }
     }
