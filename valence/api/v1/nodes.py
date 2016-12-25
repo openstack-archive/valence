@@ -18,6 +18,7 @@ from flask import request
 from flask_restful import abort
 from flask_restful import Resource
 
+from valence.common import utils
 from valence.redfish import redfish
 
 LOG = logging.getLogger(__name__)
@@ -32,6 +33,17 @@ class NodesList(Resource):
     def post(self):
         LOG.debug("POST /nodes/")
         return redfish.compose_node(request.get_json())
+
+
+class NodesAction(Resource):
+
+    # HTTP POST /nodes/
+    def post(self, nodeid):
+        # create a node management action such as ForceOff, On
+        params = request.get_json()
+        power_action = utils.extract_val(params, 'reset/type')
+        resp = redfish.reset_node(nodeid, power_action)
+        return resp
 
 
 class Nodes(Resource):
