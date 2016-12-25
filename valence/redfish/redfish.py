@@ -294,7 +294,7 @@ def compose_node(data):
 
 def delete_composednode(nodeid):
     nodes_url = get_base_resource_url("Nodes")
-    delete_url = nodes_url + str(nodeid)
+    delete_url = nodes_url + "/" + str(nodeid)
     resp = send_request(delete_url, "DELETE")
     return resp
 
