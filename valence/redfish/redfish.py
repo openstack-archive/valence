@@ -369,3 +369,66 @@ def nodes_list(filters={}):
             if filterPassed:
                 lst_nodes.append(node)
     return lst_nodes
+
+
+def get_node_details(nodeid):
+    node_base_url = get_base_resource_url("Nodes")
+    node_get_url = node_base_url + '/' + str(nodeid)
+    resp = send_request(node_get_url, "GET")
+    if not resp:
+        return None
+    return resp.json()
+
+
+def rest_node(nodeid, action):
+    # make sure that the node with specified nodeid exist
+    node_details = get_node_details(nodeid)
+    if not node_details:
+        reason = 'unable to find the specified node: %s' % nodeid
+        return utils.make_response(404, reason)
+
+    # check that the node is in reset-allowed status
+    reset_allowed = True
+    status_code = 202
+    message = ""
+
+    node_state = utils.extract_val(node_details, "ComposedNodeState", '')
+    if node_state not in {"PoweredOn", "PoweredOff"}:
+        message = "node %s can not be reseted as it is in % state" \
+                  % (nodeid, node_state)
+        reset_allowed = False
+        status_code = 400
+
+    val_path = "Actions/#ComposedNode.Reset/ResetType@Redfish.AllowableValues"
+    reset_allowed_values = utils.extract_val(node_details, val_path)
+    if action not in reset_allowed_values:
+        message = ("action %s can not be performed to the node %s in %s state"
+                   "valid actions are in :%s") % (action, nodeid, node_state,
+                                                  reset_allowed_values)
+        reset_allowed = False
+        status_code = 400
+
+    # if allowed, reset the node with the specified action
+    if reset_allowed:
+        headers = {"Content-type": "application/json"}
+        data = json.dumps({'ResetType':action})
+        target_path = "Actions/#ComposedNode.Reset/target"
+        reset_url = utils.extract_val(node_details, target_path)
+        resp = send_request(reset_url, method="POST", data=data,
+                            headers=headers)
+        if resp is None:
+            message = ("can not communicate with pod manager, "
+                       "please check valence config")
+            status_code = 500
+        elif not resp.ok:
+            status_code = resp.status_code
+            error_details = utils.extract_val(resp.json(), "error", {})
+            message = error_details.get('message', '')
+            extended_info = error_details.get("@Message.ExtendedInfo", [])
+            for i in range(len(extended_info)):
+                message += ' ' + extended_info[i].get('Message', '');
+        else:
+            return utils.make_response(resp.status_code, resp.content,
+                                       dict(resp.headers))
+
+    return utils.make_response(status_code, message)
