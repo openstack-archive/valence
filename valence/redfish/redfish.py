@@ -161,7 +161,8 @@ def system_storage_details(system_url):
                     storagecnt += device["CapacityBytes"]
     LOG.debug("Total storage for system %s : %d " % (system_url, storagecnt))
     # to convert Bytes in to GB. Divide by 1073741824
-    return str(storagecnt / 1073741824).split(".")[0]
+    BYTES_PER_GB = 1073741824
+    return str(storagecnt / BYTES_PER_GB).split(".")[0]
 
 
 def systems_list(filters={}):
@@ -322,7 +323,7 @@ def delete_composednode(nodeid):
     nodes_url = get_base_resource_url("Nodes")
     delete_url = nodes_url + str(nodeid)
     resp = send_request(delete_url, "DELETE")
-    if resp.status_code == 204:
+    if resp.status_code == http_client.NO_CONTENT:
         return exception.confirmation("", "DELETED"), resp.status_code
     else:
         raise exception.RedfishException(resp.json(),
@@ -341,7 +342,7 @@ def nodes_list(filters={}):
     for lnk in nodeurllist:
         filterPassed = True
         resp = send_request(lnk)
-        if resp.status_code != 200:
+        if resp.status_code != http_client.OK:
             LOG.info("Error in fetching Node details " + lnk)
         else:
             node = resp.json()
