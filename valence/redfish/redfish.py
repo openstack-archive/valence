@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Copyright (c) 2016 Intel, Inc.
-#
+#https://review.openstack.org/#/c/414763/edit/valence/redfish/redfish.py,unified
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
@@ -320,10 +320,16 @@ def compose_node(request_body):
 
 def delete_composednode(nodeid):
     nodes_url = get_base_resource_url("Nodes")
-    delete_url = nodes_url + str(nodeid)
+    delete_url = nodes_url + '/' + str(nodeid)
     resp = send_request(delete_url, "DELETE")
-    if resp.status_code == 204:
-        return exception.confirmation("", "DELETED"), resp.status_code
+    if resp.status_code == http_client.NO_CONTENT:
+        # todo we still can't get request id in redfish now,
+        # all requested id is faked as all zero string
+        fake_request_id = "00000000-0000-0000-0000-000000000000"
+        # we should return 200 status code instead of 204, because 204 means
+        # 'No Content', the message in resp_dict will be ignored in that way
+        resp_dict = exception.confirmation(fake_request_id, '', "DELETED")
+        return resp_dict, http_client.OK
     else:
         raise exception.RedfishException(resp.json(),
                                          status_code=resp.status_code)
