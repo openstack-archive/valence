@@ -16,6 +16,10 @@
 from valence.api import base
 from valence.api import types
 
+# TODO(yufei): all request id is faked as all zero string now,
+# need to be replaced with real request uuid in the future
+FAKE_REQUEST_ID = "00000000-0000-0000-0000-000000000000"
+
 
 class ValenceError(Exception, base.APIBase):
     """Valence Error representation.
@@ -70,7 +74,7 @@ class RedfishException(ValenceError):
     def __init__(self, responsejson, status_code=400):
         Exception.__init__(self)
         data = responsejson['error']
-        self.request_id = "00000000-0000-0000-0000-000000000000"
+        self.request_id = FAKE_REQUEST_ID
         self.code = data['code']
         self.status = status_code
         self.title = data['message']
@@ -104,7 +108,8 @@ def generalexception(e, errorcode):
     return error("", type(e).__name__, errorcode, type(e).__name__, str(e))
 
 
-def confirmation(requestid, confirm_code, confirm_detail):
+def confirmation(requestid=FAKE_REQUEST_ID, confirm_code='',
+                 confirm_detail=''):
     # responseobj - the response object of Requests framework
     confirm_obj = ValenceConfirmation()
     confirm_obj.request_id = requestid
