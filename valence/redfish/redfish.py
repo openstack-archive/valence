@@ -320,10 +320,15 @@ def compose_node(request_body):
 
 def delete_composednode(nodeid):
     nodes_url = get_base_resource_url("Nodes")
-    delete_url = nodes_url + str(nodeid)
+    delete_url = nodes_url + '/' + str(nodeid)
     resp = send_request(delete_url, "DELETE")
     if resp.status_code == 204:
-        return exception.confirmation("", "DELETED"), resp.status_code
+        # todo we still can't get request id in redfish now,
+        # all requested id is faked as all zero string
+        fake_request_id = "00000000-0000-0000-0000-000000000000"
+        # we should return 200 status code instead of 204, because 204 means
+        # 'No Content', but we have some message to return here
+        return exception.confirmation(fake_request_id, '', "DELETED"), 200
     else:
         raise exception.RedfishException(resp.json(),
                                          status_code=resp.status_code)
