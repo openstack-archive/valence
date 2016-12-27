@@ -14,6 +14,7 @@
 
 from flask import request
 from flask_restful import Resource
+from six.moves import http_client
 
 from valence.api import link
 from valence.api import types
@@ -106,4 +107,4 @@ class V1(Resource):
 
     def get(self):
         vobj = V1Base.convert()
-        return utils.make_response(200, vobj.as_dict())
+        return utils.make_response(http_client.OK, vobj.as_dict())
