@@ -13,6 +13,7 @@
 import mock
 from unittest import TestCase
 
+from valence.common import exception
 from valence import config as cfg
 from valence.redfish import redfish
 from valence.tests.unit import fakes
@@ -120,3 +121,28 @@ class TestRedfish(TestCase):
         expected = '600'
         result = redfish.system_storage_details("/redfish/v1/Systems/test")
         self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_delete_composednode_ok(self, mock_request, mock_get_url):
+        mock_get_url.return_value = '/redfish/v1/Nodes'
+        delete_result = fakes.fake_delete_composednode_ok()
+        mock_request.return_value = fakes.mock_request_get(delete_result, 204)
+        resp, status_code = redfish.delete_composednode(101)
+        mock_request.assert_called_with('/redfish/v1/Nodes/101', 'DELETE')
+        expected_resp = {
+            "code": "",
+            "details": "DELETED",
+            "request_id": "00000000-0000-0000-0000-000000000000",
+        }
+        self.assertEqual(resp, expected_resp)
+        self.assertEqual(status_code, 200)
+
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_delete_composednode_ok(self, mock_request, mock_get_url):
+        mock_get_url.return_value = '/redfish/v1/Nodes'
+        delete_result = fakes.fake_delete_composednode_fail()
+        mock_request.return_value = fakes.mock_request_get(delete_result, 500)
+        self.assertRaises(exception.RedfishException,
+                          redfish.delete_composednode, 101)
