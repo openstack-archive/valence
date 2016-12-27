@@ -13,6 +13,12 @@ log_file=/var/log/valence/valence.log
 bind_host = 0.0.0.0
 bind_port = 8181
 
+#Server request timeout
+timeout=1000
+
+#Server workers
+workers=4
+
 [podm]
 url=https://<ip address>:<port>
 user=<podm user>
