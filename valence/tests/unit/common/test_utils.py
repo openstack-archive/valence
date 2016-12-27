@@ -16,6 +16,7 @@ import json
 import unittest
 
 import flask
+from six.moves import http_client
 
 from valence.common import utils
 
@@ -32,10 +33,10 @@ class TestMakeResponse(unittest.TestCase):
 
     def test_make_response(self):
         expect = {"key": "value"}
-        resp = utils.make_response(200, expect)
+        resp = utils.make_response(http_client.OK, expect)
         result = json.loads(resp.data.decode())
         self.assertEqual(expect, result)
-        self.assertEqual(200, resp.status_code)
+        self.assertEqual(http_client.OK, resp.status_code)
 
     def test_make_response_with_wrong_status_code(self):
         with self.assertRaises(ValueError):
@@ -43,16 +44,17 @@ class TestMakeResponse(unittest.TestCase):
 
     def test_make_response_with_headers(self):
         expect = {"key": "value"}
-        resp = utils.make_response(200, expect,
+        resp = utils.make_response(http_client.OK, expect,
                                    headers={"header": "header_value"})
         result = json.loads(resp.data.decode())
         self.assertEqual(expect, result)
-        self.assertEqual(200, resp.status_code)
+        self.assertEqual(http_client.OK, resp.status_code)
         self.assertEqual("header_value", resp.headers.get("header"))
 
     def test_make_response_with_wrong_headers(self):
         with self.assertRaises(ValueError):
-            utils.make_response(200, headers=("header", "header_value"))
+            utils.make_response(http_client.OK,
+                                headers=("header", "header_value"))
 
 
 class TestUtils(unittest.TestCase):
