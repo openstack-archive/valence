@@ -14,6 +14,7 @@
 
 from flask_cors import CORS
 from flask_restful import Api
+from six.moves import http_client
 
 from valence.api import app as flaskapp
 from valence.api.root import PODMProxy
@@ -45,8 +46,9 @@ class ValenceService(Api):
             return self.make_response(exception.httpexception(error),
                                       error.code)
         else:
-            return self.make_response(exception.generalexception(error, 500),
-                                      500)
+            return self.make_response(exception.generalexception(error,
+                                      http_client.INTERNAL_SERVER_ERROR),
+                                      http_client.INTERNAL_SERVER_ERROR)
 
 
 api = ValenceService(app)

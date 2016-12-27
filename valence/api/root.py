@@ -18,6 +18,7 @@ from flask import abort
 from flask import request
 from flask import Response
 from flask_restful import Resource
+from six.moves import http_client
 
 from valence.api import base
 from valence.api import link
@@ -89,7 +90,7 @@ class Root(Resource):
     def get(self):
         obj = RootBase.convert()
         return utils.make_response(
-            200,
+            http_client.OK,
             json.loads(json.dumps(obj, default=lambda o: o.as_dict())))
 
 
@@ -109,7 +110,7 @@ class PODMProxy(Resource):
         filterext = ["Chassis", "Services", "Managers", "Systems",
                      "EventService", "Nodes", "EthernetSwitches"]
         if resource not in filterext:
-            abort(404)
+            abort(http_client.NOT_FOUND)
 
     def get(self, url):
         self.check_url(url)

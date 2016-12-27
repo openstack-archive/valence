@@ -26,11 +26,12 @@ def setup_app():
     """Return Flask application"""
     app = Flask(cfg.PROJECT_NAME)
     app.url_map.strict_slashes = False
+    TEN_KB = 10 * 1024
 
     # Configure logging
     if os.path.isfile(cfg.log_file) and os.access(cfg.log_file, os.W_OK):
         handler = RotatingFileHandler(
-            cfg.log_file, maxBytes=10000, backupCount=1)
+            cfg.log_file, maxBytes=TEN_KB, backupCount=1)
         handler.setLevel(cfg.log_level)
         formatter = logging.Formatter(cfg.log_format)
         handler.setFormatter(formatter)

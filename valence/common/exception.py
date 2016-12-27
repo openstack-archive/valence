@@ -12,6 +12,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+from six.moves import http_client
 
 from valence.api import base
 from valence.api import types
@@ -67,7 +68,7 @@ class ValenceConfirmation(base.APIBase):
 
 class RedfishException(ValenceError):
 
-    def __init__(self, responsejson, status_code=400):
+    def __init__(self, responsejson, status_code=http_client.BAD_REQUEST):
         Exception.__init__(self)
         data = responsejson['error']
         self.request_id = "00000000-0000-0000-0000-000000000000"
@@ -81,7 +82,7 @@ class RedfishException(ValenceError):
 
 
 class NotFound(Exception):
-    status = 404
+    status = http_client.NOT_FOUND
 
 
 def error(requestid, error_code, http_status,
