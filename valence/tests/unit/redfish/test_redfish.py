@@ -11,6 +11,8 @@
 #    under the License.
 
 import mock
+
+from six.moves import http_client
 from unittest import TestCase
 
 from valence import config as cfg
@@ -32,7 +34,8 @@ class TestRedfish(TestCase):
 
     @mock.patch('valence.redfish.redfish.send_request')
     def test_get_base_resource_url_chassis(self, mock_request):
-        fake_resp = fakes.mock_request_get(fakes.fake_service_root(), "200")
+        fake_resp = fakes.mock_request_get(fakes.fake_service_root(),
+                                           http_client.OK)
         mock_request.return_value = fake_resp
         expected = "/redfish/v1/Chassis"
         result = redfish.get_base_resource_url("Chassis")
@@ -47,9 +50,12 @@ class TestRedfish(TestCase):
     @mock.patch('valence.redfish.redfish.send_request')
     def test_filter_chassis_rack(self, mock_request):
         fake_chassis_list = fakes.fake_chassis_list()
-        first_request = fakes.mock_request_get(fake_chassis_list[0], "200")
-        second_request = fakes.mock_request_get(fake_chassis_list[1], "200")
-        third_request = fakes.mock_request_get(fake_chassis_list[2], "200")
+        first_request = fakes.mock_request_get(fake_chassis_list[0],
+                                               http_client.OK)
+        second_request = fakes.mock_request_get(fake_chassis_list[1],
+                                                http_client.OK)
+        third_request = fakes.mock_request_get(fake_chassis_list[2],
+                                               http_client.OK)
         mock_request.side_effect = [first_request,
                                     second_request,
                                     third_request]
@@ -67,7 +73,8 @@ class TestRedfish(TestCase):
     @mock.patch('valence.redfish.redfish.send_request')
     def test_urls2list_no_members(self, mock_request):
         resp = {"Name": "NoMembers", "Id": 1}
-        mock_request.return_value = fakes.mock_request_get(resp, "200")
+        mock_request.return_value = fakes.mock_request_get(resp,
+                                                           http_client.OK)
         result = redfish.urls2list('/redfish/v1/test')
         self.assertEqual([], result)
 
@@ -77,7 +84,8 @@ class TestRedfish(TestCase):
                 "Members":
                 [{"@odata.id": "/redfish/v1/Member/1"},
                  {"@odata.id": "/redfish/v1/Member/2"}]}
-        mock_request.return_value = fakes.mock_request_get(resp, "200")
+        mock_request.return_value = fakes.mock_request_get(resp,
+                                                           http_client.OK)
         expected = ["/redfish/v1/Member/1", "/redfish/v1/Member/2"]
         result = redfish.urls2list('/redfish/v1/test')
         self.assertEqual(expected, result)
@@ -88,8 +96,10 @@ class TestRedfish(TestCase):
         fake_processor_list = fakes.fake_processor_list()
         mock_url_list.return_value = ["/redfish/v1/Systems/1",
                                       "/redfish/v1/Systems/2"]
-        first_request = fakes.mock_request_get(fake_processor_list[0], "200")
-        second_request = fakes.mock_request_get(fake_processor_list[1], "200")
+        first_request = fakes.mock_request_get(fake_processor_list[0],
+                                               http_client.OK)
+        second_request = fakes.mock_request_get(fake_processor_list[1],
+                                                http_client.OK)
         mock_request.side_effect = [first_request, second_request]
         expected = {"cores": "3", "arch": "x86", "model": "Intel Xeon"}
         result = redfish.system_cpu_details("/redfish/v1/Systems/test")
@@ -98,7 +108,8 @@ class TestRedfish(TestCase):
     @mock.patch('valence.redfish.redfish.send_request')
     def test_system_ram_details(self, mock_request):
         resp = fakes.fake_detailed_system()
-        mock_request.return_value = fakes.mock_request_get(resp, "200")
+        mock_request.return_value = fakes.mock_request_get(resp,
+                                                           http_client.OK)
         expected = '8'
         result = redfish.system_ram_details("/redfish/v1/Systems/test")
         self.assertEqual(expected, result)
@@ -106,7 +117,8 @@ class TestRedfish(TestCase):
     @mock.patch('valence.redfish.redfish.send_request')
     def test_system_network_details(self, mock_request):
         resp = fakes.fake_system_ethernet_interfaces()
-        mock_request.return_value = fakes.mock_request_get(resp, "200")
+        mock_request.return_value = fakes.mock_request_get(resp,
+                                                           http_client.OK)
         expected = '2'
         result = redfish.system_network_details("/redfish/v1/Systems/test")
         self.assertEqual(expected, result)
@@ -116,7 +128,8 @@ class TestRedfish(TestCase):
     def test_system_storage_details(self, mock_request, mock_url_list):
         mock_url_list.return_value = ["/redfish/v1/Systems/1/SimpleStorage/1"]
         resp = fakes.fake_simple_storage()
-        mock_request.return_value = fakes.mock_request_get(resp, "200")
+        mock_request.return_value = fakes.mock_request_get(resp,
+                                                           http_client.OK)
         expected = '600'
         result = redfish.system_storage_details("/redfish/v1/Systems/test")
         self.assertEqual(expected, result)
