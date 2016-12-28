@@ -39,7 +39,7 @@ class assettagGenerator(generatorbase):
             extraspecs = {location_lst[i]: location_lst[i + 1]
                           for i in range(0, len(location_lst), 2)}
             name = self.prepend_name + location
-        return {
+        return [
             self._flavor_template("L_" + name,
                                   node['ram'],
                                   node['cpu']["count"],
@@ -52,4 +52,4 @@ class assettagGenerator(generatorbase):
                                   int(node['ram']) / 4,
                                   int(node['cpu']["count"]) / 4,
                                   int(node['storage']) / 4, extraspecs)
-        }
+        ]
