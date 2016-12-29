@@ -14,7 +14,7 @@
 
 import unittest
 
-from valence.tests.unit import fakes
+from valence.tests.unit.fakes import common_fakes as fakes
 
 
 class TestObjectBase(unittest.TestCase):
