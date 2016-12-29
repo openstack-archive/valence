@@ -1,0 +1,10 @@
+Code-Review+1: Andy Yan <yanchao3@lenovo.com>
+Code-Review+1: octopuszhang <zhang.yufei@99cloud.net>
+Code-Review+2: Ananth Narayan S <ananth.narayan@gmail.com>
+Workflow+1: Ananth Narayan S <ananth.narayan@gmail.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Thu, 29 Dec 2016 13:37:31 +0000
+Reviewed-on: https://review.openstack.org/414669
+Project: openstack/valence
+Branch: refs/heads/master
