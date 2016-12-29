@@ -163,3 +163,21 @@ def fake_system_ethernet_interfaces():
             {"@odata.id": "/redfish/v1/Systems/1/EthernetInterfaces/2"}
         ]
     }
+
+
+def fake_delete_composednode_ok():
+    return {}
+
+
+def fake_delete_composednode_fail():
+    return {
+        "error": {
+            "code": "Base.1.0.UnknownException",
+            "message": "The specified node could not be disassembled",
+            "@Message.ExtendedInfo": [{
+                "Message": "Disassembly failed: Could not power off composed "
+                           "node: ComputerSystem 33 reset action"
+                           "(GracefulShutdown) failed"
+            }]
+        }
+    }
