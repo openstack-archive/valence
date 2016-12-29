@@ -16,7 +16,7 @@ from unittest import TestCase
 
 from valence import config as cfg
 from valence.redfish import redfish
-from valence.tests.unit import fakes
+from valence.tests.unit.fakes import redfish_fakes as fakes
 
 
 class TestRedfish(TestCase):
