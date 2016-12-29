@@ -27,21 +27,6 @@ def mock_request_get(json_data, status_code):
     return MockResponse(json_data, status_code)
 
 
-class FakeObject(base.ObjectBase):
-
-    fields = {
-        'text': {
-            'validate': types.Text.validate
-        },
-        'integer': {
-            'validate': types.Integer.validate
-        },
-        'bool': {
-            'validate': types.Bool.validate
-        },
-    }
-
-
 def fake_service_root():
     return {
         "@odata.id": "/redfish/v1",
