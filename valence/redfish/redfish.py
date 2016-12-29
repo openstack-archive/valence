@@ -328,10 +328,13 @@ def compose_node(request_body):
 
 def delete_composednode(nodeid):
     nodes_url = get_base_resource_url("Nodes")
-    delete_url = nodes_url + str(nodeid)
+    delete_url = nodes_url + '/' + str(nodeid)
     resp = send_request(delete_url, "DELETE")
     if resp.status_code == http_client.NO_CONTENT:
-        return exception.confirmation("", "DELETED"), resp.status_code
+        # we should return 200 status code instead of 204, because 204 means
+        # 'No Content', the message in resp_dict will be ignored in that way
+        resp_dict = exception.confirmation(confirm_detail="DELETED")
+        return resp_dict, http_client.OK
     else:
         raise exception.RedfishException(resp.json(),
                                          status_code=resp.status_code)
