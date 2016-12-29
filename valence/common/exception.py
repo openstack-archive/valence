@@ -17,6 +17,10 @@ from six.moves import http_client
 from valence.api import types
 from valence.common import base
 
+# TODO(yufei): all request id is faked as all zero string now,
+# need to be replaced with real request uuid in the future
+FAKE_REQUEST_ID = "00000000-0000-0000-0000-000000000000"
+
 
 class ValenceError(Exception, base.ObjectBase):
     """Valence Error representation.
@@ -68,12 +72,13 @@ class ValenceConfirmation(base.ObjectBase):
 
 class RedfishException(ValenceError):
 
-    def __init__(self, responsejson, status_code=http_client.BAD_REQUEST):
+    def __init__(self, responsejson, request_id=FAKE_REQUEST_ID,
+                 status_code=http_client.BAD_REQUEST):
         Exception.__init__(self)
-        data = responsejson['error']
-        self.request_id = "00000000-0000-0000-0000-000000000000"
-        self.code = data['code']
+        self.request_id = request_id
         self.status = status_code
+        data = responsejson['error']
+        self.code = data['code']
         self.title = data['message']
         message_detail = " ".join(
                          [i['Message']
@@ -85,11 +90,11 @@ class NotFound(Exception):
     status = http_client.NOT_FOUND
 
 
-def error(requestid, error_code, http_status,
-          error_title, error_detail):
+def _error(error_code, http_status, error_title, error_detail,
+           request_id=FAKE_REQUEST_ID):
     # responseobj - the response object of Requests framework
     err_obj = ValenceError()
-    err_obj.request_id = requestid
+    err_obj.request_id = request_id
     err_obj.code = error_code
     err_obj.status = http_status
     err_obj.title = error_title
@@ -98,17 +103,18 @@ def error(requestid, error_code, http_status,
 
 
 def httpexception(e):
-    return error("", type(e).__name__, e.code, type(e).__name__, str(e))
+    return _error(type(e).__name__, e.code, type(e).__name__, str(e))
 
 
 def generalexception(e, errorcode):
-    return error("", type(e).__name__, errorcode, type(e).__name__, str(e))
+    return _error(type(e).__name__, errorcode, type(e).__name__, str(e))
 
 
-def confirmation(requestid, confirm_code, confirm_detail):
+def confirmation(request_id=FAKE_REQUEST_ID, confirm_code='',
+                 confirm_detail=''):
     # responseobj - the response object of Requests framework
     confirm_obj = ValenceConfirmation()
-    confirm_obj.request_id = requestid
+    confirm_obj.request_id = request_id
     confirm_obj.code = confirm_code
     confirm_obj.detail = confirm_detail
     return confirm_obj.as_dict()
