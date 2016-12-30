@@ -15,6 +15,9 @@
       License for the specific language governing permissions and limitations
       under the License.
 
+======================
+Deploy Valence Project
+======================
 
 This document describes how to update the code base of Valence after installation.
 Whenever valence code has been updated, either through git or modifying it locally,

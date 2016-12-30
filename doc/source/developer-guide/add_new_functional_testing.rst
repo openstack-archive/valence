@@ -15,7 +15,7 @@
       under the License.
 
 ============================
-Addng a Functional Test case
+Add a Functional Test case
 ============================
 
 Getting used to writing testing code and running this code in parallel is considered
