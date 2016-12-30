@@ -47,7 +47,7 @@ def translate_to_models(etcd_resp, model_type):
 
 @six.add_metaclass(singleton.Singleton)
 class EtcdDriver(object):
-    """etcd API."""
+    """etcd Driver."""
 
     def __init__(self, host=config.etcd_host, port=config.etcd_port):
         self.client = etcd.Client(host=host, port=port)

@@ -19,7 +19,7 @@ Contents:
 Developers Documentation
 ========================
 .. toctree::
-   :maxdepth: 2
+   :glob:
 
    developer-guide/*
 
