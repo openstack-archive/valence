@@ -15,12 +15,15 @@
       License for the specific language governing permissions and limitations
       under the License.
 
+======================
+Deploy Valence Project
+======================
 
 This document describes how to update the code base of Valence after installation.
 Whenever valence code has been updated, either through git or modifying it locally,
 it needs to be deployed to standard python path. The below steps describes them.
 
-Execure the below bash commands in the valence root directory
+Execute the below bash commands in the valence root directory
 (where the setup.py file exists)
 
  .. code-block:: bash

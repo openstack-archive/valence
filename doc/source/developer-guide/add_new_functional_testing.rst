@@ -14,18 +14,18 @@
       License for the specific language governing permissions and limitations
       under the License.
 
-============================
-Addng a Functional Test case
-============================
+==========================
+Add a Functional Test case
+==========================
 
 Getting used to writing testing code and running this code in parallel is considered
 as a good workflow.
 Whenever an API for valence is implemented, it is necessary to include
-the corresponding testcase in the testing framework.
-Currently, valence uses pythons unittest module for running the testcases.
+the corresponding test case in the testing framework.
+Currently, valence uses pythons unittest module for running the test cases.
 
 Tests scripts are located in `<valence_root>/valence/tests
-<https://github.com/openstack/rsc/tree/master/valence/tests>`_ directory
+<https://github.com/openstack/valence>`_ directory
 
 .. NOTE::
       valence/tests/__init__.py contains the base class for FunctionalTest
