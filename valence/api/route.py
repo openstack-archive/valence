@@ -29,6 +29,7 @@ from valence.api.v1.systems import Systems as v1Systems
 from valence.api.v1.systems import SystemsList as v1SystemsList
 from valence.api.v1.version import V1
 from valence.common import exception
+from valence import config as cfg
 
 
 app = flaskapp.get_app()
@@ -40,15 +41,19 @@ class ValenceService(Api):
 
     def handle_error(self, error):
 
-        if issubclass(error.__class__, exception.ValenceError):
-            return self.make_response(error.as_dict(), error.status)
-        elif hasattr(error, 'status'):
-            return self.make_response(exception.httpexception(error),
-                                      error.code)
+        if cfg.debug == 'False':
+            if issubclass(error.__class__, exception.ValenceError):
+                return self.make_response(error.as_dict(), error.status)
+            elif hasattr(error, 'status'):
+                return self.make_response(exception.httpexception(error),
+                                          error.code)
+            else:
+                return self.make_response(
+                    exception.generalexception(
+                        error, http_client.INTERNAL_SERVER_ERROR),
+                    http_client.INTERNAL_SERVER_ERROR)
         else:
-            return self.make_response(exception.generalexception(error,
-                                      http_client.INTERNAL_SERVER_ERROR),
-                                      http_client.INTERNAL_SERVER_ERROR)
+            super(ValenceService, self).handle_error(self)
 
 
 api = ValenceService(app)
