@@ -60,7 +60,7 @@ log_format = get_option("DEFAULT", "log_format", log_default_format)
 # Server Settings
 bind_port = get_option("DEFAULT", "bind_port", 8181, int)
 bind_host = get_option("DEFAULT", "bind_host", "0.0.0.0")
-debug = get_option("DEFAULT", "debug", False, bool)
+debug = get_option("DEFAULT", "debug", False, str)
 timeout = get_option("DEFAULT", "timeout", 1000, int)
 workers = get_option("DEFAULT", "workers", 4, int)
 
