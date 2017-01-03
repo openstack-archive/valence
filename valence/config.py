@@ -22,18 +22,20 @@ import logging
 from six.moves import configparser
 
 
-def get_option(section, key, default, type=str):
+def get_option(section, key, default, value_type=str):
     """Function to support default values
 
     Though config fallback feature could be used
     Py 2.7 doesnt support it
 
     """
-    if config.has_option(section, key):
-        return type(config.get(section, key))
+    option_value = config.get(
+        section, key) if config.has_option(
+        section, key) else default
+    if value_type == bool:
+        return False if str(option_value).lower() == 'false' else True
     else:
-        return type(default)
-
+        return value_type(option_value)
 
 PROJECT_NAME = 'valence'
 
