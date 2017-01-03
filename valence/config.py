@@ -22,7 +22,7 @@ import logging
 from six.moves import configparser
 
 
-def get_option(section, key, default, type=str):
+def get_option(section, key, default, value_type=str):
     """Function to support default values
 
     Though config fallback feature could be used
@@ -30,9 +30,16 @@ def get_option(section, key, default, type=str):
 
     """
     if config.has_option(section, key):
-        return type(config.get(section, key))
+        if value_type == bool:
+            return False if config.get(
+                section, key).lower() == 'false' else True
+        else:
+            return value_type(config.get(section, key))
     else:
-        return type(default)
+        if value_type == bool:
+            return False if str(default).lower() == 'false' else True
+        else:
+            return value_type(default)
 
 
 PROJECT_NAME = 'valence'
