@@ -3,7 +3,7 @@
 log_level= debug
 
 #Server log settings
-debug=True
+debug=False
 
 # Log to this file. Make sure the user running rsc has
 # permissions to write to this file!
