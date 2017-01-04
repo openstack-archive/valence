@@ -69,8 +69,8 @@ class Integer(object):
                 raise ValueError("Failed to convert value to int")
 
         if minimum is not None and value < minimum:
-            message = _("Integer '%(value)s' is smaller than "
-                        "'%(min)d'.") % {'value': value, 'min': minimum}
+            message = ("Integer '%(value)s' is smaller than"
+                       " '%(min)d'.") % {'value': value, 'min': minimum}
             raise ValueError(message)
 
         return value
