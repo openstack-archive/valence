@@ -49,9 +49,9 @@ def main():
         'timeout': cfg.timeout,
         'workers': cfg.workers
     }
-    StandaloneApplication(application, options).run()
     LOG.info(("Valence Server on http://%(host)s:%(port)s"),
              {'host': cfg.bind_host, 'port': cfg.bind_port})
+    StandaloneApplication(application, options).run()
 
 
 if __name__ == '__main__':
