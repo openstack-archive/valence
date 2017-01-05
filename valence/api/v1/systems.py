@@ -25,12 +25,10 @@ LOG = logging.getLogger(__name__)
 class SystemsList(Resource):
 
     def get(self):
-        LOG.debug("GET /systems")
         return redfish.systems_list(request.args)
 
 
 class Systems(Resource):
 
     def get(self, systemid):
-        LOG.debug("GET /systems/" + systemid)
         return redfish.get_systembyid(systemid)

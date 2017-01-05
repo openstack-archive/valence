@@ -23,12 +23,10 @@ LOG = logging.getLogger(__name__)
 class StoragesList(Resource):
 
     def get(self):
-        LOG.debug("GET /storages")
         return abort(501)
 
 
 class Storages(Resource):
 
     def get(self, storageid):
-        LOG.debug("GET /storages" + storageid)
         return abort(501)

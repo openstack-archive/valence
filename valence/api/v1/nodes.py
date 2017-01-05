@@ -26,27 +26,22 @@ LOG = logging.getLogger(__name__)
 class NodesList(Resource):
 
     def get(self):
-        LOG.debug("GET /nodes")
         return redfish.nodes_list(request.args)
 
     def post(self):
-        LOG.debug("POST /nodes/")
         return redfish.compose_node(request.get_json())
 
 
 class Nodes(Resource):
 
     def get(self, nodeid):
-        LOG.debug("GET /nodes/" + nodeid)
         return redfish.get_nodebyid(nodeid)
 
     def delete(self, nodeid):
-        LOG.debug("DELETE /nodes/" + nodeid)
         return redfish.delete_composednode(nodeid)
 
 
 class NodesStorage(Resource):
 
     def get(self, nodeid):
-        LOG.debug("GET /nodes/%s/storage" % nodeid)
         return abort(501)

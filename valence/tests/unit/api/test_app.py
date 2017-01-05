@@ -21,7 +21,7 @@ from valence.api import app
 class TestApp(unittest.TestCase):
 
     @mock.patch('valence.config.PROJECT_NAME')
-    @mock.patch('valence.api.app.Flask')
+    @mock.patch('valence.api.app.flask.Flask')
     def test_setup_app_success(self, mock_Flask, mock_PROJECT_NAME):
         self.app = app.setup_app()
         mock_Flask.assert_called_with(mock_PROJECT_NAME)
