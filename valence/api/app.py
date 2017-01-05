@@ -15,7 +15,7 @@ import os.path
 
 from logging.handlers import RotatingFileHandler
 
-from flask import Flask
+import flask
 
 from valence import config as cfg
 
@@ -24,7 +24,7 @@ _app = None
 
 def setup_app():
     """Return Flask application"""
-    app = Flask(cfg.PROJECT_NAME)
+    app = flask.Flask(cfg.PROJECT_NAME)
     app.url_map.strict_slashes = False
     TEN_KB = 10 * 1024
 
@@ -37,6 +37,22 @@ def setup_app():
         handler.setFormatter(formatter)
         app.logger.addHandler(handler)
     app.logger.setLevel(cfg.log_level)
+
+    @app.before_request
+    def before_request_logging():
+        req = flask.request
+        app.logger.debug('{0} {1}'.format(req.method, req.url))
+        app.logger.debug('Request Headers: {0}'.format(dict(req.headers)))
+        if req.data:
+            app.logger.debug('Request Content: {0}'.format(req.data))
+
+    @app.after_request
+    def after_request_logging(resp):
+        app.logger.debug('Response Headers: {0}'.format(dict(resp.headers)))
+        if resp.data:
+            app.logger.debug('Response Content: {0}'.format(resp.data))
+        return resp
+
     return app
 
 

@@ -25,9 +25,7 @@ LOG = logging.getLogger(__name__)
 class Flavors(Resource):
 
     def get(self):
-        LOG.debug("GET /flavors")
         return flavors.get_available_criteria()
 
     def post(self):
-        LOG.debug("POST /flavors")
         return flavors.create_flavors(request.get_json())
