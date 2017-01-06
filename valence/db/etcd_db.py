@@ -12,7 +12,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-
 import etcd
 
 from valence import config
@@ -29,4 +28,16 @@ etcd_client = etcd.Client(config.etcd_host, config.etcd_port)
 def init_etcd_db():
     """initialize etcd database"""
     for directory in etcd_directories:
+        try:
+            if not etcd_client.read(directory).dir:
+                # This directory name already exists, but is regular file, not
+                # directory, so delete it.
+                etcd_client.delete(directory)
+            else:
+                # This directory already exists, so skip
+                continue
+        except etcd.EtcdKeyNotFound:
+            # This directory name don't exist
+            pass
+
         etcd_client.write(directory, None, dir=True, append=True)
