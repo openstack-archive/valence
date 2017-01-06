@@ -12,16 +12,16 @@ as one of the management protocols.
 :Bugs: http://bugs.launchpad.net/openstack-valence
 
 
-===========================
+=========================
 Download and Installation
-===========================
+=========================
 
 The following steps capture how to install valence. All installation steps
 require super user permissions.
 
-*******************************************
+**************************
 Database etcd installation
-*******************************************
+**************************
 
  Single node installation reference: https://github.com/coreos/etcd/releases
 
@@ -29,9 +29,9 @@ Database etcd installation
 
  For development, single node installation is recommended practice.
 
-*******************************************
+********************
 Valence installation
-*******************************************
+********************
 
  1. Install software dependencies
 
@@ -42,8 +42,8 @@ Valence installation
     ``$ git clone https://git.openstack.org/openstack/valence``
 
  3. Execute the 'install_valence.sh' file present in the Valence root directory.
- The install script will automatically install the dependencies listed in the
- requirements.txt file.
+    The install script will automatically install the dependencies listed in the
+    requirements.txt file.
 
     ``$ sudo bash install_valence.sh``
 
@@ -83,14 +83,14 @@ The api service communicates to the PODM through REST interface using Redfish(TM
 For adding new api please refer https://github.com/openstack/valence/blob/master/doc/source/developer-guide/add_new_api.rst
 
 valence-ui
---------
+----------
 valence-ui provides a Web based GUI interface that can be used to explore
 Rack Scale Design (RSD) artifacts and compose/disassemble nodes.
 valence-ui is implemented using Node.js runtime environment and hosted through apache.
 valence-ui makes us of React.js javascript libaray and invoke Valence REST APIs through ajax REST calls.
 
-==========
+========
 Features
-==========
+========
 Please refer the Valence blueprints for supported and in-the-pipeline features.
 ``https://blueprints.launchpad.net/openstack-valence``
