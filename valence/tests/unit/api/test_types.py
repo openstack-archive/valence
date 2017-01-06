@@ -67,8 +67,9 @@ class TestTypes(TestCase):
             test_value, minimum=9))
         self.assertEqual(test_value, types.Integer.validate(
             test_value, minimum=10))
-        # self.assertRaises(test_value, types.Integer.validate(
-        #    test_value, minimum=11))
+        self.assertRaises(ValueError,
+                          types.Integer.validate, test_value,
+                          minimum=11)
 
     def test_bool_type(self):
         self.assertTrue(types.Bool.validate(None, default=True))
