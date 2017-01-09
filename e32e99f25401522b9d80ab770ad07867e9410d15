@@ -1,0 +1,10 @@
+Code-Review+1: Andy Yan <yanchao3@lenovo.com>
+Code-Review+1: praveenraj <praveenrajr9@gmail.com>
+Code-Review+2: Seenivasan Gunabalan <agsnivas@gmail.com>
+Workflow+1: Andy Yan <yanchao3@lenovo.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Mon, 09 Jan 2017 05:44:32 +0000
+Reviewed-on: https://review.openstack.org/415175
+Project: openstack/valence
+Branch: refs/heads/master
