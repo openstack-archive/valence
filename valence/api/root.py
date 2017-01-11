@@ -12,10 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from flask import abort
-from flask import request
-from flask import Response
-from flask_restful import Resource
+import flask
+import flask_restful
 from six.moves import http_client
 
 from valence.api import link
@@ -52,7 +50,7 @@ class Version(base.ObjectBase):
         version.id = id
         version.status = "CURRENT" if current else "DEPRECTED"
         version.min_version = min_version
-        version.links = [link.Link.make_link('self', request.url_root,
+        version.links = [link.Link.make_link('self', flask.request.url_root,
                                              id, '', bookmark=True)]
         return version
 
@@ -83,14 +81,14 @@ class RootBase(base.ObjectBase):
         return root
 
 
-class Root(Resource):
+class Root(flask_restful.Resource):
 
     def get(self):
         obj = RootBase.convert()
         return utils.make_response(http_client.OK, obj.as_dict())
 
 
-class PODMProxy(Resource):
+class PODMProxy(flask_restful.Resource):
     """Passthrough Proxy for PODM.
 
     This function bypasses valence processing
@@ -106,30 +104,34 @@ class PODMProxy(Resource):
         filterext = ["Chassis", "Services", "Managers", "Systems",
                      "EventService", "Nodes", "EthernetSwitches"]
         if resource not in filterext:
-            abort(http_client.NOT_FOUND)
+            flask.abort(http_client.NOT_FOUND)
 
     def get(self, url):
         self.check_url(url)
         resp = rfs.send_request(url)
-        return Response(resp.text, resp.status_code, resp.headers.items())
+        return flask.Response(resp.text, resp.status_code,
+                              resp.headers.items())
 
     def post(self, url):
         self.check_url(url)
         resp = rfs.send_request(url,
                                 "POST",
                                 headers={'Content-type': 'application/json'},
-                                data=request.data)
-        return Response(resp.text, resp.status_code, resp.headers.items())
+                                data=flask.request.data)
+        return flask.Response(resp.text, resp.status_code,
+                              resp.headers.items())
 
     def delete(self, url):
         self.check_url(url)
         resp = rfs.send_request(url, "DELETE")
-        return Response(resp.text, resp.status_code, resp.headers.items())
+        return flask.Response(resp.text, resp.status_code,
+                              resp.headers.items())
 
     def patch(self, url):
         self.check_url(url)
         resp = rfs.send_request(url,
                                 "PATCH",
                                 headers={'Content-type': 'application/json'},
-                                data=request.data)
-        return Response(resp.text, resp.status_code, resp.headers.items())
+                                data=flask.request.data)
+        return flask.Response(resp.text, resp.status_code,
+                              resp.headers.items())

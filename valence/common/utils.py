@@ -20,7 +20,7 @@
 
 import logging
 
-from flask import jsonify
+import flask
 import six
 
 LOG = logging.getLogger(__name__)
@@ -90,7 +90,7 @@ def make_response(status_code, content="", headers=None):
     :returns: return_type -- flask Response object
     """
 
-    response = jsonify(content)
+    response = flask.jsonify(content)
 
     if isinstance(status_code, int):
         response.status_code = status_code
