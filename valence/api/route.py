@@ -15,31 +15,27 @@
 import logging
 import traceback
 
-from flask_cors import CORS
-from flask_restful import Api
+import flask_cors
+import flask_restful
 from six.moves import http_client
 
 from valence.api import app as flaskapp
-from valence.api.root import PODMProxy
-from valence.api.root import Root
-from valence.api.v1.flavors import Flavors as v1Flavors
-from valence.api.v1.nodes import Nodes as v1Nodes
-from valence.api.v1.nodes import NodesList as v1NodesList
-from valence.api.v1.nodes import NodesStorage as v1NodesStorage
-from valence.api.v1.storages import Storages as v1Storages
-from valence.api.v1.storages import StoragesList as v1StoragesList
-from valence.api.v1.systems import Systems as v1Systems
-from valence.api.v1.systems import SystemsList as v1SystemsList
-from valence.api.v1.version import V1
+import valence.api.root as api_root
+import valence.api.v1.flavors as v1_flavors
+import valence.api.v1.nodes as v1_nodes
+import valence.api.v1.storages as v1_storages
+import valence.api.v1.systems as v1_systems
+import valence.api.v1.version as v1_version
+
 from valence.common import exception
 
 
 LOG = logging.getLogger(__name__)
 app = flaskapp.get_app()
-cors = CORS(app)
+cors = flask_cors.CORS(app)
 
 
-class ValenceService(Api):
+class ValenceService(flask_restful.Api):
     """Overriding Flask Restful Error handler"""
 
     def handle_error(self, error):
@@ -66,30 +62,31 @@ api = ValenceService(app)
 
 
 # API Root operation
-api.add_resource(Root, '/', endpoint='root')
+api.add_resource(api_root.Root, '/', endpoint='root')
 
 # V1 Root operations
-api.add_resource(V1, '/v1', endpoint='v1')
+api.add_resource(v1_version.V1, '/v1', endpoint='v1')
 
 # Node(s) operations
-api.add_resource(v1NodesList, '/v1/nodes', endpoint='nodes')
-api.add_resource(v1Nodes, '/v1/nodes/<string:nodeid>', endpoint='node')
-api.add_resource(v1NodesStorage,
+api.add_resource(v1_nodes.NodesList, '/v1/nodes', endpoint='nodes')
+api.add_resource(v1_nodes.Nodes, '/v1/nodes/<string:nodeid>', endpoint='node')
+api.add_resource(v1_nodes.NodesStorage,
                  '/v1/nodes/<string:nodeid>/storages',
                  endpoint='nodes_storages')
 
 # System(s) operations
-api.add_resource(v1SystemsList, '/v1/systems', endpoint='systems')
-api.add_resource(v1Systems, '/v1/systems/<string:systemid>', endpoint='system')
+api.add_resource(v1_systems.SystemsList, '/v1/systems', endpoint='systems')
+api.add_resource(v1_systems.Systems, '/v1/systems/<string:systemid>',
+                 endpoint='system')
 
 # Flavor(s) operations
-api.add_resource(v1Flavors, '/v1/flavors', endpoint='flavors')
+api.add_resource(v1_flavors.Flavors, '/v1/flavors', endpoint='flavors')
 
 
 # Storage(s) operations
-api.add_resource(v1StoragesList, '/v1/storages', endpoint='storages')
-api.add_resource(v1Storages,
+api.add_resource(v1_storages.StoragesList, '/v1/storages', endpoint='storages')
+api.add_resource(v1_storages.Storages,
                  '/v1/storages/<string:storageid>', endpoint='storage')
 
 # Proxy to PODM
-api.add_resource(PODMProxy, '/<path:url>', endpoint='podmproxy')
+api.add_resource(api_root.PODMProxy, '/<path:url>', endpoint='podmproxy')
