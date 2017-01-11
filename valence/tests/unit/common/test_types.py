@@ -10,13 +10,13 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from unittest import TestCase
+import unittest
 
 from valence.common import base
 from valence.common import types
 
 
-class TestTypes(TestCase):
+class TestTypes(unittest.TestCase):
     def test_text(self):
         self.assertIsNone(types.Text.validate(None))
 

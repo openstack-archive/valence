@@ -13,7 +13,7 @@
 #    under the License.
 
 
-from flask import request
+import flask
 
 from valence.common import base
 from valence.common import types
@@ -21,7 +21,7 @@ from valence.common import types
 
 def build_url(resource, resource_args, bookmark=False, base_url=None):
     if base_url is None:
-        base_url = request.root_url
+        base_url = flask.request.root_url
     base_url = base_url.rstrip("//")
     template = '%(url)s/%(res)s' if bookmark else '%(url)s/v1/%(res)s'
     template += '%(args)s' if resource_args.startswith('?') else '/%(args)s'

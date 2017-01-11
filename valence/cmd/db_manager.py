@@ -16,13 +16,13 @@
 import logging
 import sys
 
-from valence.db import etcd_db
+import valence.db.etcd_db as valence_etcdb
 
 LOG = logging.getLogger(__name__)
 
 
 def init():
-    etcd_db.init_etcd_db()
+    valence_etcdb.init_etcd_db()
 
 
 def migrate():
