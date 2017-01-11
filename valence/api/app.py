@@ -17,7 +17,7 @@ from logging.handlers import RotatingFileHandler
 
 import flask
 
-from valence import config as cfg
+import valence.config as cfg
 
 _app = None
 
@@ -29,7 +29,8 @@ def setup_app():
     TEN_KB = 10 * 1024
 
     # Configure logging
-    if os.path.isfile(cfg.log_file) and os.access(cfg.log_file, os.W_OK):
+    if os.path.isfile(cfg.log_file) and os.access(cfg.log_file,
+                                                  os.W_OK):
         handler = RotatingFileHandler(
             cfg.log_file, maxBytes=TEN_KB, backupCount=1)
         handler.setLevel(cfg.log_level)
