@@ -11,14 +11,12 @@
 #    under the License.
 
 import mock
-from unittest import TestCase
+import unittest
 from valence.flavors import flavors
-from valence.flavors.plugins.assettag import assettagGenerator
-from valence.flavors.plugins.default import defaultGenerator
 from valence.tests.unit.fakes import flavors_fakes as fakes
 
 
-class TestFlavors(TestCase):
+class TestFlavors(unittest.TestCase):
 
     def test_get_available_criteria(self):
         expected = {'criteria': [{'name': 'default',
@@ -36,7 +34,8 @@ class TestFlavors(TestCase):
         result = sorted(result['criteria'], key=lambda x: x['name'])
         self.assertEqual(expected, result)
 
-    @mock.patch.object(assettagGenerator, 'generate')
+    @mock.patch(
+        'valence.flavors.plugins.assettag.assettagGenerator.generate')
     @mock.patch('uuid.uuid4')
     @mock.patch('valence.redfish.redfish.systems_list')
     def test_create_flavors_asserttag(self, mock_systems,
@@ -50,7 +49,8 @@ class TestFlavors(TestCase):
         expected = [fakes.fake_assettag_flavors()]
         self.assertEqual(expected, result)
 
-    @mock.patch.object(defaultGenerator, 'generate')
+    @mock.patch(
+        'valence.flavors.plugins.default.defaultGenerator.generate')
     @mock.patch('uuid.uuid4')
     @mock.patch('valence.redfish.redfish.systems_list')
     def test_create_flavors_default(self, mock_systems,
@@ -64,8 +64,10 @@ class TestFlavors(TestCase):
         expected = [fakes.fake_default_flavors()]
         self.assertEqual(expected, result)
 
-    @mock.patch.object(defaultGenerator, 'generate')
-    @mock.patch.object(assettagGenerator, 'generate')
+    @mock.patch(
+        'valence.flavors.plugins.default.defaultGenerator.generate')
+    @mock.patch(
+        'valence.flavors.plugins.assettag.assettagGenerator.generate')
     @mock.patch('uuid.uuid4')
     @mock.patch('valence.redfish.redfish.systems_list')
     def test_create_flavors_asserttag_and_default(self, mock_systems,

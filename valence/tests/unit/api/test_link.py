@@ -10,12 +10,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from unittest import TestCase
+import unittest
 
 from valence.api import link as link_module
 
 
-class TestLink(TestCase):
+class TestLink(unittest.TestCase):
     def test_build_url_with_bookmark(self):
         link = link_module.build_url(
             'v1', 'flavors', bookmark=True, base_url='http://localhost:8181')

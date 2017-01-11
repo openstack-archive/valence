@@ -18,7 +18,6 @@ import logging
 import os
 
 import requests
-from requests.auth import HTTPBasicAuth
 from six.moves import http_client
 
 from valence.common import exception
@@ -69,7 +68,8 @@ def send_request(resource, method="GET", **kwargs):
     LOG.debug(url)
     try:
         resp = requests.request(method, url, verify=False,
-                                auth=HTTPBasicAuth(httpuser, httppwd),
+                                auth=requests.auth.HTTPBasicAuth(
+                                    httpuser, httppwd),
                                 **kwargs)
     except requests.exceptions.RequestException as e:
         LOG.error(e)
