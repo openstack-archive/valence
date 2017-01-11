@@ -17,7 +17,9 @@ import logging
 from flask import request
 from flask_restful import abort
 from flask_restful import Resource
+from six.moves import http_client
 
+from valence.common import utils
 from valence.redfish import redfish
 
 LOG = logging.getLogger(__name__)
@@ -26,19 +28,23 @@ LOG = logging.getLogger(__name__)
 class NodesList(Resource):
 
     def get(self):
-        return redfish.nodes_list(request.args)
+        return utils.make_response(http_client.OK,
+                                   redfish.list_nodes())
 
     def post(self):
-        return redfish.compose_node(request.get_json())
+        return utils.make_response(
+            http_client.OK, redfish.compose_node(request.get_json()))
 
 
 class Nodes(Resource):
 
     def get(self, nodeid):
-        return redfish.get_nodebyid(nodeid)
+        return utils.make_response(http_client.OK,
+                                   redfish.get_node_by_id(nodeid))
 
     def delete(self, nodeid):
-        return redfish.delete_composednode(nodeid)
+        return utils.make_response(http_client.OK,
+                                   redfish.delete_composednode(nodeid))
 
 
 class NodesStorage(Resource):

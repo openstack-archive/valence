@@ -51,6 +51,107 @@ def fake_service_root():
     }
 
 
+def fake_nodes_root():
+    return {
+        "@odata.context": "/redfish/v1/$metadata#Nodes",
+        "@odata.id": "/redfish/v1/Nodes",
+        "@odata.type": "#ComposedNodeCollection.ComposedNodeCollection",
+        "Name": "Composed Nodes Collection",
+        "Members@odata.count": 1,
+        "Members": [{
+            "@odata.id": "/redfish/v1/Nodes/14"
+        }],
+        "Actions": {
+            "#ComposedNodeCollection.Allocate": {
+                "target": "/redfish/v1/Nodes/Actions/Allocate"
+            }
+        }
+    }
+
+
+def fake_node_detail():
+    return {
+        "@odata.context": "/redfish/v1/$metadata#Nodes/Members/$entity",
+        "@odata.id": "/redfish/v1/Nodes/6",
+        "@odata.type": "#ComposedNode.1.0.0.ComposedNode",
+        "Id": "6",
+        "Name": "test",
+        "Description": "",
+        "SystemType": "Logical",
+        "AssetTag": "",
+        "Manufacturer": "",
+        "Model": "",
+        "SKU": "",
+        "SerialNumber": "",
+        "PartNumber": "",
+        "UUID": "deba2630-d2af-11e6-a65f-4d709ab9a725",
+        "HostName": "web-srv344",
+        "PowerState": "On",
+        "BiosVersion": "P79 v1.00 (09/20/2013)",
+        "Status": {
+            "State": "Enabled",
+            "Health": "OK",
+            "HealthRollup": "OK"
+        },
+        "Processors": {
+            "Count": 1,
+            "Status": {
+                "State": "Enabled",
+                "Health": "OK",
+                "HealthRollup": "OK"
+            }
+        },
+        "Memory": {
+            "TotalSystemMemoryGiB": 8,
+            "Status": {
+                "State": "Enabled",
+                "Health": "OK",
+                "HealthRollup": "OK"
+            }
+        },
+        "ComposedNodeState": "PoweredOff",
+        "Boot": {
+            "BootSourceOverrideEnabled": "Continuous",
+            "BootSourceOverrideTarget": "Hdd",
+            "BootSourceOverrideTarget@Redfish.AllowableValues": [
+                "None", "Pxe", "Floppy", "Cd", "Usb", "Hdd", "BiosSetup",
+                "Utilities", "Diags", "UefiTarget"]
+        },
+        "Oem": {},
+        "Links": {
+            "ComputerSystem": {
+                "@odata.id": "/redfish/v1/Systems/1"
+            },
+            "Processors": [{
+                "@odata.id": "/redfish/v1/Systems/1/Processors/1"
+            }],
+            "Memory": [{
+                "@odata.id": "/redfish/v1/Systems/1/Memory/1"
+            }],
+            "EthernetInterfaces": [{
+                "@odata.id": "/redfish/v1/Systems/1/EthernetInterfaces/2"
+            }],
+            "LocalDrives": [],
+            "RemoteDrives": [],
+            "ManagedBy": [{
+                "@odata.id": "/redfish/v1/Managers/1"
+            }],
+            "Oem": {}
+        },
+        "Actions": {
+            "#ComposedNode.Reset": {
+                "target": "/redfish/v1/Nodes/6/Actions/ComposedNode.Reset",
+                "ResetType@DMTF.AllowableValues": [
+                    "On", "ForceOff", "GracefulShutdown", "ForceRestart",
+                    "Nmi", "GracefulRestart", "ForceOn", "PushPowerButton"]
+            },
+            "#ComposedNode.Assemble": {
+                "target": "/redfish/v1/Nodes/6/Actions/ComposedNode.Assemble"
+            }
+        }
+    }
+
+
 def fake_chassis_list():
     return [
         {
@@ -135,6 +236,50 @@ def fake_simple_storage():
     }
 
 
+def fake_processor():
+    return {
+        "InstructionSet": "x86-64",
+        "Model": "Intel(R) Core(TM) i7-4790",
+        "MaxSpeedMHz": 3700,
+        "TotalCores": 8,
+    }
+
+
+def fake_memory():
+    return {
+        "DataWidthBits": 0,
+        "OperatingSpeedMHz": 2400,
+        "CapacityMiB": 8192
+    }
+
+
+def fake_network_interface():
+    return {
+        "MACAddress": "e9:47:d3:60:64:66",
+        "SpeedMbps": 100,
+        "Status": {
+            "State": "Enabled"
+        },
+        "IPv4Addresses": [{
+            "Address": "192.168.0.10",
+            "SubnetMask": "255.255.252.0",
+            "Gateway": "192.168.0.1",
+        }],
+        "VLANs": {
+            "@odata.id": "/redfish/v1/Systems/1/EthernetInterfaces/2/VLANs"
+        }
+    }
+
+
+def fake_vlan():
+    return {
+        "VLANId": 99,
+        "Status": {
+            "State": "Enabled",
+        }
+    }
+
+
 def fake_system_ethernet_interfaces():
     return {
         "@odata.id": "/redfish/v1/Systems/1/EthernetInterfaces",
@@ -160,6 +305,39 @@ def fake_delete_composednode_fail():
                 "Message": "Disassembly failed: Could not power off composed "
                            "node: ComputerSystem 33 reset action"
                            "(GracefulShutdown) failed"
+            }]
+        }
+    }
+
+
+def fake_allocate_node_conflict():
+    return {
+        "error": {
+            "code": "Base.1.0.ResourcesStateMismatch",
+            "message": "Conflict during allocation",
+            "@Message.ExtendedInfo": [{
+                "Message": "There are no computer systems available for this "
+                           "allocation request."
+            }, {
+                "Message": "Available assets count after applying filters: ["
+                           "available: 0 -> status: 0 -> resource: 0 -> "
+                           "chassis: 0 -> processors: 0 -> memory: 0 -> "
+                           "local drives: 0 -> ethernet interfaces: 0]"
+            }]
+        }
+    }
+
+
+def fake_assemble_node_failed():
+    return {
+        "error": {
+            "code": "Base.1.0.InvalidPayload",
+            "message": "Request payload is invalid or missing",
+            "@Message.ExtendedInfo": [{
+                "Message": "Assembly action could not be completed!"
+            }, {
+                "Message": "Assembly failed: Only composed node in ALLOCATED "
+                           "state can be assembled"
             }]
         }
     }
