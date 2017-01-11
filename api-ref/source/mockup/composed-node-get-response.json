@@ -6,6 +6,7 @@
   "target_boot_source": "Pxe",
   "health_status" : "ok",
   "name" : "Server-1",
+  "description": "Description for this node",
   "pooled_group_id" : "11z23344-0099-7766-5544-33225511",
   "metadata" : {
     "system_nic" : [
