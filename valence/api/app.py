@@ -17,26 +17,28 @@ from logging.handlers import RotatingFileHandler
 
 import flask
 
-from valence import config as cfg
+# from valence import config as cfg
+import valence as v
 
 _app = None
 
 
 def setup_app():
     """Return Flask application"""
-    app = flask.Flask(cfg.PROJECT_NAME)
+    app = flask.Flask(v.config.PROJECT_NAME)
     app.url_map.strict_slashes = False
     TEN_KB = 10 * 1024
 
     # Configure logging
-    if os.path.isfile(cfg.log_file) and os.access(cfg.log_file, os.W_OK):
+    if os.path.isfile(v.config.log_file) and os.access(v.config.log_file,
+                                                       os.W_OK):
         handler = RotatingFileHandler(
-            cfg.log_file, maxBytes=TEN_KB, backupCount=1)
-        handler.setLevel(cfg.log_level)
-        formatter = logging.Formatter(cfg.log_format)
+            v.config.log_file, maxBytes=TEN_KB, backupCount=1)
+        handler.setLevel(v.config.log_level)
+        formatter = logging.Formatter(v.config.log_format)
         handler.setFormatter(formatter)
         app.logger.addHandler(handler)
-    app.logger.setLevel(cfg.log_level)
+    app.logger.setLevel(v.config.log_level)
 
     @app.before_request
     def before_request_logging():
