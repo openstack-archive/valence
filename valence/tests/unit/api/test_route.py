@@ -10,12 +10,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from unittest import TestCase
+import unittest
 
 from valence.api import route
 
 
-class TestRoute(TestCase):
+class TestRoute(unittest.TestCase):
 
     def setUp(self):
         self.app = route.app
