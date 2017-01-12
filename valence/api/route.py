@@ -84,7 +84,7 @@ api.add_resource(v1Systems, '/v1/systems/<string:systemid>', endpoint='system')
 
 # Flavor(s) operations
 api.add_resource(v1Flavors, '/v1/flavors', endpoint='flavors')
-
+api.add_resource(v1Flavors, '/v1/flavors/<string:flavorid>', endpoint='flavor')
 
 # Storage(s) operations
 api.add_resource(v1StoragesList, '/v1/storages', endpoint='storages')
