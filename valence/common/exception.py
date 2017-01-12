@@ -14,8 +14,8 @@
 
 from six.moves import http_client
 
-from valence.api import types
 from valence.common import base
+from valence.common import types
 
 # TODO(yufei): all request id is faked as all zero string now,
 # need to be replaced with real request uuid in the future
