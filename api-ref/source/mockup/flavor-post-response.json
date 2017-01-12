@@ -1,8 +1,12 @@
-[
-  [
-    "[{\"flavor\": {\"disk\": 0, \"vcpus\": 0, \"ram\": 16, \"name\": \"S_irsd-Rack1Block1\", \"id\": \"321a271b-ab30-4dfb-a098-6cfb8549a143\"}}, {\"extra_specs\": {\"Rack\": \"1\", \"Block\": \"1\"}}]",
-    "[{\"flavor\": {\"disk\": 0, \"vcpus\": 1, \"ram\": 32, \"name\": \"M_irsd-Rack1Block1\", \"id\": \"819ba7e5-1621-4bf1-b904-9a1a433fd338\"}}, {\"extra_specs\": {\"Rack\": \"1\", \"Block\": \"1\"}}]",
-    "[{\"flavor\": {\"disk\": 0, \"vcpus\": 2, \"ram\": 64, \"name\": \"L_irsd-Rack1Block1\", \"id\": \"79e27bb9-2a7e-4c10-8ded-9ec4cdd4856d\"}}, {\"extra_specs\": {\"Rack\": \"1\", \"Block\": \"1\"}}]"
-  ]
-]
-
+{
+  "name": "test", 
+  "properties": {
+    "memory": {
+      "capacity_mib": "3000"
+    }, 
+    "processor": {
+      "total_cores": "10", 
+      "model": "Intel"
+    }
+  }
+}

@@ -1,3 +1,36 @@
-{
-
-}
+[
+  {
+    "created_at": "2017-01-19 18:46:30 UTC", 
+    "name": "test", 
+    "properties": {
+      "memory": [
+        {
+          "capacity_mib": "3000",
+          "type": "DDR3"
+        }
+      ], 
+      "processor": [
+        {
+          "total_cores": "10"
+        }
+      ]
+    }, 
+    "updated_at": "2017-01-19 18:46:30 UTC", 
+    "uuid": "33d07db6-82c1-48ac-abca-2761433b79f9"
+  }, 
+  {
+    "created_at": "2017-01-19 18:49:45 UTC", 
+    "name": "test 2", 
+    "properties": {
+      "memory": {
+        "capacity_mib": "1000"
+      }, 
+      "processor": {
+        "model": "Intel", 
+        "total_cores": "2"
+      }
+    }, 
+    "updated_at": "2017-01-19 18:49:45 UTC", 
+    "uuid": "dd561046-4372-40df-ad34-8f8c65d50e02"
+  }
+]

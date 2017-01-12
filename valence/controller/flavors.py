@@ -13,15 +13,29 @@
 #    under the License.
 
 import logging
-from valence.flavors.generatorbase import generatorbase
+from six.moves import http_client
+
+from valence.common import utils
+from valence.db import api as db_api
 
 LOG = logging.getLogger(__name__)
 
 
-class exampleGenerator(generatorbase):
-    def __init__(self, nodes):
-        generatorbase.__init__(self, nodes)
+def list_flavors():
+    flavor_models = db_api.Connection.list_flavors()
+    return [flavor.as_dict() for flavor in flavor_models]
 
-    def generate(self):
-        LOG.info("Example Flavor Generate")
-        return {"Info": "Example Flavor Generator- Not Yet Implemented"}
+
+def create_flavor(values):
+    flavor = db_api.Connection.create_flavor(values)
+    return flavor.as_dict()
+
+
+def delete_flavor(flavorid):
+    db_api.Connection.delete_flavor(flavorid)
+    return "Deleted flavor {0}".format(flavorid)
+
+
+def update_flavor(flavorid, values):
+    flavor = db_api.Connection.update_flavor(flavorid, values)
+    return flavor.as_dict()
