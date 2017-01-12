@@ -17,8 +17,8 @@ from flask_restful import Resource
 from six.moves import http_client
 
 from valence.api import link
-from valence.api import types
 from valence.common import base
+from valence.common import types
 from valence.common import utils
 
 
