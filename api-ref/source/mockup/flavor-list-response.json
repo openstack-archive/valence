@@ -1,3 +1,15 @@
-{
+[
+  {
+    "name": "Test",
+    "uuid": "c5136b82-2b6d-435b-899e-b5326723b9e5",
+    "ram": "64",
+    "processor_model": "intel_xeon",
+    "cores": "2"
+  },
+  {
+    "name": "Test2",
+    "uuid": "6eb7dba7-6687-404c-ba63-fa7dec324eca",
+    "ram": "8"
+  }
+]
 
-}

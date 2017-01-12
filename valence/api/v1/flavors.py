@@ -17,7 +17,7 @@ import logging
 from flask import request
 from flask_restful import Resource
 
-from valence.flavors import flavors
+from valence import flavors
 
 LOG = logging.getLogger(__name__)
 
@@ -25,7 +25,13 @@ LOG = logging.getLogger(__name__)
 class Flavors(Resource):
 
     def get(self):
-        return flavors.get_available_criteria()
+        return flavors.list_flavors()
 
     def post(self):
-        return flavors.create_flavors(request.get_json())
+        return flavors.create_flavor(request.get_json())
+
+    def delete(self, flavorid):
+        return flavors.delete_flavor(flavorid)
+
+    def patch(self, flavorid):
+        return flavors.update_flavor(flavorid, request.get_json())
