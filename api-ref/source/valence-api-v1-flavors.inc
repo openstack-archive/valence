@@ -7,13 +7,10 @@ Flavors
 List, Searching of Flavors through the ``/v1/flavors``
 
 
-List Flavor
+List Flavors
 ============
 
-.. rest_method::  GET /v1/flavor/
-
-
-Leaving this empty for discussion due to there isn't a DB to keep generated flavor.
+.. rest_method::  GET /v1/flavors/
 
 Normal response codes: 200
 
@@ -32,10 +29,10 @@ Response
    :language: javascript
 
 
-Generate Flavor
-===============
+Create Flavor
+=============
 
-.. rest_method:: POST /v1/flavors
+.. rest_method:: PUT /v1/flavors
 
 Normal response codes: 200
 
@@ -46,7 +43,10 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-    - criterial: criteria_list
+    - name: flavor_name
+    - ram: flavor_ram
+    - processor_model: flavor_processor_model
+    - cores: flavor_cores
 
 **Example generate flavor :**
 
@@ -61,30 +61,49 @@ Response
 .. literalinclude:: mockup/flavor-post-response.json
    :language: javascript
 
-List Flavor criteria
-=====================
+Update Flavor
+=============
 
-.. rest_method::  GET /v1/flavors/criteria
+.. rest_method:: POST /v1/flavors/{flavor_uuid}
 
-Get all supported flavor generation criteria along with their description.
+Updates the information stored about a flavor.
 
 Normal response codes: 200
 
-Error response codes: unauthorized(401), forbidden(403)
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), 404
 
 Request
 -------
 
+.. rest_parameters:: parameters.yaml
+
+   - flavor_uuid: flavor_uuid
 
 Response
 --------
 
 .. rest_parameters:: parameters.yaml
 
-    - criteria: criteria_object
+   - uuid: flavor_uuid
+   - name: flavor_name
+   - ram: flavor_ram
+   - processor_model: flavor_processor_model
+   - cores: flavor_cores
 
-**Example JSON representation of a Compute System:**
+Delete Flavor
+=============
 
-.. literalinclude:: mockup/flavor-criteria-get-response.json
-   :language: javascript
+.. rest_method:: DELETE /v1/flavors/{flavor_uuid}
 
+Deletes a flavor.
+
+Normal response codes: 204
+
+Error response codes: 401, 403, 404, 409
+
+Request
+-------
+
+.. rest_parameters:: parameters.yaml
+
+   - flavor_ident: flavor_ident

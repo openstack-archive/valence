@@ -71,3 +71,47 @@ class Connection(object):
         :returns: A list of all pod managers.
         """
         return cls.dbdriver.list_podmanager()
+
+    @classmethod
+    def create_flavor(cls, values):
+        """Create a new flavor.
+
+        :param values: The properties of the new flavor.
+        :returns: The created flavor.
+        """
+        return cls.dbdriver.create_flavor(values)
+
+    @classmethod
+    def get_flavor_by_uuid(cls, flavor_uuid):
+        """Get specific flavor by its uuid.
+
+        :param flavor_uuid: The uuid of the flavor.
+        :returns: The flavor with the specified uuid.
+        """
+        return cls.dbdriver.get_flavor_by_uuid(flavor_uuid)
+
+    @classmethod
+    def delete_flavor(cls, flavor_uuid):
+        """Delete a flavor by its uuid.
+
+        :param flavor_uuid: The uuid of the flavor to delete.
+        """
+        cls.dbdriver.delete_flavor(flavor_uuid)
+
+    @classmethod
+    def update_flavor(cls, flavor_uuid, values):
+        """Update properties of a specified flavor.
+
+        :param flavor_uuid: The uuid of the flavor to update.
+        :param values: The properties to be updated.
+        :returns: The updated flavor.
+        """
+        return cls.dbdriver.update_flavor(flavor_uuid, values)
+
+    @classmethod
+    def list_flavors(cls):
+        """Get a list of all flavors.
+
+        :returns: A list of all flavors.
+        """
+        return cls.dbdriver.list_flavors()
