@@ -1,4 +1,7 @@
 {
-  "criteria": "cpu, storage"
+  "name": "small",
+  "ram": "8",
+  "cores": "1",
+  "processor_model": "Intel"
 }
 
