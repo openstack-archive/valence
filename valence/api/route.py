@@ -12,6 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import logging
+import traceback
+
 from flask_cors import CORS
 from flask_restful import Api
 from six.moves import http_client
@@ -31,6 +34,7 @@ from valence.api.v1.version import V1
 from valence.common import exception
 
 
+LOG = logging.getLogger(__name__)
 app = flaskapp.get_app()
 cors = CORS(app)
 
@@ -41,11 +45,16 @@ class ValenceService(Api):
     def handle_error(self, error):
 
         if issubclass(error.__class__, exception.ValenceError):
+            LOG.debug(traceback.format_exc())
             return self.make_response(error.as_dict(), error.status)
         elif hasattr(error, 'status'):
+            LOG.debug(traceback.format_exc())
             return self.make_response(exception.httpexception(error),
                                       error.code)
         else:
+            # Valence will not throw general exception in normal case, so use
+            # LOG.error() to record it.
+            LOG.error(traceback.format_exc())
             return self.make_response(exception.generalexception(error,
                                       http_client.INTERNAL_SERVER_ERROR),
                                       http_client.INTERNAL_SERVER_ERROR)
