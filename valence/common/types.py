@@ -38,17 +38,14 @@ class String(object):
     def validate(cls, value, min_length=0, max_length=None):
         if value is None:
             return None
-
         try:
             strlen = len(value)
             if strlen < min_length:
-                raise TypeError('String length is less than' + min_length)
+                raise ValueError('String length is less than' + min_length)
             if max_length and strlen > max_length:
-                raise TypeError('String length is greater than' + max_length)
+                raise ValueError('String length is greater than' + max_length)
         except TypeError:
             raise ValueError("An invalid value was provided")
-        except ValueError as e:
-            raise ValueError(str(e))
 
         return value
 
@@ -65,7 +62,6 @@ class Integer(object):
             try:
                 value = int(value)
             except Exception:
-                LOG.exception('Failed to convert value to int')
                 raise ValueError("Failed to convert value to int")
 
         if minimum is not None and value < minimum:
@@ -88,7 +84,6 @@ class Bool(object):
             try:
                 value = value.lower() in ("yes", "true", "t", "1")
             except Exception:
-                LOG.exception('Failed to convert value to bool')
                 raise ValueError("Failed to convert value to bool")
 
         return value
@@ -108,7 +103,6 @@ class Custom(object):
             try:
                 value = self.user_class(**value)
             except Exception:
-                LOG.exception('Failed to validate received value')
                 raise ValueError("Failed to validate received value")
 
         return value
@@ -130,5 +124,4 @@ class List(object):
         try:
             return [self.type.validate(v) for v in value]
         except Exception:
-            LOG.exception('Failed to validate received value')
             raise ValueError("Failed to validate received value")
