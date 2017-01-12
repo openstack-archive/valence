@@ -17,8 +17,8 @@ import os
 
 import etcd
 
-from valence.api import types
 from valence.common import base
+from valence.common import types
 from valence import db
 
 

@@ -10,8 +10,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from valence.api import types
 from valence.common import base
+from valence.common import types
 
 
 class FakeObject(base.ObjectBase):
