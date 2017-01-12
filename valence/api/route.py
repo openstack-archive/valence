@@ -12,6 +12,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import logging
+import traceback
+
 from flask_cors import CORS
 from flask_restful import Api
 from six.moves import http_client
@@ -31,6 +34,7 @@ from valence.api.v1.version import V1
 from valence.common import exception
 
 
+LOG = logging.getLogger(__name__)
 app = flaskapp.get_app()
 cors = CORS(app)
 
@@ -39,6 +43,8 @@ class ValenceService(Api):
     """Overriding Flask Restful Error handler"""
 
     def handle_error(self, error):
+
+        LOG.debug(traceback.format_exc())
 
         if issubclass(error.__class__, exception.ValenceError):
             return self.make_response(error.as_dict(), error.status)
