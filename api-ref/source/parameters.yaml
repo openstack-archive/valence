@@ -63,17 +63,35 @@ created_at:
   in: body
   required: true
   type: string
-criteria_list:
+flavor_uuid:
   description: |
-    Criteria name for generated a new one.
+    UUID for flavor.
   in: body
-  required: true
+  required: false
   type: string
-criteria_object:
+flavor_name:
   description: |
-    Criteria object including name and its description.
+    Name for specified flavor.
   in: body
-  required: true
+  required: false
+  type: string
+flavor_ram:
+  description: |
+    RAM requirement for flavor.
+  in: body
+  required: false
+  type: string
+flavor_processor_model:
+  description: |
+    Processor model specified by flavor.
+  in: body
+  required: false
+  type: string
+flavor_cores:
+  description: |
+    Number of processor cores specified by flavor.
+  in: body
+  required: false
   type: string
 id:
   description: |
