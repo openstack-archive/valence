@@ -80,7 +80,7 @@ api.add_resource(v1_systems.Systems, '/v1/systems/<string:systemid>',
 
 # Flavor(s) operations
 api.add_resource(v1_flavors.Flavors, '/v1/flavors', endpoint='flavors')
-
+api.add_resource(v1_flavors.Flavors, '/v1/flavors/<string:flavorid>', endpoint='flavor')
 
 # Storage(s) operations
 api.add_resource(v1_storages.StoragesList, '/v1/storages', endpoint='storages')

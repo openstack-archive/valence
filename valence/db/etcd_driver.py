@@ -37,6 +37,8 @@ def translate_to_models(etcd_resp, model_type):
     data = json.loads(etcd_resp.value)
     if model_type == models.PodManager.path:
         ret = models.PodManager(**data)
+    elif model_type == models.Flavor.path:
+        ret = models.Flavor(**data)
     else:
         # TODO(lin.a.yang): after exception module got merged, raise
         # valence specific InvalidParameter exception here
@@ -102,3 +104,48 @@ class EtcdDriver(object):
                     podm, models.PodManager.path))
 
         return podmanagers
+
+    def get_flavor_by_uuid(self, flavor_uuid):
+        try:
+            resp = self.client.read(models.Flavor.etcd_path(flavor_uuid))
+        except etcd.EtcdKeyNotFound:
+            # TODO(ntpttr): Change this to a valence specific exception
+            # when the exceptions module is merged.
+            raise Exception('Flavor {0} not found.'.format(flavor_uuid))
+
+        return translate_to_models(resp, models.Flavor.path)
+
+    def create_flavor(self, values):
+        values['uuid'] = uuidutils.generate_uuid()
+
+        flavor = models.Flavor(**values)
+        flavor.save()
+
+        return flavor
+
+    def delete_flavor(self, flavor_uuid):
+        flavor = self.get_flavor_by_uuid(flavor_uuid)
+        flavor.delete()
+
+    def update_flavor(self, flavor_uuid, values):
+        flavor = self.get_flavor_by_uuid(flavor_uuid)
+        flavor.update(values)
+
+        return flavor
+
+    def list_flavors(self):
+        try:
+            resp = getattr(self.client.read(models.Flavor.path),
+                           'children', None)
+        except etcd.EtcdKeyNotFound:
+            LOG.error("Path '/flavors' does not exist, the etcd server may "
+                      "not have been initialized appropriately.")
+            raise
+
+        flavors = []
+        for flavor in resp:
+            if flavor.value is not None:
+                flavors.append(translate_to_models(
+                    flavor, models.Flavor.path))
+
+        return flavors
