@@ -154,3 +154,38 @@ class PodManager(ModelBaseWithTimeStamp):
             'validate': types.Text.validate
         }
     }
+
+
+class Flavor(ModelBaseWithTimeStamp):
+
+    path = "/flavors"
+
+    fields = {
+        'uuid': {
+            'validate': types.Text.validate
+        },
+        'name': {
+            'validate': types.Text.validate
+        },
+        'properties': {
+            'memory': {
+                'capacity_mib': {
+                    'validate': types.Text.validate
+                },
+                'type': {
+                    'validate': types.Text.validate
+                },
+                'validate': types.Dict.validate
+            },
+            'processor': {
+                'total_cores': {
+                    'validate': types.Text.validate
+                },
+                'model': {
+                    'validate': types.Text.validate
+                },
+                'validate': types.Dict.validate
+            },
+            'validate': types.Dict.validate
+        }
+    }

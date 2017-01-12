@@ -56,3 +56,22 @@ def get_test_podmanager(**kwargs):
         'created_at': kwargs.get('created_at', '2016-01-01 00:00:00 UTC'),
         'updated_at': kwargs.get('updated_at', '2016-01-01 00:00:00 UTC'),
     }
+
+
+def get_test_flavor(**kwargs):
+    return {
+        'uuid': kwargs.get('uuid', 'f0565d8c-d79b-11e6-bf26-cec0c932ce01'),
+        'name': kwargs.get('name', 'fake_name'),
+        'properties': {
+            'memory': {
+                'capacity_mib': kwargs.get('capacity_mib', 'fake_capacity'),
+                'type': kwargs.get('type', 'fake_type'),
+            },
+            'processor': {
+                'total_cores': kwargs.get('total_cores', 'fake_cores'),
+                'model': kwargs.get('model', 'fake_model')
+            }
+        },
+        'created_at': kwargs.get('created_at', '2016-01-01 00:00:00 UTC'),
+        'updated_at': kwargs.get('updated_at', '2016-01-01 00:00:00 UTC'),
+    }

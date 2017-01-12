@@ -44,6 +44,23 @@ class TestDBAPI(unittest.TestCase):
             '/pod_managers/' + podmanager['uuid'],
             json.dumps(result.as_dict()))
 
+    @freezegun.freeze_time('2017-01-01')
+    @mock.patch('etcd.Client.write')
+    @mock.patch('etcd.Client.read')
+    def test_create_flavor(self, mock_etcd_read, mock_etcd_write):
+        flavor = utils.get_test_flavor()
+        fake_utcnow = '2017-01-01 00:00:00 UTC'
+        flavor['created_at'] = fake_utcnow
+        flavor['updated_at'] = fake_utcnow
+
+        mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
+
+        result = db_api.Connection.create_flavor(flavor)
+        self.assertEqual(flavor, result.as_dict())
+        mock_etcd_read.assert_called_with('/flavors/' + flavor['uuid'])
+        mock_etcd_write.assert_called_with('/flavors/' + flavor['uuid'],
+                                           json.dumps(result.as_dict()))
+
     @mock.patch('etcd.Client.read')
     def test_get_podmanager_by_uuid(self, mock_etcd_read):
         podmanager = utils.get_test_podmanager()
@@ -55,6 +72,18 @@ class TestDBAPI(unittest.TestCase):
         self.assertEqual(podmanager, result.as_dict())
         mock_etcd_read.assert_called_with(
             '/pod_managers/' + podmanager['uuid'])
+
+    @mock.patch('etcd.Client.read')
+    def test_get_flavor_by_uuid(self, mock_etcd_read):
+        flavor = utils.get_test_flavor()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            flavor['uuid'], json.dumps(flavor))
+        result = db_api.Connection.get_flavor_by_uuid(flavor['uuid'])
+
+        self.assertEqual(flavor, result.as_dict())
+        mock_etcd_read.assert_called_with(
+            '/flavors/' + flavor['uuid'])
 
     @mock.patch('etcd.Client.read')
     def test_get_podmanager_not_found(self, mock_etcd_read):
@@ -69,6 +98,18 @@ class TestDBAPI(unittest.TestCase):
         mock_etcd_read.assert_called_with(
             '/pod_managers/' + podmanager['uuid'])
 
+    @mock.patch('etcd.Client.read')
+    def test_get_flavor_not_found(self, mock_etcd_read):
+        flavor = utils.get_test_flavor()
+        mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
+
+        with self.assertRaises(Exception) as context:  # noqa: H202
+            db_api.Connection.get_flavor_by_uuid(flavor['uuid'])
+
+        self.assertTrue('Flavor {0} not found.'.format(
+            flavor['uuid']) in str(context.exception))
+        mock_etcd_read.assert_called_with('/flavors/' + flavor['uuid'])
+
     @mock.patch('etcd.Client.delete')
     @mock.patch('etcd.Client.read')
     def test_delete_podmanager(self, mock_etcd_read, mock_etcd_delete):
@@ -80,6 +121,17 @@ class TestDBAPI(unittest.TestCase):
 
         mock_etcd_delete.assert_called_with(
             '/pod_managers/' + podmanager['uuid'])
+
+    @mock.patch('etcd.Client.delete')
+    @mock.patch('etcd.Client.read')
+    def test_delete_flavor(self, mock_etcd_read, mock_etcd_delete):
+        flavor = utils.get_test_flavor()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            flavor['uuid'], json.dumps(flavor))
+        db_api.Connection.delete_flavor(flavor['uuid'])
+
+        mock_etcd_delete.assert_called_with('/flavors/' + flavor['uuid'])
 
     @freezegun.freeze_time("2017-01-01")
     @mock.patch('etcd.Client.write')
@@ -102,4 +154,27 @@ class TestDBAPI(unittest.TestCase):
             '/pod_managers/' + podmanager['uuid'])
         mock_etcd_write.assert_called_with(
             '/pod_managers/' + podmanager['uuid'],
+            json.dumps(result.as_dict()))
+
+    @freezegun.freeze_time("2017-01-01")
+    @mock.patch('etcd.Client.write')
+    @mock.patch('etcd.Client.read')
+    def test_update_flavor(self, mock_etcd_read, mock_etcd_write):
+        flavor = utils.get_test_flavor()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            flavor['uuid'], json.dumps(flavor))
+
+        fake_utcnow = '2017-01-01 00:00:00 UTC'
+        flavor['updated_at'] = fake_utcnow
+        flavor.update({'properties': {'memory': {'type': 'new_type'}}})
+
+        result = db_api.Connection.update_flavor(
+            flavor['uuid'], {'properties': {'memory': {'type': 'new_type'}}})
+
+        self.assertEqual(flavor, result.as_dict())
+        mock_etcd_read.assert_called_with(
+            '/flavors/' + flavor['uuid'])
+        mock_etcd_write.assert_called_with(
+            '/flavors/' + flavor['uuid'],
             json.dumps(result.as_dict()))
