@@ -154,3 +154,23 @@ class PodManager(ModelBaseWithTimeStamp):
             'validate': types.Text.validate
         }
     }
+
+
+class ComposedNode(ModelBaseWithTimeStamp):
+
+    path = "/nodes"
+
+    fields = {
+        'uuid': {
+            'validate': types.Text.validate
+        },
+        'name': {
+            'validate': types.Text.validate
+        },
+        'index': {
+            'validate': types.Text.validate
+        },
+        'links': {
+            'validate': types.List(types.Dict).validate
+        }
+    }
