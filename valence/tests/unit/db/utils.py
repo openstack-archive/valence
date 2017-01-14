@@ -56,3 +56,21 @@ def get_test_podmanager(**kwargs):
         'created_at': kwargs.get('created_at', '2016-01-01 00:00:00 UTC'),
         'updated_at': kwargs.get('updated_at', '2016-01-01 00:00:00 UTC'),
     }
+
+
+def get_test_composed_node_db_info(**kwargs):
+    return {
+        'uuid': kwargs.get('uuid', 'ea8e2a25-2901-438d-8157-de7ffd68d051'),
+        'name': kwargs.get('name', 'fake_name'),
+        'index': kwargs.get('index', '1'),
+        'links': kwargs.get(
+            'links',
+            [{'href': 'http://127.0.0.1:8181/v1/nodes/'
+                      '7be5bc10-dcdf-11e6-bd86-934bc6947c55/',
+              'rel': 'self'},
+             {'href': 'http://127.0.0.1:8181/nodes/'
+                      '7be5bc10-dcdf-11e6-bd86-934bc6947c55/',
+              'rel': 'bookmark'}]),
+        'created_at': kwargs.get('created_at', '2016-01-01 00:00:00 UTC'),
+        'updated_at': kwargs.get('updated_at', '2016-01-01 00:00:00 UTC')
+    }
