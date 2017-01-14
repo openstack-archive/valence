@@ -67,8 +67,10 @@ api.add_resource(api_root.Root, '/', endpoint='root')
 api.add_resource(v1_version.V1, '/v1', endpoint='v1')
 
 # Node(s) operations
-api.add_resource(v1_nodes.NodesList, '/v1/nodes', endpoint='nodes')
-api.add_resource(v1_nodes.Nodes, '/v1/nodes/<string:nodeid>', endpoint='node')
+api.add_resource(v1_nodes.Nodes, '/v1/nodes', endpoint='nodes')
+api.add_resource(v1_nodes.Node,
+                 '/v1/nodes/<string:node_uuid>',
+                 endpoint='node')
 api.add_resource(v1_nodes.NodesStorage,
                  '/v1/nodes/<string:nodeid>/storages',
                  endpoint='nodes_storages')
