@@ -71,3 +71,47 @@ class Connection(object):
         :returns: A list of all pod managers.
         """
         return cls.dbdriver.list_podmanager()
+
+    @classmethod
+    def create_composed_node(cls, values):
+        """Create a new composed node.
+
+        :values: The properties for this new composed node.
+        :returns: A composed node created.
+        """
+        return cls.dbdriver.create_composed_node(values)
+
+    @classmethod
+    def get_composed_node_by_uuid(cls, composed_node_uuid):
+        """Get specific composed node by its uuid
+
+        :param composed_node_uuid: The uuid of composed node.
+        :returns: A composed node with this uuid.
+        """
+        return cls.dbdriver.get_composed_node_by_uuid(composed_node_uuid)
+
+    @classmethod
+    def delete_composed_node(cls, composed_node_uuid):
+        """Delete specific composed node by its uuid
+
+        :param composed_node_uuid: The uuid of composed node.
+        """
+        cls.dbdriver.delete_composed_node(composed_node_uuid)
+
+    @classmethod
+    def update_composed_node(cls, composed_node_uuid, values):
+        """Update properties of a composed node.
+
+        :param composed_node_uuid: The uuid of composed node.
+        :values: The properties to be updated.
+        :returns: A composed node model after updated.
+        """
+        return cls.dbdriver.update_composed_node(composed_node_uuid, values)
+
+    @classmethod
+    def list_composed_nodes(cls):
+        """Get a list of all composed nodes.
+
+        :returns: A list of all composed node.
+        """
+        return cls.dbdriver.list_composed_nodes()
