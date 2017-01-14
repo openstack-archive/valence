@@ -132,3 +132,17 @@ class List(object):
         except Exception:
             LOG.exception('Failed to validate received value')
             raise ValueError("Failed to validate received value")
+
+
+class Dict(object):
+    type_name = 'Dict'
+
+    @classmethod
+    def validate(cls, value, default={}):
+        if value is None:
+            value = default
+
+        if not isinstance(value, dict):
+            raise ValueError("Failed to validate received value")
+
+        return value
