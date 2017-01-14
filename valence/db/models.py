@@ -154,3 +154,44 @@ class PodManager(ModelBaseWithTimeStamp):
             'validate': types.Text.validate
         }
     }
+
+
+class ComposedNode(ModelBaseWithTimeStamp):
+
+    path = "/nodes"
+
+    fields = {
+        'uuid': {
+            'validate': types.Text.validate
+        },
+        'name': {
+            'validate': types.Text.validate
+        },
+        'description': {
+            'validate': types.Text.validate
+        },
+        'node_state': {
+            'validate': types.Text.validate
+        },
+        'node_power_state': {
+            'validate': types.Text.validate
+        },
+        'health_status': {
+            'validate': types.Text.validate
+        },
+        'index': {
+            'validate': types.Text.validate
+        },
+        'boot_source': {
+            'validate': types.Text.validate
+        },
+        'target_boot_source': {
+            'validate': types.Text.validate
+        },
+        'pooled_group_id': {
+            'validate': types.Text.validate
+        },
+        'links': {
+            'validate': types.List.validate
+        }
+    }
