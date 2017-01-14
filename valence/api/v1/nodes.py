@@ -12,39 +12,36 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import logging
-
 from flask import request
 from flask_restful import abort
 from flask_restful import Resource
 from six.moves import http_client
 
 from valence.common import utils
-from valence.redfish import redfish
-
-LOG = logging.getLogger(__name__)
-
-
-class NodesList(Resource):
-
-    def get(self):
-        return utils.make_response(http_client.OK,
-                                   redfish.list_nodes())
-
-    def post(self):
-        return utils.make_response(
-            http_client.OK, redfish.compose_node(request.get_json()))
+from valence.controller import nodes
 
 
 class Nodes(Resource):
 
-    def get(self, nodeid):
-        return utils.make_response(http_client.OK,
-                                   redfish.get_node_by_id(nodeid))
+    def get(self):
+        return utils.make_response(
+            http_client.OK, nodes.Node.list_composed_nodes())
 
-    def delete(self, nodeid):
-        return utils.make_response(http_client.OK,
-                                   redfish.delete_composednode(nodeid))
+    def post(self):
+        return utils.make_response(
+            http_client.OK, nodes.Node.compose_node(request.get_json()))
+
+
+class Node(Resource):
+
+    def get(self, node_uuid):
+        return utils.make_response(
+            http_client.OK,
+            nodes.Node.get_composed_node_by_uuid(node_uuid))
+
+    def delete(self, node_uuid):
+        return utils.make_response(
+            http_client.OK, nodes.Node.delete_composed_node(node_uuid))
 
 
 class NodesStorage(Resource):

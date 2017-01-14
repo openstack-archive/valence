@@ -21,6 +21,7 @@
 import logging
 
 import flask
+from oslo_utils import uuidutils
 import six
 
 LOG = logging.getLogger(__name__)
@@ -106,3 +107,8 @@ def make_response(status_code, content="", headers=None):
             raise ValueError("Response headers should be dict object.")
 
     return response
+
+
+def generate_uuid():
+    """Generate uniform format uuid"""
+    return uuidutils.generate_uuid()
