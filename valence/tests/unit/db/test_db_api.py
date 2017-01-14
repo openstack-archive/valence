@@ -103,3 +103,83 @@ class TestDBAPI(unittest.TestCase):
         mock_etcd_write.assert_called_with(
             '/pod_managers/' + podmanager['uuid'],
             json.dumps(result.as_dict()))
+
+    @freezegun.freeze_time("2017-01-01")
+    @mock.patch('etcd.Client.write')
+    @mock.patch('etcd.Client.read')
+    def test_create_composed_node(self, mock_etcd_read, mock_etcd_write):
+        node = utils.get_test_composed_node_db_info()
+        fake_utcnow = '2017-01-01 00:00:00 UTC'
+        node['created_at'] = fake_utcnow
+        node['updated_at'] = fake_utcnow
+
+        # Mark this uuid don't exist in etcd db
+        mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
+
+        result = db_api.Connection.create_composed_node(node)
+        self.assertEqual(node, result.as_dict())
+        mock_etcd_read.assert_called_once_with(
+            '/nodes/' + node['uuid'])
+        mock_etcd_write.assert_called_once_with(
+            '/nodes/' + node['uuid'],
+            json.dumps(result.as_dict()))
+
+    @mock.patch('etcd.Client.read')
+    def test_get_composed_node_by_uuid(self, mock_etcd_read):
+        node = utils.get_test_composed_node_db_info()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            node['uuid'], json.dumps(node))
+        result = db_api.Connection.get_composed_node_by_uuid(node['uuid'])
+
+        self.assertEqual(node, result.as_dict())
+        mock_etcd_read.assert_called_once_with(
+            '/nodes/' + node['uuid'])
+
+    @mock.patch('etcd.Client.read')
+    def test_get_composed_node_not_found(self, mock_etcd_read):
+        node = utils.get_test_composed_node_db_info()
+        mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
+
+        with self.assertRaises(Exception) as context:  # noqa: H202
+            db_api.Connection.get_composed_node_by_uuid(node['uuid'])
+
+        self.assertTrue('Composed node not found {0} in database.'.format(
+            node['uuid']) in str(context.exception))
+        mock_etcd_read.assert_called_once_with(
+            '/nodes/' + node['uuid'])
+
+    @mock.patch('etcd.Client.delete')
+    @mock.patch('etcd.Client.read')
+    def test_delete_composed_node(self, mock_etcd_read, mock_etcd_delete):
+        node = utils.get_test_composed_node_db_info()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            node['uuid'], json.dumps(node))
+        db_api.Connection.delete_composed_node(node['uuid'])
+
+        mock_etcd_delete.assert_called_with(
+            '/nodes/' + node['uuid'])
+
+    @freezegun.freeze_time("2017-01-01")
+    @mock.patch('etcd.Client.write')
+    @mock.patch('etcd.Client.read')
+    def test_update_composed_node(self, mock_etcd_read, mock_etcd_write):
+        node = utils.get_test_composed_node_db_info()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            node['uuid'], json.dumps(node))
+
+        fake_utcnow = '2017-01-01 00:00:00 UTC'
+        node['updated_at'] = fake_utcnow
+        node.update({'index': '2'})
+
+        result = db_api.Connection.update_composed_node(
+            node['uuid'], {'index': '2'})
+
+        self.assertEqual(node, result.as_dict())
+        mock_etcd_read.assert_called_with(
+            '/nodes/' + node['uuid'])
+        mock_etcd_write.assert_called_with(
+            '/nodes/' + node['uuid'],
+            json.dumps(result.as_dict()))

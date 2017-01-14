@@ -37,6 +37,8 @@ def translate_to_models(etcd_resp, model_type):
     data = json.loads(etcd_resp.value)
     if model_type == models.PodManager.path:
         ret = models.PodManager(**data)
+    elif model_type == models.ComposedNode.path:
+        ret = models.ComposedNode(**data)
     else:
         # TODO(lin.a.yang): after exception module got merged, raise
         # valence specific InvalidParameter exception here
@@ -102,3 +104,51 @@ class EtcdDriver(object):
                     podm, models.PodManager.path))
 
         return podmanagers
+
+    def create_composed_node(self, values):
+        composed_node = models.ComposedNode(**values)
+        composed_node.save()
+
+        return composed_node
+
+    def get_composed_node_by_uuid(self, composed_node_uuid):
+        try:
+            resp = self.client.read(models.ComposedNode.etcd_path(
+                composed_node_uuid))
+        except etcd.EtcdKeyNotFound:
+            # TODO(lin.a.yang): after exception module got merged, raise
+            # valence specific DBNotFound exception here
+            raise Exception(
+                'Composed node not found {0} in database.'.format(
+                    composed_node_uuid))
+
+        return translate_to_models(resp, models.ComposedNode.path)
+
+    def delete_composed_node(self, composed_node_uuid):
+        composed_node = self.get_composed_node_by_uuid(composed_node_uuid)
+        composed_node.delete()
+
+    def update_composed_node(self, composed_node_uuid, values):
+        composed_node = self.get_composed_node_by_uuid(composed_node_uuid)
+        composed_node.update(values)
+
+        return composed_node
+
+    def list_composed_nodes(self):
+        # TODO(lin.a.yang): support filter for listing composed_node
+
+        try:
+            resp = getattr(self.client.read(models.ComposedNode.path),
+                           'children', None)
+        except etcd.EtcdKeyNotFound:
+            LOG.error("Path '/nodes' does not exist, seems etcd server "
+                      "was not initialized appropriately.")
+            raise
+
+        composed_nodes = []
+        for node in resp:
+            if node.value is not None:
+                composed_nodes.append(translate_to_models(
+                    node, models.ComposedNode.path))
+
+        return composed_nodes
