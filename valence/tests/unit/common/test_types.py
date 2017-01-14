@@ -145,3 +145,20 @@ class TestTypes(TestCase):
         self.assertIsInstance(value, list)
         self.assertIsInstance(value[0], TestAPI)
         self.assertEqual({'test': 'test_value'}, value[0].as_dict())
+
+    def test_dict_type(self):
+        # Test default value
+        self.assertEqual({}, types.Dict.validate(None))
+        self.assertEqual({}, types.Dict.validate(None, default={}))
+
+        # Test validate successfully
+        self.assertEqual({"abc": "xyz"}, types.Dict.validate({"abc": "xyz"}))
+        self.assertEqual({}, types.Dict.validate({}))
+
+        # Test validate failed
+        self.assertRaises(ValueError,
+                          types.Dict.validate, "test")
+        self.assertRaises(ValueError,
+                          types.Dict.validate, 123)
+        self.assertRaises(ValueError,
+                          types.Dict.validate, [])
