@@ -255,7 +255,7 @@ class TestRedfish(TestCase):
         fake_delete_response = fakes.mock_request_get(delete_result,
                                                       http_client.NO_CONTENT)
         mock_request.return_value = fake_delete_response
-        result = redfish.delete_composednode(101)
+        result = redfish.delete_composed_node(101)
         mock_request.assert_called_with('/redfish/v1/Nodes/101', 'DELETE')
         expected = {
             "code": "DELETED",
@@ -276,7 +276,7 @@ class TestRedfish(TestCase):
                                            http_client.INTERNAL_SERVER_ERROR)
         mock_request.return_value = fake_resp
         self.assertRaises(exception.RedfishException,
-                          redfish.delete_composednode, 101)
+                          redfish.delete_composed_node, 101)
         self.assertFalse(mock_make_response.called)
 
     @mock.patch('requests.get')
@@ -340,7 +340,7 @@ class TestRedfish(TestCase):
         self.assertTrue("There are no computer systems available for this "
                         "allocation request." in str(context.exception.detail))
 
-    @mock.patch('valence.redfish.redfish.delete_composednode')
+    @mock.patch('valence.redfish.redfish.delete_composed_node')
     @mock.patch('valence.redfish.redfish.get_base_resource_url')
     @mock.patch('valence.redfish.redfish.send_request')
     def test_assemble_node_failed(self, mock_request, mock_get_url,
@@ -375,7 +375,7 @@ class TestRedfish(TestCase):
         mock_delete_node.assert_called_once()
 
     @mock.patch('valence.redfish.redfish.get_node_by_id')
-    @mock.patch('valence.redfish.redfish.delete_composednode')
+    @mock.patch('valence.redfish.redfish.delete_composed_node')
     @mock.patch('valence.redfish.redfish.get_base_resource_url')
     @mock.patch('valence.redfish.redfish.send_request')
     def test_assemble_node_success(self, mock_request, mock_get_url,

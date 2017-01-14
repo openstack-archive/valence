@@ -20,7 +20,8 @@ from valence.db import models
 
 etcd_directories = [
     models.PodManager.path,
-    models.Flavor.path
+    models.Flavor.path,
+    models.ComposedNode.path
 ]
 
 etcd_client = etcd.Client(config.etcd_host, config.etcd_port)

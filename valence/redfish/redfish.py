@@ -491,7 +491,7 @@ def compose_node(request_body):
 
     if assemble_resp.status_code != http_client.NO_CONTENT:
         # Delete node if assemble failed
-        delete_composednode(node_index)
+        delete_composed_node(node_index)
         raise exception.RedfishException(assemble_resp.json(),
                                          status_code=resp.status_code)
     else:
@@ -499,10 +499,10 @@ def compose_node(request_body):
         LOG.debug('Successfully assembled node: ' + node_url)
 
     # Return new composed node index
-    return get_node_by_id(node_index, show_detail=False)
+    return get_node_by_id(node_index)
 
 
-def delete_composednode(nodeid):
+def delete_composed_node(nodeid):
     nodes_url = get_base_resource_url("Nodes")
     delete_url = nodes_url + '/' + str(nodeid)
     resp = send_request(delete_url, "DELETE")
