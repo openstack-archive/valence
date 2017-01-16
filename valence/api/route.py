@@ -32,6 +32,7 @@ from valence.api.v1.systems import Systems as v1Systems
 from valence.api.v1.systems import SystemsList as v1SystemsList
 from valence.api.v1.version import V1
 from valence.common import exception
+from valence.common import utils
 
 
 LOG = logging.getLogger(__name__)
@@ -43,22 +44,19 @@ class ValenceService(Api):
     """Overriding Flask Restful Error handler"""
 
     def handle_error(self, error):
-
         if issubclass(error.__class__, exception.ValenceError):
             LOG.debug(traceback.format_exc())
-            return self.make_response(error.as_dict(), error.status)
+            return utils.make_response(error.status, error.as_dict())
         elif hasattr(error, 'status'):
             LOG.debug(traceback.format_exc())
-            return self.make_response(exception.httpexception(error),
-                                      error.code)
+            return utils.make_response(error.code,
+                                       exception.httpexception(error))
         else:
             # Valence will not throw general exception in normal case, so use
             # LOG.error() to record it.
             LOG.error(traceback.format_exc())
-            return self.make_response(exception.generalexception(error,
-                                      http_client.INTERNAL_SERVER_ERROR),
-                                      http_client.INTERNAL_SERVER_ERROR)
-
+            exc = exception.generalexception(error, http_client.INTERNAL_SERVER_ERROR)
+            return utils.make_response(http_client.INTERNAL_SERVER_ERROR, exc)
 
 api = ValenceService(app)
 
