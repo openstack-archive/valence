@@ -1,0 +1,9 @@
+Code-Review+2: Lin Yang <lin.a.yang@intel.com>
+Code-Review+2: Andy Yan <yanchao3@lenovo.com>
+Workflow+1: Andy Yan <yanchao3@lenovo.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Mon, 16 Jan 2017 02:08:48 +0000
+Reviewed-on: https://review.openstack.org/419352
+Project: openstack/valence
+Branch: refs/heads/master
