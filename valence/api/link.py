@@ -15,8 +15,8 @@
 
 from flask import request
 
-from valence.api import types
 from valence.common import base
+from valence.common import types
 
 
 def build_url(resource, resource_args, bookmark=False, base_url=None):

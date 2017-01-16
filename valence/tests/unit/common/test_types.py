@@ -12,8 +12,8 @@
 
 from unittest import TestCase
 
-from valence.api import types
 from valence.common import base
+from valence.common import types
 
 
 class TestTypes(TestCase):
