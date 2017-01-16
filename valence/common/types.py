@@ -125,3 +125,17 @@ class List(object):
             return [self.type.validate(v) for v in value]
         except Exception:
             raise ValueError("Failed to validate received value")
+
+
+class Dict(object):
+    type_name = 'Dict'
+
+    @classmethod
+    def validate(cls, value, default={}):
+        if value is None:
+            value = default
+
+        if not isinstance(value, dict):
+            raise ValueError("Failed to validate received value")
+
+        return value
