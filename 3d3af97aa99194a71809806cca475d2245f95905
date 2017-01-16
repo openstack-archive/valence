@@ -1,0 +1,9 @@
+Code-Review+2: Nate Potter <nathaniel.potter@intel.com>
+Workflow+1: Andy Yan <yanchao3@lenovo.com>
+Code-Review+1: Andy Yan <yanchao3@lenovo.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Mon, 16 Jan 2017 02:08:57 +0000
+Reviewed-on: https://review.openstack.org/419762
+Project: openstack/valence
+Branch: refs/heads/master
