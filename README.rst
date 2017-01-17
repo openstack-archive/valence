@@ -55,7 +55,12 @@ Valence installation
 
  6. Initialize etcd database
 
-    ``$ sudo db_manager init``
+    ``$ db_manager init``
+
+    Note: The TypeError exception "TypeError: NoneType object is not callable"
+    is caused by known python-etcd bug, which will not impact this db init
+    functionality.
+    https://github.com/jplana/python-etcd/issues/190
 
  7. Start valence service
 

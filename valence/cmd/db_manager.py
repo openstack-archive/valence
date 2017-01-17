@@ -16,24 +16,24 @@
 import logging
 import sys
 
-from valence.db.etcd_db import init_etcd_db
+from valence.db import etcd_db
 
 LOG = logging.getLogger(__name__)
 
 
 def init():
-    init_etcd_db()
+    etcd_db.init_etcd_db()
 
 
 def migrate():
     pass
 
 
-def main(argv):
-    if argv[1] == 'init':
+def main():
+    if sys.argv[1] == 'init':
         LOG.info("initialize database")
         init()
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    sys.exit(main())
