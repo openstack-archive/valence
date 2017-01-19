@@ -19,9 +19,11 @@ from flask_restful import abort
 from flask_restful import Resource
 
 from valence.redfish import redfish
+from valence.schemas import validator
 
 LOG = logging.getLogger(__name__)
 
+node_validator = validator.Validator('node_schema')
 
 class NodesList(Resource):
 
@@ -29,6 +31,8 @@ class NodesList(Resource):
         return redfish.nodes_list(request.args)
 
     def post(self):
+        # Validate the input arguments with schema
+        node_validator.validate(request.get_json())
         return redfish.compose_node(request.get_json())
 
 
