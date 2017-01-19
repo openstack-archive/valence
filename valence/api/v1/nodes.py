@@ -19,6 +19,7 @@ from flask_restful import abort
 from flask_restful import Resource
 
 from valence.redfish import redfish
+from valence.validation import validator
 
 LOG = logging.getLogger(__name__)
 
