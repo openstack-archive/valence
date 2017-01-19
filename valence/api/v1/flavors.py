@@ -20,8 +20,11 @@ from six.moves import http_client
 
 from valence.common import utils
 from valence.controller import flavors
+from valence.validation import validator
 
 LOG = logging.getLogger(__name__)
+
+flavor_validator = validator.Validator('flavor_schema')
 
 
 class Flavors(Resource):
@@ -29,6 +32,7 @@ class Flavors(Resource):
     def get(self):
         return utils.make_response(http_client.OK, flavors.list_flavors())
 
+    @validator.check_input(flavor_validator, request)
     def post(self):
         return utils.make_response(http_client.OK,
                                    flavors.create_flavor(request.get_json()))
