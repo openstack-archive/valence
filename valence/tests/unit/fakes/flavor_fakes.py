@@ -20,7 +20,7 @@ def fake_flavor():
         "properties": {
             "memory": {
                 "capacity_mib": "1000",
-                "type": "DDR2"
+                "memory_type": "DDR2"
             },
             "processor": {
                 "total_cores": "10",
