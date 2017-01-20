@@ -14,9 +14,9 @@
 #    under the License.
 
 import json
-import logging
 import os
 
+from oslo_log import log as logging
 import requests
 from six.moves import http_client
 

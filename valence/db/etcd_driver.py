@@ -14,9 +14,9 @@
 """etcd storage backend."""
 
 import json
-import logging
 
 import etcd
+from oslo_log import log as logging
 from oslo_utils import uuidutils
 import six
 

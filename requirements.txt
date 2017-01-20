@@ -7,6 +7,7 @@ Flask-RESTful==0.3.5
 itsdangerous==0.24
 Jinja2==2.8
 MarkupSafe==0.23
+oslo.log>=3.11.0 # Apache-2.0
 python-dateutil==2.5.3
 pytz==2016.7
 requests==2.11.1

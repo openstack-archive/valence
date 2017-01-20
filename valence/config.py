@@ -18,7 +18,7 @@
 """
 
 
-import logging
+from oslo_log import log as logging
 from six.moves import configparser
 
 

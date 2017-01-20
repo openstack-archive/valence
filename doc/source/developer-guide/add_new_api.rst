@@ -57,7 +57,7 @@ Consider we want to implement a new API /v1/example that returns "hello world" j
 
            from flask import request
            from flask_restful import Resource
-           import logging
+           from oslo_log import log as logging
 
            LOG = logging.getLogger(__name__)
 

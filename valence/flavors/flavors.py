@@ -13,9 +13,9 @@
 #    under the License.
 
 from importlib import import_module
-import logging
 import os
 
+from oslo_log import log as logging
 from valence.redfish import redfish as rfs
 
 FLAVOR_PLUGIN_PATH = os.path.dirname(os.path.abspath(__file__)) + '/plugins'

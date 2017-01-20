@@ -13,11 +13,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import logging
-
 import gunicorn.app.base
 from gunicorn.six import iteritems
 
+from oslo_log import log as logging
 from valence.api.route import app as application
 from valence import config as cfg
 

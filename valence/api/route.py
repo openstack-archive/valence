@@ -12,11 +12,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import logging
 import traceback
 
 import flask_cors
 import flask_restful
+from oslo_log import log as logging
 from six.moves import http_client
 
 from valence.api import app as flaskapp

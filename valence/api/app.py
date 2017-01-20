@@ -10,13 +10,13 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import logging
 import logging.handlers
 import os.path
 
 
 import flask
 
+from oslo_log import log as logging
 import valence.config as cfg
 
 _app = None
