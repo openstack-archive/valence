@@ -61,7 +61,7 @@ Consider we want to implement a new API /v1/example that returns "hello world" j
 
            LOG = logging.getLogger(__name__)
 
-           class Example(Resorce):
+           class Example(Resource):
                def get(self):
                LOG.debug("GET /example")
                return {“msg” : “hello world”}

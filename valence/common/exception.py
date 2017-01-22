@@ -53,7 +53,7 @@ class ValenceConfirmation(base.ObjectBase):
     """Valence Confirmation Message representation.
 
        Whenever confirmation response needs to send back to client
-       for successfull operation
+       for successful operation
 
     """
 

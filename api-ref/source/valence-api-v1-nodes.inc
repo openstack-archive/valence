@@ -248,7 +248,7 @@ Resource attach/detach
 
 .. rest_method::  POST /v1/nodes/{node_ident}/action
 
-Send a attach/detach cmd to a composed node.
+Send an attach/detach cmd to a composed node.
 
 Normal response codes: 204
 

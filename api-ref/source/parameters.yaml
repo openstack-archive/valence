@@ -165,7 +165,7 @@ node_property:
   type: array
 node_provision_state:
   description: |
-    The composed node state value set by other orchestation tool, use this value
+    The composed node state value set by other orchestration tool, use this value
     to help with orchestration software know its proviision progress.
   in: body
   required: true

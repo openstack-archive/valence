@@ -37,9 +37,9 @@ def get_available_criteria():
 
 
 def create_flavors(data):
-    """criteria : comma seperated generator names
+    """criteria : comma separated generator names
 
-       This should be same as thier file name)
+       This should be same as their file name)
 
     """
     criteria = data["criteria"]

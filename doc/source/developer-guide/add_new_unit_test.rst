@@ -36,9 +36,9 @@ Unit tests scripts are located in `<valence_root>/valence/tests/unit/
 Implement a Unit Test Case
 -----------------------------
 
-Consider implementing an unit test case for our example unit module.
+Consider implementing a unit test case for our example unit module.
 
-To implement an unit test case for the example unit module,
+To implement a unit test case for the example unit module,
 
 Create a class in valence/tests/unit/(directory)/test_(example).py,
 which inherits the TestCase class from unittest.

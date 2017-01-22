@@ -35,7 +35,7 @@ Add a model for db
 Models are defined in the valence/db/models.py file. A new model
 should be updated there.
 
-To add a example model for Etcd db, we should create
+To add an example model for Etcd db, we should create
 a class that inherits the ModelBase class in valence/db/models.py.
 
 .. NOTE::
