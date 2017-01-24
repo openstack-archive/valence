@@ -21,8 +21,6 @@ exports.getPods = function(callback) {
   $.ajax({
     url: url,
     type: 'GET',
-    dataType: 'json',
-    cache: false,
     success: function(resp) {
       var chassis = this.listItems(resp['Members']);
       var pods = this.filterChassis(chassis, 'Pod');
@@ -39,8 +37,6 @@ exports.getRacks = function(callback) {
   $.ajax({
     url: url,
     type: 'GET',
-    dataType: 'json',
-    cache: false,
     success: function(resp) {
       var chassis = this.listItems(resp['Members']);
       var racks = this.filterChassis(chassis, 'Rack');
@@ -53,15 +49,12 @@ exports.getRacks = function(callback) {
 };
 
 exports.getSystems = function(callback) {
-  var url = config.url + '/Systems';
+  var url = config.url + '/v1/systems';
   $.ajax({
     url: url,
     type: 'GET',
-    dataType: 'json',
-    cache: false,
     success: function(resp) {
-      var systems = this.listItems(resp['Members']);
-      callback(systems);
+      callback(resp);
     }.bind(this),
     error: function(xhr, status, err) {
       console.error(url, status, err.toString());
@@ -74,8 +67,6 @@ exports.getNodes = function(callback) {
   $.ajax({
     url: url,
     type: 'GET',
-    dataType: 'json',
-    cache: false,
     success: function(resp) {
       var nodes = this.listItems(resp['Members']);
       callback(nodes);

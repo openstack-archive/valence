@@ -69,6 +69,7 @@ Response
     - description: node_description
     - name: system_name
     - power_state: system_power_state
+    - health: system_health
     - chassis_id : system_chassis_id
     - assettag: system_assettag
     - url_id : system_url_id
