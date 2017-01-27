@@ -23,10 +23,10 @@ from valence.api import app as flaskapp
 import valence.api.root as api_root
 import valence.api.v1.flavors as v1_flavors
 import valence.api.v1.nodes as v1_nodes
+import valence.api.v1.podmanagers as v1_podmanagers
 import valence.api.v1.storages as v1_storages
 import valence.api.v1.systems as v1_systems
 import valence.api.v1.version as v1_version
-
 from valence.common import exception
 from valence.common import utils
 
@@ -59,7 +59,6 @@ api = ValenceService(app)
 
 """API V1.0 Operations"""
 
-
 # API Root operation
 api.add_resource(api_root.Root, '/', endpoint='root')
 
@@ -87,6 +86,12 @@ api.add_resource(v1_flavors.Flavors, '/v1/flavors/<string:flavorid>',
 api.add_resource(v1_storages.StoragesList, '/v1/storages', endpoint='storages')
 api.add_resource(v1_storages.Storages,
                  '/v1/storages/<string:storageid>', endpoint='storage')
+
+# PodManager(s) operations
+api.add_resource(v1_podmanagers.PodManager,
+                 '/v1/pod_managers/<string:podm_uuid>', endpoint='podmanager')
+api.add_resource(v1_podmanagers.PodManagersList,
+                 '/v1/pod_managers', endpoint='podmanagers')
 
 # Proxy to PODM
 api.add_resource(api_root.PODMProxy, '/<path:url>', endpoint='podmproxy')

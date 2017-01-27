@@ -86,8 +86,24 @@ class RedfishException(ValenceError):
         self.detail = message_detail
 
 
-class NotFound(Exception):
-    status = http_client.NOT_FOUND
+class NotFound(ValenceError):
+
+    def __init__(self, detail='resource not found', request_id=None):
+        self.request_id = request_id
+        self.status_code = http_client.NOT_FOUND
+        self.code = http_client.NOT_FOUND
+        self.title = "resource not found"
+        self.detail = detail
+
+
+class BadRequest(ValenceError):
+
+    def __init__(self, detail='bad request', request_id=None):
+        self.request_id = request_id
+        self.status_code = http_client.BAD_REQUEST
+        self.code = http_client.BAD_REQUEST
+        self.title = "bad request"
+        self.detail = detail
 
 
 def _error(error_code, http_status, error_title, error_detail,

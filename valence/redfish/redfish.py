@@ -18,8 +18,10 @@ import logging
 import os
 
 import requests
+from requests import auth
 from six.moves import http_client
 
+from valence.common import constants
 from valence.common import exception
 from valence.common import utils
 from valence import config as cfg
@@ -104,6 +106,18 @@ def pods():
     jsonContent = send_request(chassis_url)
     pods = filter_chassis(jsonContent, "Pod")
     return json.dumps(pods)
+
+
+def pod_status(pod_url, username, password):
+    try:
+        resp = requests.get(pod_url,
+                            auth=auth.HTTPBasicAuth(username, password))
+        if resp.status_code == http_client.OK:
+            return constants.PODM_STATUS_ONLINE
+        else:
+            return constants.PODM_STATUS_OFFLINE
+    except requests.RequestException:
+        return constants.PODM_STATUS_OFFLINE
 
 
 def urls2list(url):
@@ -272,7 +286,7 @@ def get_systembyid(systemid):
 def get_nodebyid(nodeid):
     node = nodes_list({"Id": nodeid})
     if not node:
-        raise exception.NotFound()
+        raise exception.NotFound(detail='Node: %s not found' % nodeid)
     return node[0]
 
 
