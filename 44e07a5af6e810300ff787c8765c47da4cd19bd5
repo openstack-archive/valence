@@ -1,0 +1,10 @@
+Code-Review+2: Lin Yang <lin.a.yang@intel.com>
+Code-Review+2: Nate Potter <nathaniel.potter@intel.com>
+Workflow+1: Nate Potter <nathaniel.potter@intel.com>
+Code-Review+1: hubian <hubian1@lenovo.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Fri, 27 Jan 2017 17:53:21 +0000
+Reviewed-on: https://review.openstack.org/410051
+Project: openstack/valence
+Branch: refs/heads/master
