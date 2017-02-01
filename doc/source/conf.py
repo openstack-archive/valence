@@ -58,6 +58,9 @@ pygments_style = 'sphinx'
 # html_theme = '_theme'
 # html_static_path = ['static']
 
+# A list of ignored prefixes for module index sorting.
+modindex_common_prefix = ['valence.']
+
 # Output file base name for HTML help builder.
 htmlhelp_basename = '%sdoc' % project
 
