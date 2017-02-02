@@ -115,3 +115,16 @@ class TestAPINodes(unittest.TestCase):
         result = nodes.Node.list_composed_nodes()
 
         self.assertEqual(expected, result)
+
+    @mock.patch("valence.redfish.redfish.node_action")
+    @mock.patch("valence.db.api.Connection.get_composed_node_by_uuid")
+    def test_node_action(
+            self, mock_db_get_composed_node, mock_node_action):
+        """Test reset composed node status"""
+        action = {"Reset": {"Type": "On"}}
+        mock_db_model = mock.MagicMock()
+        mock_db_model.index = "1"
+        mock_db_get_composed_node.return_value = mock_db_model
+
+        nodes.Node.node_action("fake_uuid", action)
+        mock_node_action.assert_called_once_with("1", action)
