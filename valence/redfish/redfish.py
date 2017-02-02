@@ -529,3 +529,52 @@ def list_nodes():
         nodes.append(get_node_by_id(node_index, show_detail=False))
 
     return nodes
+
+
+def node_action(nodeid, request):
+    nodes_url = get_base_resource_url("Nodes")
+    node_url = os.path.normpath("/".join([nodes_url, nodeid]))
+    resp = send_request(node_url)
+
+    LOG.debug(resp.status_code)
+    if resp.status_code != http_client.OK:
+        # Raise exception if don't find node
+        raise exception.RedfishException(resp.json(),
+                                         status_code=resp.status_code)
+
+    node = resp.json()
+
+    # Only support "Reset" action right now.
+    action = "Reset"
+    # Assume api module already verified the request format. Here only
+    # verify action type is allowable or not.
+    action_type = request.get(action, {}).get("Type")
+    allowable_actions = node["Actions"]["#ComposedNode.Reset"][
+        "ResetType@DMTF.AllowableValues"]
+
+    if not action_type:
+        raise exception.BadRequest(
+            detail="Please refer to Valence api specification to correct this "
+                   "malformed content of node action request.")
+    if action_type not in allowable_actions:
+        raise exception.BadRequest(
+            detail="Action type {0} is not in allowable action list "
+                   "{1}.".format(action_type, allowable_actions))
+
+    target_url = node["Actions"]["#ComposedNode.Reset"]["target"]
+
+    action_resp = send_request(target_url, 'POST',
+                               headers={'Content-type': 'application/json'},
+                               json={"ResetType": action_type})
+
+    if action_resp.status_code != http_client.NO_CONTENT:
+        raise exception.RedfishException(action_resp.json(),
+                                         status_code=action_resp.status_code)
+    else:
+        # Reset node successfully
+        LOG.debug("Post action {0} to node {1} successfully."
+                  .format(action_type, target_url))
+        return exception.confirmation(
+            confirm_code="Reset Composed Node",
+            confirm_detail="This composed node has been set to {0} "
+                           "successfully.".format(action_type))
