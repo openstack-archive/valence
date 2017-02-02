@@ -422,3 +422,83 @@ class TestRedfish(TestCase):
 
         mock_get_node_by_id.assert_called_with("1", show_detail=False)
         self.assertEqual(["node1_detail"], result)
+
+    @mock.patch('valence.redfish.redfish.send_request')
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    def test_reset_node_malformed_request(self, mock_get_url, mock_request):
+        """Test reset node with malformed request content"""
+        mock_get_url.return_value = '/redfish/v1/Nodes'
+        mock_request.return_value = fakes.mock_request_get(
+            fakes.fake_node_detail(), http_client.OK)
+
+        with self.assertRaises(exception.BadRequest) as context:
+            redfish.reset_node("1", {"fake_request": "fake_value"})
+
+        self.assertTrue("Please refer to Valence api specification to correct "
+                        "this malformed content of node action request." in
+                        str(context.exception.detail))
+
+    @mock.patch('valence.redfish.redfish.send_request')
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    def test_reset_node_wrong_request(self, mock_get_url, mock_request):
+        """Test reset node with wrong action type"""
+        mock_get_url.return_value = '/redfish/v1/Nodes'
+        mock_request.return_value = fakes.mock_request_get(
+            fakes.fake_node_detail(), http_client.OK)
+
+        with self.assertRaises(exception.BadRequest) as context:
+            redfish.reset_node("1", {"Reset": {"Type": "wrong_action"}})
+
+        self.assertTrue("Action type 'wrong_action' is not in allowable action"
+                        " list" in str(context.exception.detail))
+
+    @mock.patch('valence.redfish.redfish.send_request')
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    def test_reset_node_success(self, mock_get_url, mock_request):
+        """Test successfully reset node status"""
+        mock_get_url.return_value = '/redfish/v1/Nodes'
+        fake_node_detail = fakes.mock_request_get(
+            fakes.fake_node_detail(), http_client.OK)
+        fake_node_action_resp = fakes.mock_request_get(
+            {}, http_client.NO_CONTENT)
+        mock_request.side_effect = [fake_node_detail, fake_node_action_resp]
+
+        result = redfish.reset_node("1", {"Reset": {"Type": "On"}})
+        expected = exception.confirmation(
+            confirm_code="Reset Composed Node",
+            confirm_detail="This composed node has been set to 'On' "
+                           "successfully.")
+
+        self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish.reset_node')
+    def test_node_action_malformed_request(self, mock_reset_node):
+        """Test post node_action with malformed request"""
+
+        # Unsupported multiply action
+        with self.assertRaises(exception.BadRequest) as context:
+            redfish.node_action(
+                "1", {"Reset": {"Type": "On"}, "Assemble": {}})
+        self.assertTrue("No action found or multiple actions in one single "
+                        "request. Please refer to Valence api specification "
+                        "to correct the content of node action request."
+                        in str(context.exception.detail))
+        mock_reset_node.assert_not_called()
+
+        # Unsupported action
+        with self.assertRaises(exception.BadRequest) as context:
+            redfish.node_action(
+                "1", {"Assemble": {}})
+        self.assertTrue("This node action 'Assemble' is unsupported. Please "
+                        "refer to Valence api specification to correct this "
+                        "content of node action request."
+                        in str(context.exception.detail))
+        mock_reset_node.assert_not_called()
+
+    @mock.patch('valence.redfish.redfish.reset_node')
+    def test_node_action_success(self, mock_reset_node):
+        """Test post node_action success"""
+
+        redfish.node_action("1", {"Reset": {"Type": "On"}})
+
+        mock_reset_node.assert_called_once_with("1", {"Reset": {"Type": "On"}})

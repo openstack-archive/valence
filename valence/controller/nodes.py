@@ -97,3 +97,28 @@ class Node(object):
         """
         return [cls._show_node_brief_info(node_info.as_dict())
                 for node_info in db_api.Connection.list_composed_nodes()]
+
+    @classmethod
+    def node_action(cls, node_uuid, request_body):
+        """Post action to a composed node
+
+        param node_uuid: uuid of composed node
+        param request_body: parameter of node action
+        return: message of this deletion
+        """
+
+        # Get node detail from db, and map node uuid to index
+        index = db_api.Connection.get_composed_node_by_uuid(node_uuid).index
+
+        # TODO(lin.yang): should validate request body whether follow specifc
+        # format, like
+        #   {
+        #     "Reset": {
+        #       "Type": "On"
+        #     }
+        #   }
+        # Should rework this part after basic validation framework for api
+        # input is done.
+        # https://review.openstack.org/#/c/422547/
+
+        return redfish.node_action(index, request_body)

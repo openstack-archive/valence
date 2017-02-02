@@ -70,6 +70,9 @@ api.add_resource(v1_nodes.Nodes, '/v1/nodes', endpoint='nodes')
 api.add_resource(v1_nodes.Node,
                  '/v1/nodes/<string:node_uuid>',
                  endpoint='node')
+api.add_resource(v1_nodes.NodeAction,
+                 '/v1/nodes/<string:node_uuid>/action',
+                 endpoint='node_action')
 api.add_resource(v1_nodes.NodesStorage,
                  '/v1/nodes/<string:nodeid>/storages',
                  endpoint='nodes_storages')
