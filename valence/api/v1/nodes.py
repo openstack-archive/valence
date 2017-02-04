@@ -44,6 +44,13 @@ class Node(Resource):
             http_client.OK, nodes.Node.delete_composed_node(node_uuid))
 
 
+class NodeManage(Resource):
+
+    def post(self):
+        return utils.make_response(
+            http_client.OK, nodes.Node.manage_node(request.get_json()))
+
+
 class NodesStorage(Resource):
 
     def get(self, nodeid):

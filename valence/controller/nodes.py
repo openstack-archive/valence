@@ -12,19 +12,24 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import logging
 import six
 
+from valence.common import exception
 from valence.common import utils
 from valence.db import api as db_api
 from valence.redfish import redfish
+
+LOG = logging.getLogger(__name__)
 
 
 class Node(object):
 
     @staticmethod
     def _show_node_brief_info(node_info):
+        LOG.info(node_info)
         return {key: node_info[key] for key in six.iterkeys(node_info)
-                if key in ["uuid", "name", "links"]}
+                if key in ["uuid", "name", "index", "links"]}
 
     @classmethod
     def compose_node(cls, request_body):
@@ -42,6 +47,42 @@ class Node(object):
         # Only store the minimum set of composed node info into backend db,
         # since other fields like power status may be changed and valence is
         # not aware.
+        node_db = {"uuid": composed_node["uuid"],
+                   "name": composed_node["name"],
+                   "index": composed_node["index"],
+                   "links": composed_node["links"]}
+        db_api.Connection.create_composed_node(node_db)
+
+        return cls._show_node_brief_info(composed_node)
+
+    @classmethod
+    def manage_node(cls, request_body):
+        """Manage existing RSD node.
+
+        param request_body: Parameters for node to manage.
+
+        Required JSON body:
+
+        {
+          'node_url': <Redfish URL of node to manage>
+        }
+
+        return: Info on managed node.
+        """
+
+        composed_node = redfish.get_node_by_id(request_body["node_url"])
+        LOG.info(composed_node)
+        # Check to see that the node to manage doesn't already exist in the
+        # Valence database.
+        current_nodes = cls.list_composed_nodes()
+        for node in current_nodes:
+            LOG.info(node)
+            if node['index'] == composed_node['index']:
+                raise exception.ResourceExists(
+                    detail="Node already managed by Valence.")
+
+        composed_node["uuid"] = utils.generate_uuid()
+
         node_db = {"uuid": composed_node["uuid"],
                    "name": composed_node["name"],
                    "index": composed_node["index"],
