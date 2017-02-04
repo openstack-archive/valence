@@ -16,6 +16,7 @@ import unittest
 
 import mock
 
+from valence.common.exception import ResourceExists
 from valence.controller import nodes
 from valence.tests.unit.controller import fakes
 from valence.tests.unit.db import utils as test_utils
@@ -27,6 +28,7 @@ class TestAPINodes(unittest.TestCase):
         """Test only show node brief info"""
         node_info = fakes.get_test_composed_node()
         expected = {
+            "index": "1",
             "name": "fake_name",
             "uuid": "ea8e2a25-2901-438d-8157-de7ffd68d051",
             "links": [{'href': 'http://127.0.0.1:8181/v1/nodes/'
@@ -38,6 +40,46 @@ class TestAPINodes(unittest.TestCase):
         }
         self.assertEqual(expected,
                          nodes.Node._show_node_brief_info(node_info))
+
+    @mock.patch("valence.db.api.Connection.create_composed_node")
+    @mock.patch("valence.common.utils.generate_uuid")
+    @mock.patch("valence.controller.nodes.Node.list_composed_nodes")
+    @mock.patch("valence.redfish.redfish.get_node_by_id")
+    def test_manage_node(self, mock_get_node, mock_list_nodes,
+                         mock_generate_uuid, mock_db_create_composed_node):
+        manage_node = fakes.get_test_composed_node()
+        mock_get_node.return_value = manage_node
+        node_list = fakes.get_test_node_list()
+        # Change the index of node 1 so that the node to manage
+        # doesn't appear in the list of nodes already managed by Valence.
+        node_list[0]["index"] = '4'
+        mock_list_nodes.return_value = node_list
+
+        uuid = "ea8e2a25-2901-438d-8157-de7ffd68d051"
+        mock_generate_uuid.return_value = uuid
+
+        node_db = {"uuid": manage_node["uuid"],
+                   "index": manage_node["index"],
+                   "name": manage_node["name"],
+                   "links": manage_node["links"]}
+
+        nodes.Node.manage_node({"node_index": "1"})
+        mock_db_create_composed_node.assert_called_once_with(node_db)
+
+    @mock.patch("valence.controller.nodes.Node.list_composed_nodes")
+    @mock.patch("valence.redfish.redfish.get_node_by_id")
+    def test_manage_already_managed_node(self, mock_get_node, mock_list_nodes):
+        manage_node = fakes.get_test_composed_node()
+        mock_get_node.return_value = manage_node
+        # Leave the index of node 1 as '1' so that it conflicts with the node
+        # being managed, meaning we're trying to manage a node that already
+        # exists in the Valence DB.
+        node_list = fakes.get_test_node_list()
+        mock_list_nodes.return_value = node_list
+
+        self.assertRaises(ResourceExists,
+                          nodes.Node.manage_node,
+                          {"node_index": "1"})
 
     @mock.patch("valence.db.api.Connection.create_composed_node")
     @mock.patch("valence.common.utils.generate_uuid")

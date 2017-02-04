@@ -50,3 +50,23 @@ def get_test_composed_node(**kwargs):
                             'speed_mhz': 3700,
                             'total_core': 0}]})
     }
+
+
+def get_test_node_list(**kwargs):
+    return [
+        {
+            'uuid': kwargs.get('uuid', '11111111-1111-1111-1111-111111111111'),
+            'name': kwargs.get('name', 'node_1'),
+            'index': kwargs.get('index', '1')
+        },
+        {
+            'uuid': kwargs.get('uuid', '22222222-2222-2222-2222-222222222222'),
+            'name': kwargs.get('name', 'node_2'),
+            'index': kwargs.get('index', '2')
+        },
+        {
+            'uuid': kwargs.get('uuid', '33333333-3333-3333-3333-333333333333'),
+            'name': kwargs.get('name', 'node_3'),
+            'index': kwargs.get('index', '3')
+        }
+    ]
