@@ -1,5 +1,4 @@
-# copyright (c) 2016 Intel, Inc.
-#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
 #
@@ -50,3 +49,23 @@ def get_test_composed_node(**kwargs):
                             'speed_mhz': 3700,
                             'total_core': 2}]})
     }
+
+
+def get_test_node_list(**kwargs):
+    return [
+        {
+            'uuid': kwargs.get('uuid', '11111111-1111-1111-1111-111111111111'),
+            'name': kwargs.get('name', 'node_1'),
+            'index': kwargs.get('index', '1')
+        },
+        {
+            'uuid': kwargs.get('uuid', '22222222-2222-2222-2222-222222222222'),
+            'name': kwargs.get('name', 'node_2'),
+            'index': kwargs.get('index', '2')
+        },
+        {
+            'uuid': kwargs.get('uuid', '33333333-3333-3333-3333-333333333333'),
+            'name': kwargs.get('name', 'node_3'),
+            'index': kwargs.get('index', '3')
+        }
+    ]
