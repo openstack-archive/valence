@@ -86,6 +86,15 @@ class RedfishException(ValenceError):
         self.detail = message_detail
 
 
+class ResourceExists(ValenceError):
+    def __init__(self, detail='resource already exists', request_id=None):
+        self.request_id = request_id
+        self.status_code = http_client.METHOD_NOT_ALLOWED
+        self.code = http_client.METHOD_NOT_ALLOWED
+        self.title = "resource already exists"
+        self.detail = detail
+
+
 class NotFound(ValenceError):
 
     def __init__(self, detail='resource not found',
