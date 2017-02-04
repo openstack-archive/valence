@@ -46,6 +46,7 @@ The list and example below are representative of the response as of API
 
     - uuid: node_uuid
     - name: node_name
+    - index: node_index
     - links: links
 
 **Example JSON representation of a Node:**
@@ -78,6 +79,7 @@ Response
 
     - uuid: node_uuid
     - name: node_name
+    - index: node_index
     - node_power_state: node_power_state
     - links: links
 
@@ -289,8 +291,8 @@ Normal response codes: 200
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 
-Requet
-------
+Request
+-------
 
 .. rest_parameters:: parameters.yaml
 
@@ -312,3 +314,33 @@ Response
 .. literalinclude:: mockup/composed-node-get-asset.json
    :language: javascript
 
+
+Manage Node
+===========
+
+.. rest_method:: POST /v1/nodes/managed
+
+Manage a composed node already existing in the RSD rack by creating a
+Valence database entry for it, allowing Valence to perform all operations
+on it.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+Request
+-------
+
+.. rest_parameters:: parameters.yaml
+
+    - node_index: node_index
+
+Response
+--------
+
+.. rest_parameters:: parameters.yaml
+
+    - uuid: node_uuid
+    - name: node_name
+    - index: node_index
+    - links: links
