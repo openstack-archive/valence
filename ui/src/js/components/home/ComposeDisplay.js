@@ -17,6 +17,7 @@ import React from "react";
 
 var config = require('../../config.js');
 var util = require('../../util.js');
+var style = require("../../../css/components/home/ComposeDisplay.css");
 
 const VlanItem = React.createClass({
 
@@ -153,41 +154,41 @@ const ComposeDisplay = React.createClass({
       displayStyle = "none";
     }
     return (
-      <div class="details" style={{display: displayStyle}}>
+      <div class="compose-node-details" style={{display: displayStyle}}>
         <form id="inputForm">
           <table>
             <tbody>
               <tr>
-                <td align="right">Name:</td>
-                <td align="left"><input type="text" id="name" /></td>
+                <td>Name:</td>
+                <td><input type="text" id="name" /></td>
               </tr>
               <tr>
-                <td align="right">Description:</td>
-                <td align="left"><input type="text" id="description" /></td>
+                <td>Description:</td>
+                <td><input type="text" id="description" /></td>
               </tr>
               <tr>
-                <td align="right">System Memory GB:</td>
-                <td align="left"><input type="number" min="0" id="totalMem" /></td>
+                <td>System Memory GB:</td>
+                <td><input type="number" min="0" id="totalMem" /></td>
               </tr>
               <tr>
-                <td align="right">Processor Model:</td>
-                <td align="left"><select id="processorModels" /></td>
+                <td>Processor Model:</td>
+                <td><select id="processorModels" /></td>
               </tr>
               <tr>
-                <td align="right">Remote Storage Capacity GB:</td>
-                <td align="left"><input type="number" min="0" id="storageCapacity" /></td>
+                <td>Remote Storage Capacity GB:</td>
+                <td><input type="number" min="0" id="storageCapacity" /></td>
               </tr>
               <tr>
-                <td align="right">Remote storage IQN:</td>
-                <td align="left"><input type="text" id="iqn" /></td>
+                <td>Remote storage IQN:</td>
+                <td><input type="text" id="iqn" /></td>
               </tr>
               <tr>
-                <td align="right">Remote storage master drive:</td>
-                <td align="left"><select id="remoteDrives" /></td>
+                <td>Remote storage master drive:</td>
+                <td><select id="remoteDrives" /></td>
               </tr>
               <tr>
-                <td align="right">Ethernet interface:</td>
-                <td align="left">
+                <td>Ethernet interface:</td>
+                <td>
                   {this.state.vlans.map(function(obj) {
                     return <VlanItem vlan={obj} remove={this.removeVlan} />
                   }.bind(this))}

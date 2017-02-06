@@ -19,6 +19,7 @@ import NodeList from "./NodeList";
 
 var config = require('../../config.js');
 var util = require('../../util.js');
+var style = require("../../../css/components/home/Home.css");
 
 const Home = React.createClass({
 
@@ -56,12 +57,12 @@ const Home = React.createClass({
 
   renderHome: function() {
     return (
-      <div style={{display: "inline-block"}}>
+      <div>
         <div class="jumbotron">
           <h2>Welcome to RSD Details</h2>
           <p>This is a brief overview of all kinds of resources in this environment. See the <a href="#">User Guide</a> for more information on how to configure them.</p>
           <p>
-            <input type="button" class="btn btn-lg btn-primary" style={{marginRight:'20px'}} onClick={() => this.props.onShowCompose()} value="Compose Node" />
+            <input type="button" class="btn btn-lg btn-primary compose-node-button" onClick={() => this.props.onShowCompose()} value="Compose Node" />
             <input type="button" class="btn btn-lg btn-primary" onClick={() => this.configCompose()} value="Compose From Config File" />
           </p>
         </div>

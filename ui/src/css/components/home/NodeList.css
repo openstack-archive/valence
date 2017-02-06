@@ -1,0 +1,10 @@
+.node-detail-button {
+  background-color: #428bca;
+  border: none;
+  color: white;
+  padding: 6px 18px;
+  text-align: center;
+  border-radius: 4px;
+  float: right;
+}
+
