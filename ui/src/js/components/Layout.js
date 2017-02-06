@@ -97,6 +97,8 @@ const Layout = React.createClass({
       model = this.state.systems[i]['ProcessorSummary']['Model'];
       if (model && processorModels.indexOf(model) < 0) {
         processorModels.push(model);
+        console.log(processorModels);
+        console.log(model);
       }
     }
     this.fillDropdownMenu('processorModels', processorModels, processorModels);

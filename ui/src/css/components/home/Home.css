@@ -50,67 +50,11 @@ hr.separator {
   height: 2px;
 }
 
-.detail-button {
-  background-color: #428bca;
-  border: none;
-  color: white;
-  padding: 6px 18px;
-  text-align: center;
-  border-radius: 4px;
-  float: right;
-}
-
-.compose-button {
-  background-color: #428bca;
-  border: none;
-  color: white;
-  padding: 10px 24px;
-  text-align: center;
-  margin-top: 10px;
-  display: block;
-  border-radius: 4px;
-  position: relative;
-  float: left;
-}
-
-.details {
-  margin-top: 30px;
-  padding: 20px;
-  padding-bottom: 40px;
-  width: 100%;
-  border-radius: 4px;
-  background-color: #f8f8f8;
-}
-
 .resource {
   margin-bottom: 10px;
   padding: 20px;
   height: 75px;
   background-color: #b3b3b3;
-  border-radius: 4px;
-}
-
-.in-use-resource {
-  margin-bottom: 10px;
-  padding: 20px;
-  height: 75px;
-  background-color: #00cc44;
-  border-radius: 4px;
-}
-
-.warning-resource {
-  margin-bottom: 10px;
-  padding: 20px;
-  height: 75px;
-  background-color: #cccc00;
-  border-radius: 4px;
-}
-
-.critical-resource {
-  margin-bottom: 10px;
-  padding: 20px;
-  height: 75px;
-  background-color: #e60000;
   border-radius: 4px;
 }
 
@@ -190,5 +134,9 @@ hr.separator {
 .placeholder img {
   display: inline-block;
   border-radius: 50%;
+}
+
+.compose-node-button {
+    margin-right: 20px;
 }
 
