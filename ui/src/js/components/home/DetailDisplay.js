@@ -15,6 +15,8 @@
 
 import React from "react";
 
+var style = require("../../../css/components/home/DetailDisplay.css");
+
 const DetailDisplay = React.createClass({
 
   renderPod: function(data) {

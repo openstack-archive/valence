@@ -1,0 +1,24 @@
+.in-use-resource {
+  margin-bottom: 10px;
+  padding: 20px;
+  height: 75px;
+  background-color: #00cc44;
+  border-radius: 4px;
+}
+.warning-resource {
+  margin-bottom: 10px;
+  padding: 20px;
+  height: 75px;
+  background-color: #cccc00;
+  border-radius: 4px;
+}
+
+.critical-resource {
+  margin-bottom: 10px;
+  padding: 20px;
+  height: 75px;
+  background-color: #e60000;
+  border-radius: 4px;
+}
+
+

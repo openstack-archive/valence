@@ -17,6 +17,7 @@ import React from "react";
 
 var config = require('../../config.js');
 var util = require('../../util.js');
+var style = require("../../../css/components/home/NodeList.css");
 
 const NodeList = React.createClass({
 
@@ -97,11 +98,11 @@ const NodeList = React.createClass({
     return this.props.nodes.map((node, i) =>
       <div class="resource" key={i}>
         {node.Name}
-        <input type="button" class="detail-button" onClick={() => this.props.onShowDetail(node, this.props.header)} value="Show" />
-        <input type="button" class="detail-button" onClick={() => this.delete(node.Id)} value="Delete" />
-        <input type="button" class="detail-button" onClick={() => this.setBoot(node.Id)} value="Set Boot Source" />
-        <input type="button" class="detail-button" onClick={() => this.assemble(node.Id)} value="Assemble" />
-        <input type="button" class="detail-button" onClick={() => this.powerOn(node.Id)} value="Power On" />
+        <input type="button" class="node-detail-button" onClick={() => this.props.onShowDetail(node, this.props.header)} value="Show" />
+        <input type="button" class="node-detail-button" onClick={() => this.delete(node.Id)} value="Delete" />
+        <input type="button" class="node-detail-button" onClick={() => this.setBoot(node.Id)} value="Set Boot Source" />
+        <input type="button" class="node-detail-button" onClick={() => this.assemble(node.Id)} value="Assemble" />
+        <input type="button" class="node-detail-button" onClick={() => this.powerOn(node.Id)} value="Power On" />
         <br />
         {node.Description}
       </div>
