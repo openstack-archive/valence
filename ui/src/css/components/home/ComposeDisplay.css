@@ -1,0 +1,31 @@
+.detail-button {
+  background-color: #428bca;
+  border: none;
+  color: white;
+  padding: 6px 18px;
+  text-align: center;
+  border-radius: 4px;
+  float: right;
+}
+
+.compose-button {
+  background-color: #428bca;
+  border: none;
+  color: white;
+  padding: 10px 24px;
+  text-align: center;
+  margin-top: 10px;
+  display: block;
+  border-radius: 4px;
+  position: relative;
+  float: left;
+}
+
+.compose-node-details {
+  margin-top: 30px;
+  padding: 20px;
+  padding-bottom: 40px;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+}
+

@@ -16,6 +16,7 @@
 import React from "react";
 
 var util = require('../../util.js');
+var style = require("../../../css/components/home/ResourceList.css");
 
 const ResourceList = React.createClass({
 
