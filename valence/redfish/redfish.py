@@ -17,10 +17,12 @@ import json
 import logging
 import os
 
+import flask
 import requests
 from requests import auth
 from six.moves import http_client
 
+from valence.api import link
 from valence.common import constants
 from valence.common import exception
 from valence.common import utils
@@ -283,11 +285,143 @@ def get_systembyid(systemid):
     return systems_list({"Id": systemid})
 
 
-def get_nodebyid(nodeid):
-    node = nodes_list({"Id": nodeid})
-    if not node:
-        raise exception.NotFound(detail='Node: %s not found' % nodeid)
-    return node[0]
+def show_cpu_details(cpu_url):
+    """Get processor details .
+
+    :param cpu_url: relative redfish url to processor,
+                    e.g /redfish/v1/Systems/1/Processors/1.
+    :returns: dict of processor detail.
+    """
+    resp = send_request(cpu_url)
+    if resp.status_code != http_client.OK:
+        # Raise exception if don't find processor
+        raise exception.RedfishException(resp.json(),
+                                         status_code=resp.status_code)
+    respdata = resp.json()
+    cpu_details = {
+        "instruction_set": respdata["InstructionSet"],
+        "model": respdata["Model"],
+        "speed_mhz": respdata["MaxSpeedMHz"],
+        "total_core": respdata["TotalCores"]
+    }
+
+    return cpu_details
+
+
+def show_ram_details(ram_url):
+    """Get memory details .
+
+    :param ram_url: relative redfish url to memory,
+                    e.g /redfish/v1/Systems/1/Memory/1.
+    :returns: dict of memory detail.
+    """
+    resp = send_request(ram_url)
+    if resp.status_code != http_client.OK:
+        # Raise exception if don't find memory
+        raise exception.RedfishException(resp.json(),
+                                         status_code=resp.status_code)
+    respdata = resp.json()
+    ram_details = {
+        "data_width_bit": respdata["DataWidthBits"],
+        "speed_mhz": respdata["OperatingSpeedMHz"],
+        "total_memory_mb": respdata["CapacityMiB"]
+    }
+
+    return ram_details
+
+
+def show_network_details(network_url):
+    """Get network interface details .
+
+    :param ram_url: relative redfish url to network interface,
+                    e.g /redfish/v1/Systems/1/EthernetInterfaces/1.
+    :returns: dict of network interface detail.
+    """
+    resp = send_request(network_url)
+    if resp.status_code != http_client.OK:
+        # Raise exception if don't find network interface
+        raise exception.RedfishException(resp.json(),
+                                         status_code=resp.status_code)
+    respdata = resp.json()
+    network_details = {
+        "speed_mbps": respdata["SpeedMbps"],
+        "mac": respdata["MACAddress"],
+        "status": respdata["Status"]["State"],
+        "ipv4": [{
+            "address": ipv4["Address"],
+            "subnet_mask": ipv4["SubnetMask"],
+            "gateway": ipv4["Gateway"]
+        } for ipv4 in respdata["IPv4Addresses"]]
+    }
+
+    if respdata["VLANs"]:
+        # Get vlan info
+        vlan_url_list = urls2list(respdata["VLANs"]["@odata.id"])
+        network_details["vlans"] = []
+        for url in vlan_url_list:
+            vlan_info = send_request(url).json()
+            network_details["vlans"].append({
+                "vlanid": vlan_info["VLANId"],
+                "status": vlan_info["Status"]["State"]
+            })
+
+    return network_details
+
+
+def get_node_by_id(node_index, show_detail=True):
+    """Get composed node details of specific index.
+
+    :param node_index: numeric index of new composed node.
+    :param show_detail: show more node detail when set to True.
+    :returns: node detail info.
+    """
+    nodes_base_url = get_base_resource_url('Nodes')
+    node_url = os.path.normpath('/'.join([nodes_base_url, node_index]))
+    resp = send_request(node_url)
+
+    LOG.debug(resp.status_code)
+    if resp.status_code != http_client.OK:
+        # Raise exception if don't find node
+        raise exception.RedfishException(resp.json(),
+                                         status_code=resp.status_code)
+
+    respdata = resp.json()
+
+    node_detail = {
+        "name": respdata["Name"],
+        "node_power_state": respdata["PowerState"],
+        "links": [
+            link.Link.make_link('self', flask.request.url_root,
+                                'nodes/' + respdata["UUID"], '').as_dict(),
+            link.Link.make_link('bookmark', flask.request.url_root,
+                                'nodes/' + respdata["UUID"], '',
+                                bookmark=True).as_dict()
+        ]
+    }
+
+    if show_detail:
+        node_detail.update({
+            "index": node_index,
+            "description": respdata["Description"],
+            "node_state": respdata["ComposedNodeState"],
+            "boot_source": respdata["Boot"]["BootSourceOverrideTarget"],
+            "target_boot_source": respdata["Boot"]["BootSourceOverrideTarget"],
+            "health_status": respdata["Status"]["Health"],
+            # TODO(lin.yang): "pooled_group_id" is used to check whether
+            # resource can be assigned to composed node, which should be
+            # supported after PODM API v2.1 released.
+            "pooled_group_id": None,
+            "metadata": {
+                "processor": [show_cpu_details(i["@odata.id"])
+                              for i in respdata["Links"]["Processors"]],
+                "memory": [show_ram_details(i["@odata.id"])
+                           for i in respdata["Links"]["Memory"]],
+                "network": [show_network_details(i["@odata.id"])
+                            for i in respdata["Links"]["EthernetInterfaces"]]
+            }
+        })
+
+    return node_detail
 
 
 def build_hierarchy_tree():
@@ -309,39 +443,62 @@ def build_hierarchy_tree():
 
 
 def compose_node(request_body):
+    """Compose new node through podm api.
+
+    :param request_body: The request content to compose new node, which should
+                         follow podm format. Valence api directly pass it to
+                         podm right now.
+    :returns: The numeric index of new composed node.
+    """
+
+    # Get url of allocating resource to node
     nodes_url = get_base_resource_url('Nodes')
-    headers = {'Content-type': 'application/json'}
-    nodes_resp = send_request(nodes_url, 'GET', headers=headers)
-    if nodes_resp.status_code != http_client.OK:
+    resp = send_request(nodes_url, 'GET')
+    if resp.status_code != http_client.OK:
         LOG.error('Unable to query ' + nodes_url)
-        raise exception.RedfishException(nodes_resp.json(),
-                                         status_code=nodes_resp.status_code)
-    nodes_json = json.loads(nodes_resp.content)
-    allocate_url = nodes_json['Actions']['#ComposedNodeCollection.Allocate'][
-        'target']
-    resp = send_request(allocate_url, 'POST', headers=headers,
-                        json=request_body)
-    if resp.status_code == http_client.CREATED:
-        allocated_node = resp.headers['Location']
-        node_resp = send_request(allocated_node, "GET", headers=headers)
-        LOG.debug('Successfully allocated node:' + allocated_node)
-        node_json = json.loads(node_resp.content)
-        assemble_url = node_json['Actions']['#ComposedNode.Assemble']['target']
-        LOG.debug('Assembling Node: ' + assemble_url)
-        assemble_resp = send_request(assemble_url, "POST", headers=headers)
-        LOG.debug(assemble_resp.status_code)
-        if assemble_resp.status_code == http_client.NO_CONTENT:
-            LOG.debug('Successfully assembled node: ' + allocated_node)
-            return {"node": allocated_node}
-        else:
-            parts = allocated_node.split('/')
-            node_id = parts[-1]
-            delete_composednode(node_id)
-            raise exception.RedfishException(assemble_resp.json(),
-                                             status_code=resp.status_code)
-    else:
         raise exception.RedfishException(resp.json(),
                                          status_code=resp.status_code)
+    respdata = resp.json()
+    allocate_url = respdata['Actions']['#ComposedNodeCollection.Allocate'][
+        'target']
+
+    # Allocate resource to this node
+    LOG.debug('Allocating Node: {0}'.format(request_body))
+    allocate_resp = send_request(allocate_url, 'POST',
+                                 headers={'Content-type': 'application/json'},
+                                 json=request_body)
+    if allocate_resp.status_code != http_client.CREATED:
+        # Raise exception if allocation failed
+        raise exception.RedfishException(allocate_resp.json(),
+                                         status_code=allocate_resp.status_code)
+
+    # Allocated node successfully
+    # node_url -- relative redfish url e.g redfish/v1/Nodes/1
+    node_url = allocate_resp.headers['Location'].lstrip(cfg.podm_url)
+    # node_index -- numeric index of new node e.g 1
+    node_index = node_url.split('/')[-1]
+    LOG.debug('Successfully allocated node:' + node_url)
+
+    # Get url of assembling node
+    resp = send_request(node_url, "GET")
+    respdata = resp.json()
+    assemble_url = respdata['Actions']['#ComposedNode.Assemble']['target']
+
+    # Assemble node
+    LOG.debug('Assembling Node: {0}'.format(assemble_url))
+    assemble_resp = send_request(assemble_url, "POST")
+
+    if assemble_resp.status_code != http_client.NO_CONTENT:
+        # Delete node if assemble failed
+        delete_composednode(node_index)
+        raise exception.RedfishException(assemble_resp.json(),
+                                         status_code=resp.status_code)
+    else:
+        # Assemble successfully
+        LOG.debug('Successfully assembled node: ' + node_url)
+
+    # Return new composed node index
+    return get_node_by_id(node_index, show_detail=False)
 
 
 def delete_composednode(nodeid):
@@ -351,80 +508,24 @@ def delete_composednode(nodeid):
     if resp.status_code == http_client.NO_CONTENT:
         # we should return 200 status code instead of 204, because 204 means
         # 'No Content', the message in resp_dict will be ignored in that way
-        resp_dict = exception.confirmation(confirm_detail="DELETED")
-        return utils.make_response(http_client.OK, resp_dict)
+        return exception.confirmation(
+            confirm_code="DELETED",
+            confirm_detail="This composed node has been deleted successfully.")
     else:
         raise exception.RedfishException(resp.json(),
                                          status_code=resp.status_code)
 
 
-def nodes_list(filters={}):
+def list_nodes():
     # list of nodes with hardware details needed for flavor creation
-    LOG.debug(filters)
-    lst_nodes = []
+
+    # TODO(lin.yang): support filter when list nodes
+    nodes = []
     nodes_url = get_base_resource_url("Nodes")
-    nodeurllist = urls2list(nodes_url)
-    # podmtree = build_hierarchy_tree()
-    # podmtree.writeHTML("0","/tmp/a.html")
+    node_url_list = urls2list(nodes_url)
 
-    for lnk in nodeurllist:
-        filterPassed = True
-        resp = send_request(lnk)
-        if resp.status_code != http_client.OK:
-            LOG.info("Error in fetching Node details " + lnk)
-        else:
-            node = resp.json()
+    for url in node_url_list:
+        node_index = url.split('/')[-1]
+        nodes.append(get_node_by_id(node_index, show_detail=False))
 
-            if any(filters):
-                filterPassed = utils.match_conditions(node, filters)
-                LOG.info("FILTER PASSED" + str(filterPassed))
-            if not filterPassed:
-                continue
-
-            nodeid = lnk.split("/")[-1]
-            nodeuuid = node['UUID']
-            nodelocation = node['AssetTag']
-            # podmtree.getPath(lnk) commented as location should be
-            # computed using other logic.consult Chester
-            nodesystemurl = node["Links"]["ComputerSystem"]["@odata.id"]
-            cpu = {}
-            ram = 0
-            nw = 0
-            storage = system_storage_details(nodesystemurl)
-            cpu = system_cpu_details(nodesystemurl)
-
-            if "Memory" in node:
-                ram = node["Memory"]["TotalSystemMemoryGiB"]
-
-            if ("EthernetInterfaces" in node["Links"] and
-                    node["Links"]["EthernetInterfaces"]):
-                nw = len(node["Links"]["EthernetInterfaces"])
-
-            bmcip = "127.0.0.1"  # system['Oem']['Dell_G5MC']['BmcIp']
-            bmcmac = "00:00:00:00:00"  # system['Oem']['Dell_G5MC']['BmcMac']
-            node = {"id": nodeid, "cpu": cpu,
-                    "ram": ram, "storage": storage,
-                    "nw": nw, "location": nodelocation,
-                    "uuid": nodeuuid, "bmcip": bmcip, "bmcmac": bmcmac}
-
-            # filter based on RAM, CPU, NETWORK..etc
-            if 'ram' in filters:
-                filterPassed = (True
-                                if int(ram) >= int(filters['ram'])
-                                else False)
-
-            # filter based on RAM, CPU, NETWORK..etc
-            if 'nw' in filters:
-                filterPassed = (True
-                                if int(nw) >= int(filters['nw'])
-                                else False)
-
-            # filter based on RAM, CPU, NETWORK..etc
-            if 'storage' in filters:
-                filterPassed = (True
-                                if int(storage) >= int(filters['storage'])
-                                else False)
-
-            if filterPassed:
-                lst_nodes.append(node)
-    return lst_nodes
+    return nodes

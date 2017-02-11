@@ -10,6 +10,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import os
 from unittest import TestCase
 
 import mock
@@ -189,24 +190,80 @@ class TestRedfish(TestCase):
         result = redfish.system_storage_details("/redfish/v1/Systems/test")
         self.assertEqual(expected, result)
 
-    @mock.patch('valence.common.utils.make_response')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_show_cpu_details(self, mock_request):
+        mock_request.return_value = fakes.mock_request_get(
+            fakes.fake_processor(), http_client.OK)
+        expected = {
+            "instruction_set": "x86-64",
+            "model": "Intel(R) Core(TM) i7-4790",
+            "speed_mhz": 3700,
+            "total_core": 8,
+        }
+
+        result = redfish.show_cpu_details("/redfish/v1/Systems/1/Processors/1")
+        self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_show_memory_details(self, mock_request):
+        mock_request.return_value = fakes.mock_request_get(
+            fakes.fake_memory(), http_client.OK)
+        expected = {
+            "data_width_bit": 0,
+            "speed_mhz": 2400,
+            "total_memory_mb": 8192
+        }
+
+        result = redfish.show_ram_details("/redfish/v1/Systems/1/Memory/1")
+        self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish.urls2list')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_show_network_interface_details(self, mock_request, mock_url2list):
+        mock_request.side_effect = [
+            fakes.mock_request_get(fakes.fake_network_interface(),
+                                   http_client.OK),
+            fakes.mock_request_get(fakes.fake_vlan(),
+                                   http_client.OK)
+        ]
+        mock_url2list.return_value = [
+            "redfish/v1/Systems/1/EthernetInterfaces/2/VLANs/1"]
+        expected = {
+            "mac": "e9:47:d3:60:64:66",
+            "speed_mbps": 100,
+            "status": "Enabled",
+            "ipv4": [{
+                "address": "192.168.0.10",
+                "subnet_mask": "255.255.252.0",
+                "gateway": "192.168.0.1",
+            }],
+            'vlans': [{
+                'status': 'Enabled',
+                'vlanid': 99
+            }]
+        }
+
+        result = redfish.show_network_details(
+            "/redfish/v1/Systems/1/EthernetInterfaces/1")
+        self.assertEqual(expected, result)
+
     @mock.patch('valence.redfish.redfish.get_base_resource_url')
     @mock.patch('valence.redfish.redfish.send_request')
-    def test_delete_composednode_ok(self, mock_request, mock_get_url,
-                                    mock_make_response):
+    def test_delete_composednode_ok(self, mock_request, mock_get_url):
         mock_get_url.return_value = '/redfish/v1/Nodes'
         delete_result = fakes.fake_delete_composednode_ok()
         fake_delete_response = fakes.mock_request_get(delete_result,
                                                       http_client.NO_CONTENT)
         mock_request.return_value = fake_delete_response
-        redfish.delete_composednode(101)
+        result = redfish.delete_composednode(101)
         mock_request.assert_called_with('/redfish/v1/Nodes/101', 'DELETE')
-        expected_content = {
-            "code": "",
-            "detail": "DELETED",
+        expected = {
+            "code": "DELETED",
+            "detail": "This composed node has been deleted successfully.",
             "request_id": exception.FAKE_REQUEST_ID,
         }
-        mock_make_response.assert_called_with(http_client.OK, expected_content)
+
+        self.assertEqual(expected, result)
 
     @mock.patch('valence.common.utils.make_response')
     @mock.patch('valence.redfish.redfish.get_base_resource_url')
@@ -260,3 +317,108 @@ class TestRedfish(TestCase):
         mock_get.asset_called_once_with('url',
                                         auth=auth.HTTPBasicAuth('username',
                                                                 'password'))
+
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_allocate_node_conflict(self, mock_request, mock_get_url):
+        """Test allocate resource conflict when compose node"""
+        mock_get_url.return_value = '/redfish/v1/Nodes'
+
+        # Fake response for getting nodes root
+        fake_node_root_resp = fakes.mock_request_get(fakes.fake_nodes_root(),
+                                                     http_client.OK)
+        # Fake response for allocating node
+        fake_node_allocation_conflict = \
+            fakes.mock_request_get(fakes.fake_allocate_node_conflict(),
+                                   http_client.CONFLICT)
+        mock_request.side_effect = [fake_node_root_resp,
+                                    fake_node_allocation_conflict]
+
+        with self.assertRaises(exception.RedfishException) as context:
+            redfish.compose_node({"name": "test_node"})
+
+        self.assertTrue("There are no computer systems available for this "
+                        "allocation request." in str(context.exception.detail))
+
+    @mock.patch('valence.redfish.redfish.delete_composednode')
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_assemble_node_failed(self, mock_request, mock_get_url,
+                                  mock_delete_node):
+        """Test allocate resource conflict when compose node"""
+        mock_get_url.return_value = '/redfish/v1/Nodes'
+
+        # Fake response for getting nodes root
+        fake_node_root_resp = fakes.mock_request_get(fakes.fake_nodes_root(),
+                                                     http_client.OK)
+        # Fake response for allocating node
+        fake_node_allocation_conflict = mock.MagicMock()
+        fake_node_allocation_conflict.status_code = http_client.CREATED
+        fake_node_allocation_conflict.headers['Location'] = \
+            os.path.normpath("/".join([cfg.podm_url, 'redfish/v1/Nodes/1']))
+
+        # Fake response for getting url of node assembling
+        fake_node_detail = fakes.mock_request_get(fakes.fake_node_detail(),
+                                                  http_client.OK)
+
+        # Fake response for assembling node
+        fake_node_assemble_failed = fakes.mock_request_get(
+            fakes.fake_assemble_node_failed(), http_client.BAD_REQUEST)
+        mock_request.side_effect = [fake_node_root_resp,
+                                    fake_node_allocation_conflict,
+                                    fake_node_detail,
+                                    fake_node_assemble_failed]
+
+        with self.assertRaises(exception.RedfishException):
+            redfish.compose_node({"name": "test_node"})
+
+        mock_delete_node.assert_called_once()
+
+    @mock.patch('valence.redfish.redfish.get_node_by_id')
+    @mock.patch('valence.redfish.redfish.delete_composednode')
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    @mock.patch('valence.redfish.redfish.send_request')
+    def test_assemble_node_success(self, mock_request, mock_get_url,
+                                   mock_delete_node, mock_get_node_by_id):
+        """Test compose node successfully"""
+        mock_get_url.return_value = '/redfish/v1/Nodes'
+
+        # Fake response for getting nodes root
+        fake_node_root_resp = fakes.mock_request_get(fakes.fake_nodes_root(),
+                                                     http_client.OK)
+        # Fake response for allocating node
+        fake_node_allocation_conflict = mock.MagicMock()
+        fake_node_allocation_conflict.status_code = http_client.CREATED
+        fake_node_allocation_conflict.headers['Location'] = \
+            os.path.normpath("/".join([cfg.podm_url, 'redfish/v1/Nodes/1']))
+
+        # Fake response for getting url of node assembling
+        fake_node_detail = fakes.mock_request_get(fakes.fake_node_detail(),
+                                                  http_client.OK)
+
+        # Fake response for assembling node
+        fake_node_assemble_failed = fakes.mock_request_get(
+            {}, http_client.NO_CONTENT)
+        mock_request.side_effect = [fake_node_root_resp,
+                                    fake_node_allocation_conflict,
+                                    fake_node_detail,
+                                    fake_node_assemble_failed]
+
+        redfish.compose_node({"name": "test_node"})
+
+        mock_delete_node.assert_not_called()
+        mock_get_node_by_id.assert_called_once()
+
+    @mock.patch('valence.redfish.redfish.get_node_by_id')
+    @mock.patch('valence.redfish.redfish.urls2list')
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    def test_list_node(self, mock_get_url, mock_url2list, mock_get_node_by_id):
+        """Test list node"""
+        mock_get_url.return_value = '/redfish/v1/Nodes'
+        mock_url2list.return_value = ['redfish/v1/Nodes/1']
+        mock_get_node_by_id.side_effect = ["node1_detail"]
+
+        result = redfish.list_nodes()
+
+        mock_get_node_by_id.assert_called_with("1", show_detail=False)
+        self.assertEqual(["node1_detail"], result)
