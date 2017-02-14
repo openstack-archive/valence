@@ -575,6 +575,59 @@ def reset_node(nodeid, request):
                            "successfully.".format(action_type))
 
 
+def set_boot_source(nodeid, request):
+    nodes_url = get_base_resource_url("Nodes")
+    node_url = os.path.normpath("/".join([nodes_url, nodeid]))
+    resp = send_request(node_url)
+
+    if resp.status_code != http_client.OK:
+        # Raise exception if don't find node
+        raise exception.RedfishException(resp.json(),
+                                         status_code=resp.status_code)
+
+    node = resp.json()
+
+    boot_enabled = request.get("Boot", {}).get("Enabled")
+    boot_target = request.get("Boot", {}).get("Target")
+    allowable_boot_target = \
+        node["Boot"]["BootSourceOverrideTarget@Redfish.AllowableValues"]
+
+    if not boot_enabled or not boot_target:
+        raise exception.BadRequest(
+            detail="The content of set boot source request is malformed. "
+                   "Please refer to Valence api specification to correct it.")
+    if boot_enabled not in ["Disabled", "Once", "Continuous"]:
+        raise exception.BadRequest(
+            detail="The parameter Enabled '{0}' is not in allowable list "
+                   "['Disabled', 'Once', 'Continuous'].".format(
+                       boot_enabled))
+    if allowable_boot_target and \
+            boot_target not in allowable_boot_target:
+        raise exception.BadRequest(
+            detail="The parameter Target '{0}' is not in allowable list "
+                   "{1}.".format(boot_target,
+                                 allowable_boot_target))
+
+    action_resp = send_request(
+        node_url, 'PATCH', headers={'Content-type': 'application/json'},
+        json={"Boot": {"BootSourceOverrideEnabled": boot_enabled,
+                       "BootSourceOverrideTarget": boot_target}})
+
+    if action_resp.status_code != http_client.NO_CONTENT:
+        raise exception.RedfishException(action_resp.json(),
+                                         status_code=action_resp.status_code)
+    else:
+        # Set boot source successfully
+        LOG.debug("Set boot source of composed node {0} to '{1}' with enabled "
+                  "state '{2}' successfully."
+                  .format(nodes_url, boot_target, boot_enabled))
+        return exception.confirmation(
+            confirm_code="Set Boot Source of Composed Node",
+            confirm_detail="The boot source of composed node has been set to "
+                           "'{0}' with enabled state '{1}' successfully."
+                           .format(boot_target, boot_enabled))
+
+
 def node_action(nodeid, request):
     # Only support one action in single request
     if len(list(request.keys())) != 1:
@@ -589,7 +642,8 @@ def node_action(nodeid, request):
     # Because valence assemble node by default when compose node, so only need
     # to support "Reset" action here. In case podm new version support more
     # actions, use "functions" dict to drive the workflow.
-    functions = {"Reset": reset_node}
+    functions = {"Reset": reset_node,
+                 "Boot": set_boot_source}
 
     if action not in functions:
         raise exception.BadRequest(
