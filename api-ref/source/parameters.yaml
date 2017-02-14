@@ -175,6 +175,12 @@ node_processor_asset:
   in: body
   required: true
   type: array
+node_properties:
+  description: |
+    Dictionary of properties of a composed node.
+  in: body
+  required: false
+  type: dictionary
 node_property:
   description: |
     Property of composed node including processor , memory , storage info.

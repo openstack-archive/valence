@@ -24,6 +24,11 @@ def list_flavors():
     return [flavor.as_dict() for flavor in flavor_models]
 
 
+def get_flavor(flavorid):
+    flavor = db_api.Connection.get_flavor_by_uuid(flavorid)
+    return flavor.as_dict()
+
+
 def create_flavor(values):
     flavor = db_api.Connection.create_flavor(values)
     return flavor.as_dict()
