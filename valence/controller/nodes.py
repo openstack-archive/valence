@@ -15,6 +15,7 @@
 import six
 
 from valence.common import utils
+from valence.controller import flavors
 from valence.db import api as db_api
 from valence.redfish import redfish
 
@@ -26,6 +27,32 @@ class Node(object):
         return {key: node_info[key] for key in six.iterkeys(node_info)
                 if key in ["uuid", "name", "links"]}
 
+    @staticmethod
+    def _create_compose_request(name, description, requirements):
+        request = {}
+
+        request["Name"] = name
+        request["Description"] = description
+
+        memory = {}
+        if "memory" in requirements:
+            if "capacity_mib" in requirements["memory"]:
+                memory["CapacityMiB"] = requirements["memory"]["capacity_mib"]
+            if "type" in requirements["memory"]:
+                memory["DimmDeviceType"] = requirements["memory"]["type"]
+        request["Memory"] = [memory]
+
+        processor = {}
+        if "processor" in requirements:
+            if "model" in requirements["processor"]:
+                processor["Model"] = requirements["processor"]["model"]
+            if "total_cores" in requirements["processor"]:
+                processor["TotalCores"] = (
+                    requirements["processor"]["total_cores"])
+        request["Processors"] = [processor]
+
+        return request
+
     @classmethod
     def compose_node(cls, request_body):
         """Compose new node
@@ -34,8 +61,26 @@ class Node(object):
         return: brief info of this new composed node
         """
 
+        if "flavor_id" in request_body:
+            flavor = flavors.get_flavor(request_body["flavor_id"])
+            requirements = flavor["properties"]
+        elif "properties" in request_body:
+            requirements = request_body["properties"]
+        else:
+            requirements = {
+                "memory": {},
+                "processor": {}
+            }
+
+        name = request_body["name"]
+        description = request_body["description"]
+
+        compose_request = cls._create_compose_request(name,
+                                                      description,
+                                                      requirements)
+
         # Call redfish to compose new node
-        composed_node = redfish.compose_node(request_body)
+        composed_node = redfish.compose_node(compose_request)
 
         composed_node["uuid"] = utils.generate_uuid()
 

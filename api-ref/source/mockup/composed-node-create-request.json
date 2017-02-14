@@ -1,4 +1,17 @@
 {
   "name": "test_node",
   "description": "node1",
+  "properties": {
+    "memory": {
+      "capacity_mib": "8000",
+      "type": "DDR2"
+    },
+    "processor": {
+      "model": "Multi-Core Intel(R) Xeon(R) processor 7xxx Series",
+      "total_cores": "2"
+    },
+    "remote_storage": {
+      "capacity_gib": "100"
+    }
+  }
 }
