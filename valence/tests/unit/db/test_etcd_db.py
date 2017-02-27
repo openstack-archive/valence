@@ -11,10 +11,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import mock
 import unittest
 
 import etcd
+import mock
 
 from valence.db import etcd_db
 
