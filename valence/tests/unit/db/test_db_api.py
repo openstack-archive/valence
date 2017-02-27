@@ -12,11 +12,11 @@
 #    under the License.
 
 import json
-import mock
 import unittest
 
 import etcd
 import freezegun
+import mock
 
 from valence.db import api as db_api
 from valence.tests.unit.db import utils

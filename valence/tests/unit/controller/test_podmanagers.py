@@ -11,8 +11,9 @@
 #    under the License.
 
 import copy
-import mock
 import unittest
+
+import mock
 
 from valence.common import constants
 from valence.common.exception import BadRequest
