@@ -46,6 +46,37 @@ chown "$CURR_USER":"$CURR_USER" /var/log/valence
 echo "Installing dependencies from requirements.txt" >> $install_log
 pip install -r requirements.txt
 
+echo "Installing the etcd database" >> $install_log
+ETCD_VER=v3.1.2
+DOWNLOAD_URL=https://github.com/coreos/etcd/releases/download
+curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz
+mkdir -p /var/etcd && tar xzvf /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz -C /var/etcd --strip-components=1
+chown "$CURR_USER":"$CURR_USER" /var/etcd
+mv /var/etcd/etcd /usr/local/bin/etcd && mv /var/etcd/etcdctl /usr/local/bin/etcdctl
+
+sed "s/\${CHUID}/$CURR_USER/"  "$DIR"/doc/source/init/etcd.conf > /etc/init/etcd.conf
+
+echo "Starting etcd database" >> $install_log
+service etcd start
+sleep 2
+timeout=30
+attempt=1
+until [[ $(service etcd status) = "etcd start/running"* ]]
+do
+  sleep 1
+  attempt=$((attempt+1))
+  if [[ $attempt -eq timeout ]]
+  then
+    echo "Database failed to start, aborting installation."
+    exit
+  fi
+done
+
+echo "Adding database directories" >> $install_log
+etcdctl --endpoints=127.0.0.1:2379 mkdir /nodes
+etcdctl --endpoints=127.0.0.1:2379 mkdir /flavors
+etcdctl --endpoints=127.0.0.1:2379 mkdir /pod_managers
+
 echo "Invoking setup.py" >> $install_log
 python setup.py install
 if [ $? -ne 0 ]; then
