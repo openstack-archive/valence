@@ -75,8 +75,12 @@ def send_request(resource, method="GET", **kwargs):
                                 auth=requests.auth.HTTPBasicAuth(
                                     httpuser, httppwd),
                                 **kwargs)
+    except requests.exceptions.ConnectionError as e:
+        LOG.error(e)
+        raise exception.RedfishConnectionError(detail=e.message)
     except requests.exceptions.RequestException as e:
         LOG.error(e)
+        raise
     return resp
 
 

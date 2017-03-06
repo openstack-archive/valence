@@ -70,6 +70,15 @@ class ValenceConfirmation(base.ObjectBase):
     }
 
 
+class RedfishConnectionError(ValenceError):
+    def __init__(self, detail=None, request_id=FAKE_REQUEST_ID):
+        self.request_id = request_id
+        self.status = http_client.SERVICE_UNAVAILABLE
+        self.code = "Service Unavailable"
+        self.title = "Connection to Redfish API failed"
+        self.detail = detail
+
+
 class RedfishException(ValenceError):
 
     def __init__(self, responsejson, request_id=FAKE_REQUEST_ID,
