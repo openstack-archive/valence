@@ -126,6 +126,7 @@ Response
     - created_at: created_at
     - updated_at: updated_at
     - provision_state: node_provision_state
+    - pod_uuid: pod_uuid
     - links: links
 
 **Example JSON representation of a Node:**

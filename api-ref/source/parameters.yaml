@@ -29,6 +29,12 @@ node_ident:
   in: path
   required: true
   type: string
+pod_uuid:
+  description: |
+    The UUID of pod manager.
+  in: path
+  required: true
+  type: string
 system_ident:
   description: |
     The UUID or name of Compute System.
@@ -235,6 +241,43 @@ node_url_id:
 node_uuid:
   description: |
     UUID of composed node
+  in: body
+  required: true
+  type: string
+pod_auth_info:
+  description: |
+    Authentication info for Pod manager
+  in: body
+  required: true
+  type: string
+pod_description:
+  description: |
+    Pod manager description.
+  in: body
+  required: true
+  type: string
+pod_location_id:
+  description: |
+    Pod manager location id string info.
+  in: body
+  required: true
+  type: string
+pod_name:
+  description: |
+    UUID of Pod manager.
+  in: body
+  required: true
+  type: string
+pod_redfish_link:
+  description: |
+    Redfish link of this Pod manager, come from PodM redfish API.
+    Ex: "/redfish/v1/Chassis/pod1"
+  in: body
+  required: true
+  type: string
+pod_status:
+  description: |
+    Pod manager status
   in: body
   required: true
   type: string
