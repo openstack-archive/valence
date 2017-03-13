@@ -471,6 +471,80 @@ class TestRedfish(TestCase):
 
         self.assertEqual(expected, result)
 
+    @mock.patch('valence.redfish.redfish.send_request')
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    def test_set_boot_source_wrong_request(self, mock_get_url, mock_request):
+        """Test reset node with wrong action type"""
+        mock_get_url.return_value = '/redfish/v1/Nodes'
+        mock_request.return_value = fakes.mock_request_get(
+            fakes.fake_node_detail(), http_client.OK)
+
+        # Test no "Target" parameter
+        with self.assertRaises(exception.BadRequest) as context:
+            redfish.set_boot_source("1", {"Boot": {"Enabled": "Once"}})
+
+        self.assertTrue("The content of set boot source request is malformed. "
+                        "Please refer to Valence api specification to correct "
+                        "it." in str(context.exception.detail))
+
+        # Test no "Enabled" parameter
+        with self.assertRaises(exception.BadRequest) as context:
+            redfish.set_boot_source("1", {"Boot": {"Target": "Hdd"}})
+
+        self.assertTrue("The content of set boot source request is malformed. "
+                        "Please refer to Valence api specification to correct "
+                        "it." in str(context.exception.detail))
+
+        # Test no "Enabled" either "Target" parameter
+        with self.assertRaises(exception.BadRequest) as context:
+            redfish.set_boot_source("1", {"Boot": {}})
+
+        self.assertTrue("The content of set boot source request is malformed. "
+                        "Please refer to Valence api specification to correct "
+                        "it." in str(context.exception.detail))
+
+        # Test wrong "Enabled" parameter
+        with self.assertRaises(exception.BadRequest) as context:
+            redfish.set_boot_source("1", {"Boot": {"Enabled": "wrong_input",
+                                                   "Target": "Hdd"}})
+
+        self.assertTrue("The parameter Enabled 'wrong_input' is not in "
+                        "allowable list ['Disabled', 'Once', 'Continuous']."
+                        in str(context.exception.detail))
+
+        # Test wrong "Enabled" parameter
+        with self.assertRaises(exception.BadRequest) as context:
+            redfish.set_boot_source("1", {"Boot": {"Enabled": "Once",
+                                                   "Target": "wrong_input"}})
+
+        allowable_boot_target = \
+            (fakes.fake_node_detail()["Boot"]
+             ["BootSourceOverrideTarget@Redfish.AllowableValues"])
+        self.assertTrue("The parameter Target 'wrong_input' is not in "
+                        "allowable list {0}.".format(allowable_boot_target)
+                        in str(context.exception.detail))
+
+    @mock.patch('valence.redfish.redfish.send_request')
+    @mock.patch('valence.redfish.redfish.get_base_resource_url')
+    def test_set_boot_source_success(self, mock_get_url, mock_request):
+        """Test successfully reset node status"""
+        mock_get_url.return_value = '/redfish/v1/Nodes'
+        fake_node_detail = fakes.mock_request_get(
+            fakes.fake_node_detail(), http_client.OK)
+        fake_node_action_resp = fakes.mock_request_get(
+            {}, http_client.NO_CONTENT)
+        mock_request.side_effect = [fake_node_detail, fake_node_action_resp]
+
+        result = redfish.set_boot_source(
+            "1", {"Boot": {"Enabled": "Once", "Target": "Hdd"}})
+        expected = exception.confirmation(
+            confirm_code="Set Boot Source of Composed Node",
+            confirm_detail="The boot source of composed node has been set to "
+                           "'{0}' with enabled state '{1}' successfully."
+                           .format("Hdd", "Once"))
+
+        self.assertEqual(expected, result)
+
     @mock.patch('valence.redfish.redfish.reset_node')
     def test_node_action_malformed_request(self, mock_reset_node):
         """Test post node_action with malformed request"""

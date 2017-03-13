@@ -117,10 +117,17 @@ node_attach_type:
   in: body
   required: true
   type: string
+node_boot_enabled:
+  description: |
+    The value of this describe the state of boot source override feature,
+    including "Once", "Continuous".
+  in: body
+  required: true
+  type: string
 node_boot_source:
   description: |
     The value of this contain the source to boot the composed node, including
-    "pxe", "hdd", "none"
+    "Pxe", "Hdd", "None".
   in: body
   required: true
   type: string
@@ -174,7 +181,7 @@ node_power_state:
     "On", "Off", "PoweringOn" ,"PoweringOff"
   in: body
   required: true
-  type: string 
+  type: string
 node_processor_asset:
   description: |
     Processor asset (Object) info.
@@ -214,11 +221,11 @@ node_reset_type:
   type: string
 node_state:
   description: |
-    The current composed node state including 
+    The current composed node state including
     "Assembling", "Allocating", "Assembling" ,"Failed", "Assembled"
   in: body
   required: true
-  type: string 
+  type: string
 node_storage_asset:
   description: |
     Storage asset (Object) info.

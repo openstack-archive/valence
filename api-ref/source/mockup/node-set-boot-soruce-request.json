@@ -1,0 +1,6 @@
+{
+  "Boot": {
+    "Enabled": "Once",
+    "Target": "Pxe"
+  }
+}

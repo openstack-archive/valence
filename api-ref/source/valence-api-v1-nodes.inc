@@ -213,12 +213,12 @@ Request
    - node_ident: node_ident
 
 
-Node reset
+Node action
 ===========
 
 .. rest_method::  POST /v1/nodes/{node_ident}/action
 
-Send a POST (reset) cmd to a composed node.
+Send a POST cmd to a composed node, includes reset node state and set boot source.
 
 
 Normal response codes: 204
@@ -232,10 +232,17 @@ Request
 
    - node_ident: node_ident
    - reset_type: node_reset_type
+   - boot_enabled: node_boot_enabled
+   - boot_source: node_boot_source
 
-**Example POST action cmd for composed node :**
+**Example reset state for composed node :**
 
-.. literalinclude:: mockup/node-post-action-request.json
+.. literalinclude:: mockup/node-reset-state-request.json
+   :language: javascript
+
+**Example set boot source for composed node :**
+
+.. literalinclude:: mockup/node-set-boot-source-request.json
    :language: javascript
 
 Response
