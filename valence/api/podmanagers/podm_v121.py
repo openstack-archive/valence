@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2016 Intel, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -12,10 +13,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-PODM_AUTH_BASIC_TYPE = 'basic'
 
-PODM_STATUS_ONLINE = 'Online'
-PODM_STATUS_OFFLINE = 'Offline'
-PODM_STATUS_UNKNOWN = "Unknown"
+from valence.api.podmanagers.podm_base import PodManagerBase
 
-HTTP_HEADERS = {"Content-type": "application/json"}
+
+class PodManagerV121(PodManagerBase):
+
+    def compose_new_node(self, podm_compose_request_body):
+        pass

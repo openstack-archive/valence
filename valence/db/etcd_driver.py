@@ -201,3 +201,7 @@ class EtcdDriver(object):
                     node, models.ComposedNode.path))
 
         return composed_nodes
+
+    def get_podmanager_by_node_uuid(self, node_uuid):
+        node = self.get_composed_node_by_uuid(node_uuid)
+        return self.get_podmanager_by_uuid(node[''])

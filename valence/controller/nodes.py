@@ -54,11 +54,12 @@ class Node(object):
         return request
 
     @classmethod
-    def compose_node(cls, request_body):
+    def compose_node(cls, request_body, podm=None):
         """Compose new node
 
-        param request_body: parameter for node composition
-        return: brief info of this new composed node
+        :param podm: specify a podm, if not let the scheduler to specify one
+        :param request_body: parameter for node composition
+        :return: brief info of this new composed node
         """
 
         if "flavor_id" in request_body:
@@ -79,6 +80,7 @@ class Node(object):
                                                       description,
                                                       requirements)
 
+        # TODO call podmanager's function to compose a new node
         # Call redfish to compose new node
         composed_node = redfish.compose_node(compose_request)
 
