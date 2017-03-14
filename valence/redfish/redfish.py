@@ -19,7 +19,6 @@ import os
 
 import flask
 import requests
-from requests import auth
 from six.moves import http_client
 
 from valence.api import link
@@ -110,10 +109,9 @@ def pods():
     return json.dumps(pods)
 
 
-def pod_status(pod_url, username, password):
+def pod_status(pod_url, auth):
     try:
-        resp = requests.get(pod_url,
-                            auth=auth.HTTPBasicAuth(username, password))
+        resp = requests.get(pod_url, auth=auth)
         if resp.status_code == http_client.OK:
             return constants.PODM_STATUS_ONLINE
         else:

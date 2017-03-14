@@ -14,8 +14,11 @@
 
 import logging
 
+from requests import auth
+
 from valence.common import constants
 from valence.common import exception
+from valence.common import http_adapter
 from valence.db import api as db_api
 from valence.redfish import redfish
 
@@ -76,6 +79,21 @@ def _check_updation(values):
     return values
 
 
+def _get_basic_auth_from_authentication(authentication):
+    """parse out the basic auth from podm's authentication array properties
+
+    :param authentication: podm's authentication
+
+    :return: HTTPBasicAuth of the podm
+    """
+    for auth_property in authentication:
+        if auth_property['type'] == constants.PODM_AUTH_BASIC_TYPE:
+            username = auth_property['auth_items']['username']
+            password = auth_property['auth_items']['password']
+            return auth.HTTPBasicAuth(username, password)
+    return None
+
+
 def get_podm_list():
     return map(lambda x: x.as_dict(), db_api.Connection.list_podmanager())
 
@@ -107,12 +125,62 @@ def get_podm_status(url, authentication):
 
     :returns: status of the pod manager
     """
-    for auth in authentication:
-        # TODO(Hubian) Only consider and support basic auth type here.
-        # After decided to support other auth type this would be improved.
-        if auth['type'] == constants.PODM_AUTH_BASIC_TYPE:
-            username = auth['auth_items']['username']
-            password = auth['auth_items']['password']
-            return redfish.pod_status(url, username, password)
+    # TODO(Hubian) Only consider and support basic auth type here.
+    # After decided to support other auth type this would be improved.
+    basic_auth = _get_basic_auth_from_authentication(authentication)
 
-    return constants.PODM_STATUS_UNKNOWN
+    if basic_auth is None:
+        return constants.PODM_STATUS_UNKNOWN
+
+    return redfish.pod_status(url, basic_auth)
+
+
+def get_podm_usage(podm):
+    """get pod manager's systems usage
+
+    :param podm: pod manager dict object of model instance
+
+    :return: the number of systems and nodes
+    """
+    basic_auth = _get_basic_auth_from_authentication(podm['authentication'])
+
+    systems_url = podm['url'] + '/redfish/v1/Systems'
+    systems_resp = http_adapter.get_http_request(systems_url, basic_auth)
+    systems_num = systems_resp['Members@odata.count']
+
+    nodes_url = podm['url'] + '/redfish/v1/Nodes'
+    nodes_resp = http_adapter.get_http_request(nodes_url, basic_auth)
+    nodes_num = nodes_resp['Members@odata.count']
+
+    return {
+        "podm_uuid": podm['uuid'],
+        "systems": systems_num,
+        "nodes": nodes_num,
+        "usage": float("%.2f" % (float(nodes_num)/systems_num))
+    }
+
+
+def schedule_podm():
+    """schedule out a podm to face the request of composing a new Node
+
+    Choose the podm which systems usage is the minimum value
+
+    :return: the result pod manager
+    """
+    podm_list = get_podm_list()
+    podm_uuid = None
+    usage_value = 1
+    for podm in podm_list:
+        # ignore the un-online pod manager
+        if podm['status'] != constants.PODM_STATUS_ONLINE:
+            continue
+        # find the minimum usage value
+        usage = get_podm_usage(podm)
+        if usage['usage'] < usage_value:
+            podm_uuid = podm['uuid']
+            usage_value = usage['usage']
+
+    if podm_uuid is None:
+        return None
+
+    return get_podm_by_uuid(podm_uuid)
