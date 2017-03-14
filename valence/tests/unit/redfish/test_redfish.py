@@ -15,7 +15,6 @@ from unittest import TestCase
 
 import mock
 import requests
-from requests import auth
 from requests.compat import urljoin
 from six.moves import http_client
 
@@ -293,28 +292,28 @@ class TestRedfish(TestCase):
     def test_get_podm_status_Offline_by_wrong_auth(self, mock_get):
         fake_resp = fakes.mock_request_get({}, 401)
         mock_get.return_value = fake_resp
-        self.assertEqual(redfish.pod_status('url', 'username', 'password'),
+        wrong_auth = 'wrong_auth'
+        self.assertEqual(redfish.pod_status('url', wrong_auth),
                          constants.PODM_STATUS_OFFLINE)
-        mock_get.asset_called_once_with('url',
-                                        auth=auth.HTTPBasicAuth('username',
-                                                                'password'))
+        mock_get.asset_called_once_with('url', auth=wrong_auth)
 
     @mock.patch('requests.get')
     def test_get_podm_status_Offline_by_http_exception(self, mock_get):
+        auth_value = 'auth_value'
         mock_get.side_effect = requests.ConnectionError
-        self.assertEqual(redfish.pod_status('url', 'username', 'password'),
+        self.assertEqual(redfish.pod_status('url', auth_value),
                          constants.PODM_STATUS_OFFLINE)
-        mock_get.asset_called_once_with('url',
-                                        auth=auth.HTTPBasicAuth('username',
-                                                                'password'))
+        mock_get.asset_called_once_with('url', auth=auth_value)
+
         # SSL Error
         mock_get.side_effect = requests.exceptions.SSLError
-        self.assertEqual(redfish.pod_status('url', 'username', 'password'),
+        self.assertEqual(redfish.pod_status('url', auth_value),
                          constants.PODM_STATUS_OFFLINE)
         self.assertEqual(mock_get.call_count, 2)
+
         # Timeout
         mock_get.side_effect = requests.Timeout
-        self.assertEqual(redfish.pod_status('url', 'username', 'password'),
+        self.assertEqual(redfish.pod_status('url', auth_value),
                          constants.PODM_STATUS_OFFLINE)
         self.assertEqual(mock_get.call_count, 3)
 
@@ -322,11 +321,10 @@ class TestRedfish(TestCase):
     def test_get_podm_status_Online(self, mock_get):
         fake_resp = fakes.mock_request_get({}, http_client.OK)
         mock_get.return_value = fake_resp
-        self.assertEqual(redfish.pod_status('url', 'username', 'password'),
+        basic_auth = 'right_basic_auth'
+        self.assertEqual(redfish.pod_status('url', basic_auth),
                          constants.PODM_STATUS_ONLINE)
-        mock_get.asset_called_once_with('url',
-                                        auth=auth.HTTPBasicAuth('username',
-                                                                'password'))
+        mock_get.asset_called_once_with('url', basic_auth)
 
     @mock.patch('valence.redfish.redfish.get_base_resource_url')
     @mock.patch('valence.redfish.redfish.send_request')
