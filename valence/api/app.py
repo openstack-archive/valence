@@ -17,27 +17,38 @@ import os.path
 
 import flask
 
-import valence.config as cfg
+from valence.common import config
+import valence.conf
 
+CONF = valence.conf.CONF
+PROJECT_NAME = 'valence'
 _app = None
+
+log_level_map = {'debug': logging.DEBUG,
+                 'info': logging.INFO,
+                 'warning': logging.WARNING,
+                 'error': logging.ERROR,
+                 'critical': logging.CRITICAL,
+                 'notset': logging.NOTSET}
 
 
 def setup_app():
     """Return Flask application"""
-    app = flask.Flask(cfg.PROJECT_NAME)
+    config.parse_args(prog='valence')
+    app = flask.Flask(PROJECT_NAME)
     app.url_map.strict_slashes = False
     TEN_KB = 10 * 1024
 
     # Configure logging
-    if os.path.isfile(cfg.log_file) and os.access(cfg.log_file,
-                                                  os.W_OK):
+    if os.path.isfile(CONF.api.log_file) and os.access(CONF.api.log_file,
+                                                       os.W_OK):
         handler = logging.handlers.RotatingFileHandler(
-            cfg.log_file, maxBytes=TEN_KB, backupCount=1)
-        handler.setLevel(cfg.log_level)
-        formatter = logging.Formatter(cfg.log_format)
+            CONF.api.log_file, maxBytes=TEN_KB, backupCount=1)
+        handler.setLevel(log_level_map.get(CONF.api.log_level))
+        formatter = logging.Formatter(CONF.api.log_format)
         handler.setFormatter(formatter)
         app.logger.addHandler(handler)
-    app.logger.setLevel(cfg.log_level)
+    app.logger.setLevel(log_level_map.get(CONF.api.log_level))
 
     @app.before_request
     def before_request_logging():
