@@ -17,16 +17,24 @@ import mock
 
 from valence.api import app
 
+import valence.conf
+
+CONF = valence.conf.CONF
+
 
 class TestApp(unittest.TestCase):
 
-    @mock.patch('valence.config.PROJECT_NAME')
+    @mock.patch('valence.common.config.parse_args')
+    @mock.patch('valence.api.app.PROJECT_NAME')
     @mock.patch('valence.api.app.flask.Flask')
-    def test_setup_app_success(self, mock_Flask, mock_PROJECT_NAME):
+    def test_setup_app_success(self, mock_Flask, mock_PROJECT_NAME,
+                               mock_parse_arg):
+        CONF.set_override('log_level', 'debug', group='api')
         self.app = app.setup_app()
         mock_Flask.assert_called_with(mock_PROJECT_NAME)
+        mock_parse_arg.assert_called_once_with(prog=mock_PROJECT_NAME)
         self.assertFalse(self.app.url_map.strict_slashes)
-        self.app.logger.setLevel.assert_called_with(app.cfg.log_level)
+        self.assertTrue(self.app.logger.setLevel.called)
 
     @mock.patch('valence.api.app.setup_app')
     def test_get_app_success(self, mock_setup_app):
