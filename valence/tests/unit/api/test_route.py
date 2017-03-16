@@ -12,18 +12,23 @@
 
 import unittest
 
+import mock
+
+from valence.common import config
+config.parse_args = mock.Mock()
+
 from valence.api import route
 
 
 class TestRoute(unittest.TestCase):
 
     def setUp(self):
-        self.app = route.app
+        self.app = route.app.test_client()
         self.api = route.api
 
     def test_app(self):
         self.assertNotEqual(self.app, None)
-        self.assertEqual(self.app.__class__.__name__, 'Flask')
+        self.assertEqual(self.app.__class__.__name__, 'FlaskClient')
 
     def test_api(self):
         self.assertNotEqual(self.api, None)
