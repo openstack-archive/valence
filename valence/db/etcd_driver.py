@@ -21,15 +21,17 @@ from oslo_utils import uuidutils
 import six
 
 from valence.common import singleton
-from valence import config
+import valence.conf
 from valence.db import models
 
+
+CONF = valence.conf.CONF
 
 LOG = logging.getLogger(__name__)
 
 
 def get_driver():
-    return EtcdDriver(config.etcd_host, config.etcd_port)
+    return EtcdDriver(CONF.etcd.host, CONF.etcd.port)
 
 
 def translate_to_models(etcd_resp, model_type):
@@ -53,7 +55,7 @@ def translate_to_models(etcd_resp, model_type):
 class EtcdDriver(object):
     """etcd Driver."""
 
-    def __init__(self, host=config.etcd_host, port=config.etcd_port):
+    def __init__(self, host=CONF.etcd.host, port=CONF.etcd.port):
         self.client = etcd.Client(host=host, port=port)
 
     def create_podmanager(self, values):

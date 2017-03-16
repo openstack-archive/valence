@@ -26,23 +26,24 @@ from valence.api import link
 from valence.common import constants
 from valence.common import exception
 from valence.common import utils
-from valence import config as cfg
+import valence.conf
 from valence.redfish import tree
 
 
+CONF = valence.conf.CONF
 LOG = logging.getLogger(__name__)
 SERVICE_ROOT = None
 
 
 def update_service_root():
     global SERVICE_ROOT
-    resp = send_request(cfg.redfish_base_ext)
+    resp = send_request(CONF.podm.base_ext)
     SERVICE_ROOT = resp.json()
 
 
 def get_rfs_url(serviceext):
     # Strip slash to make sure all input with/without slash
-    redfish_base_ext = cfg.redfish_base_ext.strip("/")
+    redfish_base_ext = CONF.podm.base_ext.strip("/")
     serviceext = serviceext.strip("/")
 
     # Check whether serviceext statswith redfish_base_ext "redfish/v1", if yes,
@@ -52,7 +53,7 @@ def get_rfs_url(serviceext):
     else:
         relative_url = os.path.normpath(
             "/".join([redfish_base_ext, serviceext]))
-    return requests.compat.urljoin(cfg.podm_url, relative_url)
+    return requests.compat.urljoin(CONF.podm.url, relative_url)
 
 
 def get_base_resource_url(resource, update_services=False):
@@ -66,8 +67,8 @@ def get_base_resource_url(resource, update_services=False):
 def send_request(resource, method="GET", **kwargs):
     # The verify=false param in the request should be removed eventually
     url = get_rfs_url(resource)
-    httpuser = cfg.podm_user
-    httppwd = cfg.podm_password
+    httpuser = CONF.podm.username
+    httppwd = CONF.podm.password
     resp = None
     LOG.debug(url)
     try:
@@ -474,7 +475,7 @@ def compose_node(request_body):
 
     # Allocated node successfully
     # node_url -- relative redfish url e.g redfish/v1/Nodes/1
-    node_url = allocate_resp.headers['Location'].lstrip(cfg.podm_url)
+    node_url = allocate_resp.headers['Location'].lstrip(CONF.podm.url)
     # node_index -- numeric index of new node e.g 1
     node_index = node_url.split('/')[-1]
     LOG.debug('Successfully allocated node:' + node_url)

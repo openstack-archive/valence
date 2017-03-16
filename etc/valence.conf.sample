@@ -1,0 +1,97 @@
+[DEFAULT]
+
+
+[api]
+
+#
+# From valence.conf
+#
+
+# The port for the valence API server. (port value)
+# Minimum value: 0
+# Maximum value: 65535
+#port = 8181
+
+# The listen IP for the valence API server. (IP address value)
+#host_ip = 127.0.0.1
+
+# Enable the integrated stand-alone API to service requests via HTTPS
+# instead of HTTP. If there is a front-end service performing HTTPS
+# offloading from the service, this option should be False; note, you
+# will want to change public API endpoint to represent SSL termination
+# URL with 'public_endpoint' option. (boolean value)
+#enable_ssl_api = false
+
+# Number of workers for valence-api service. The default will be the
+# number of CPUs available. (integer value)
+#workers = 4
+
+# The maximum timeout to wait for valence API server to come up.
+# (integer value)
+#timeout = 1000
+
+# The maximum number of items returned in a single response from a
+# collection resource. (integer value)
+#max_limit = 1000
+
+# Configuration file for WSGI definition of API. (string value)
+#api_paste_config = api-paste.ini
+
+# Enable debug mode for valence-api service. (boolean value)
+#debug = false
+
+# The log file location for valence-api service (string value)
+#log_file = /var/log/valence/valence.log
+
+# The granularity of Error log outputs. (string value)
+#log_level = debug
+
+# The log format. (string value)
+#log_format = %(asctime)s %(name)-4s %(levelname)-4s %(message)s
+
+
+[etcd]
+
+#
+# From valence.conf
+#
+
+# The port for the etcd server. (port value)
+# Minimum value: 0
+# Maximum value: 65535
+#port = 2379
+
+# The listen IP for the etcd server. (IP address value)
+#host = 127.0.0.1
+
+
+[podm]
+
+#
+# From valence.conf
+#
+
+# The URL of Redfish API server. (e.g.: http(s)://<IP>:<PORT>/).
+# Required. (IP address value)
+#url = <None>
+
+# User account with admin/server-profile access privilege. Although
+# this property is not mandatory it's highly recommended to set a
+# username. Optional. (string value)
+#username = <None>
+
+# User account password. Although this property is not mandatory, it's
+# highly recommended to set a password. Optional. (string value)
+#password = <None>
+
+# Either a boolean value, a path to a CA_BUNDLE file or directory with
+# certificates of trusted CAs. If set to True the driver will verify
+# the host certificates; if False the driver will ignore verifying the
+# SSL certificate; If it's a path the driver will use the specified
+# certificate or one of the certificates in the directory. Defaults to
+# True. Optional. (boolean value)
+#verify_ca = <None>
+
+# The URL extension that specifies the Redfish API version that
+# valence will interact with (string value)
+#base_ext = /redfish/v1/
