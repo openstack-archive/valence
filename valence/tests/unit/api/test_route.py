@@ -18,7 +18,7 @@ from valence.api import route
 class TestRoute(unittest.TestCase):
 
     def setUp(self):
-        self.app = route.app
+        self.app = route.make_app()
         self.api = route.api
 
     def test_app(self):

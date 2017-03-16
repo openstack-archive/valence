@@ -32,8 +32,9 @@ from valence.common import utils
 
 
 LOG = logging.getLogger(__name__)
-app = flaskapp.get_app()
-cors = flask_cors.CORS(app)
+app = None
+cors = None
+api = None
 
 
 class ValenceService(flask_restful.Api):
@@ -55,48 +56,62 @@ class ValenceService(flask_restful.Api):
                                              http_client.INTERNAL_SERVER_ERROR)
             return utils.make_response(http_client.INTERNAL_SERVER_ERROR, exc)
 
-api = ValenceService(app)
 
-"""API V1.0 Operations"""
+def make_app():
+    global app
+    app = flaskapp.get_app()
+    global cors
+    cors = flask_cors.CORS(app)
+    make_route()
+    return app
 
-# API Root operation
-api.add_resource(api_root.Root, '/', endpoint='root')
 
-# V1 Root operations
-api.add_resource(v1_version.V1, '/v1', endpoint='v1')
+def make_route():
+    global api
+    api = ValenceService(app)
 
-# Node(s) operations
-api.add_resource(v1_nodes.Nodes, '/v1/nodes', endpoint='nodes')
-api.add_resource(v1_nodes.Node,
-                 '/v1/nodes/<string:node_uuid>',
-                 endpoint='node')
-api.add_resource(v1_nodes.NodeAction,
-                 '/v1/nodes/<string:node_uuid>/action',
-                 endpoint='node_action')
-api.add_resource(v1_nodes.NodesStorage,
-                 '/v1/nodes/<string:nodeid>/storages',
-                 endpoint='nodes_storages')
+    """API V1.0 Operations"""
 
-# System(s) operations
-api.add_resource(v1_systems.SystemsList, '/v1/systems', endpoint='systems')
-api.add_resource(v1_systems.Systems, '/v1/systems/<string:systemid>',
-                 endpoint='system')
+    # API Root operation
+    api.add_resource(api_root.Root, '/', endpoint='root')
 
-# Flavor(s) operations
-api.add_resource(v1_flavors.Flavors, '/v1/flavors', endpoint='flavors')
-api.add_resource(v1_flavors.Flavors, '/v1/flavors/<string:flavorid>',
-                 endpoint='flavor')
+    # V1 Root operations
+    api.add_resource(v1_version.V1, '/v1', endpoint='v1')
 
-# Storage(s) operations
-api.add_resource(v1_storages.StoragesList, '/v1/storages', endpoint='storages')
-api.add_resource(v1_storages.Storages,
-                 '/v1/storages/<string:storageid>', endpoint='storage')
+    # Node(s) operations
+    api.add_resource(v1_nodes.Nodes, '/v1/nodes', endpoint='nodes')
+    api.add_resource(v1_nodes.Node,
+                     '/v1/nodes/<string:node_uuid>',
+                     endpoint='node')
+    api.add_resource(v1_nodes.NodeAction,
+                     '/v1/nodes/<string:node_uuid>/action',
+                     endpoint='node_action')
+    api.add_resource(v1_nodes.NodesStorage,
+                     '/v1/nodes/<string:nodeid>/storages',
+                     endpoint='nodes_storages')
 
-# PodManager(s) operations
-api.add_resource(v1_podmanagers.PodManager,
-                 '/v1/pod_managers/<string:podm_uuid>', endpoint='podmanager')
-api.add_resource(v1_podmanagers.PodManagersList,
-                 '/v1/pod_managers', endpoint='podmanagers')
+    # System(s) operations
+    api.add_resource(v1_systems.SystemsList, '/v1/systems', endpoint='systems')
+    api.add_resource(v1_systems.Systems, '/v1/systems/<string:systemid>',
+                     endpoint='system')
 
-# Proxy to PODM
-api.add_resource(api_root.PODMProxy, '/<path:url>', endpoint='podmproxy')
+    # Flavor(s) operations
+    api.add_resource(v1_flavors.Flavors, '/v1/flavors', endpoint='flavors')
+    api.add_resource(v1_flavors.Flavors, '/v1/flavors/<string:flavorid>',
+                     endpoint='flavor')
+
+    # Storage(s) operations
+    api.add_resource(v1_storages.StoragesList, '/v1/storages',
+                     endpoint='storages')
+    api.add_resource(v1_storages.Storages,
+                     '/v1/storages/<string:storageid>', endpoint='storage')
+
+    # PodManager(s) operations
+    api.add_resource(v1_podmanagers.PodManager,
+                     '/v1/pod_managers/<string:podm_uuid>',
+                     endpoint='podmanager')
+    api.add_resource(v1_podmanagers.PodManagersList,
+                     '/v1/pod_managers', endpoint='podmanagers')
+
+    # Proxy to PODM
+    api.add_resource(api_root.PODMProxy, '/<path:url>', endpoint='podmproxy')

@@ -14,9 +14,11 @@
 
 import etcd
 
-from valence import config
+import valence.conf
 from valence.db import models
 
+
+CONF = valence.conf.CONF
 
 etcd_directories = [
     models.PodManager.path,
@@ -24,7 +26,7 @@ etcd_directories = [
     models.ComposedNode.path
 ]
 
-etcd_client = etcd.Client(config.etcd_host, config.etcd_port)
+etcd_client = etcd.Client(CONF.etcd.host, CONF.etcd.port)
 
 
 def init_etcd_db():
