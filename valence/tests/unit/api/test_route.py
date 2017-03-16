@@ -10,7 +10,12 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import sys
 import unittest
+
+import mock
+
+sys.modules['valence.common.config'] = mock.Mock()
 
 from valence.api import route
 
@@ -18,7 +23,7 @@ from valence.api import route
 class TestRoute(unittest.TestCase):
 
     def setUp(self):
-        self.app = route.app
+        self.app = route.app.test_client()
         self.api = route.api
 
     def test_app(self):

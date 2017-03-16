@@ -19,8 +19,9 @@ import gunicorn.app.base
 from gunicorn.six import iteritems
 
 from valence.api.route import app as application
-from valence import config as cfg
+import valence.conf
 
+CONF = valence.conf.CONF
 
 LOG = logging.getLogger(__name__)
 
@@ -44,13 +45,13 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 
 def main():
     options = {
-        'bind': '%s:%s' % (cfg.bind_host, cfg.bind_port),
-        'reload': cfg.debug,
-        'timeout': cfg.timeout,
-        'workers': cfg.workers
+        'bind': '%s:%s' % (CONF.api.bind_host, CONF.api.bind_port),
+        'reload': CONF.api.debug,
+        'timeout': CONF.api.timeout,
+        'workers': CONF.api.workers
     }
     LOG.info(("Valence Server on http://%(host)s:%(port)s"),
-             {'host': cfg.bind_host, 'port': cfg.bind_port})
+             {'host': CONF.api.bind_host, 'port': CONF.api.bind_port})
     StandaloneApplication(application, options).run()
 
 

@@ -35,7 +35,17 @@ if [ ! -d "/etc/valence" ]; then
     mkdir /etc/valence
 fi
 chown "$CURR_USER":"$CURR_USER" /etc/valence
+VALENCE_CONF=/etc/valence/valence.conf
 cp etc/valence/valence.conf.sample /etc/valence/valence.conf
+sudo sed -i "s/#debug\s*=.*/debug=true/" $VALENCE_CONF
+sudo sed -i "s/#log_level\s*=.*/log_level=debug/" $VALENCE_CONF
+sudo sed -i "s/#log_file\s*=.*/log_file=/var/log/valence/valence.log/" $VALENCE_CONF
+sudo sed -i "s/#bind_host\s*=.*/bind_host=0.0.0.0/" $VALENCE_CONF
+sudo sed -i "s/#bind_port\s*=.*/bind_port=8181/" $VALENCE_CONF
+sudo sed -i "s/#timeout\s*=.*/timeout=1000/" $VALENCE_CONF
+sudo sed -i "s/#workers\s*=.*/workers=4/" $VALENCE_CONF
+sudo sed -i "s/#host\s*=.*/host=localhost/" $VALENCE_CONF
+sudo sed -i "s/#port\s*=.*/port=2379/" $VALENCE_CONF
 
 # create log directory for valence if it doesn't exist
 if [ ! -d "/var/log/valence" ]; then
