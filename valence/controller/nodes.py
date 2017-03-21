@@ -20,6 +20,7 @@ from valence.common import exception
 from valence.common import utils
 from valence.controller import flavors
 from valence.db import api as db_api
+from valence.provision import driver
 from valence.redfish import redfish
 
 LOG = logging.getLogger(__name__)
@@ -206,3 +207,14 @@ class Node(object):
         # https://review.openstack.org/#/c/422547/
 
         return redfish.node_action(index, request_body)
+
+    @classmethod
+    def node_register(cls, node_uuid, request_body):
+        """Register a node to  provisioning services.
+
+        :param node_uuid: UUID of composed node to register
+        :param request_body: parameter of register node with
+        :returns: response from provisioning services
+        """
+        resp = driver.node_register(node_uuid, request_body)
+        return resp

@@ -63,3 +63,10 @@ class NodesStorage(Resource):
 
     def get(self, nodeid):
         return abort(http_client.NOT_IMPLEMENTED)
+
+
+class NodeRegister(Resource):
+
+    def post(self, node_uuid):
+        return utils.make_response(http_client.OK, nodes.Node.node_register(
+                                   node_uuid, request.get_json()))
