@@ -76,6 +76,9 @@ api.add_resource(v1_nodes.NodeAction,
 api.add_resource(v1_nodes.NodesStorage,
                  '/v1/nodes/<string:nodeid>/storages',
                  endpoint='nodes_storages')
+api.add_resource(v1_nodes.NodeRegister,
+                 '/v1/nodes/<string:node_uuid>/register',
+                 endpoint='node_register')
 
 # System(s) operations
 api.add_resource(v1_systems.SystemsList, '/v1/systems', endpoint='systems')
