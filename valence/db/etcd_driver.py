@@ -20,6 +20,7 @@ import etcd
 from oslo_utils import uuidutils
 import six
 
+from valence.common import exception
 from valence.common import singleton
 import valence.conf
 from valence.db import models
@@ -167,7 +168,7 @@ class EtcdDriver(object):
         except etcd.EtcdKeyNotFound:
             # TODO(lin.a.yang): after exception module got merged, raise
             # valence specific DBNotFound exception here
-            raise Exception(
+            raise exception.NotFound(
                 'Composed node not found {0} in database.'.format(
                     composed_node_uuid))
 

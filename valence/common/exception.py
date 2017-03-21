@@ -12,6 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import functools
+import sys
+
+from keystoneclient import exceptions as keystone_exceptions
 from six.moves import http_client
 
 from valence.common import base
@@ -70,6 +74,16 @@ class ValenceConfirmation(base.ObjectBase):
     }
 
 
+class ValenceException(ValenceError):
+    def __init__(self, detail, status=None,
+                 request_id=FAKE_REQUEST_ID):
+        self.request_id = request_id
+        self.status = status or http_client.SERVICE_UNAVAILABLE
+        self.code = "ValenceError"
+        self.title = http_client.responses.get(self.status)
+        self.detail = detail
+
+
 class RedfishException(ValenceError):
 
     def __init__(self, responsejson, request_id=FAKE_REQUEST_ID,
@@ -114,6 +128,13 @@ class ValidationError(BadRequest):
                                               code='ValidationError')
 
 
+class AuthorizationFailure(ValenceError):
+    def __init__(self, detail, request_id=None):
+        message = "Keystone authorization error. %s" % detail
+        super(AuthorizationFailure, self).__init__(detail=message,
+                                                   code='AuthorizationFailure')
+
+
 def _error(error_code, http_status, error_title, error_detail,
            request_id=FAKE_REQUEST_ID):
     # responseobj - the response object of Requests framework
@@ -142,3 +163,21 @@ def confirmation(request_id=FAKE_REQUEST_ID, confirm_code='',
     confirm_obj.code = confirm_code
     confirm_obj.detail = confirm_detail
     return confirm_obj.as_dict()
+
+
+def wrap_keystone_exception(func):
+    """Wrap keystone exceptions and throw Valence specific exceptions."""
+    @functools.wraps(func)
+    def wrapped(*args, **kw):
+        try:
+            return func(*args, **kw)
+        except keystone_exceptions.AuthorizationFailure:
+            message = ("%s connection failed. Reason: "
+                       "%s" % (func.__name__, sys.exc_info()[1]))
+            raise AuthorizationFailure(detail=message)
+        except keystone_exceptions.ClientException:
+            message = ("%s connection failed. Unexpected keystone client "
+                       "error occurred: %s" % (func.__name__,
+                                               sys.exc_info()[1]))
+            raise AuthorizationFailure(detail=message)
+    return wrapped
