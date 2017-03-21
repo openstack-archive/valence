@@ -207,5 +207,8 @@ class ComposedNode(ModelBaseWithTimeStamp):
         },
         'links': {
             'validate': types.List(types.Dict).validate
+        },
+        'managed_by': {
+            'validate': types.Text.validate
         }
     }
