@@ -89,6 +89,9 @@ def make_route():
     api.add_resource(v1_nodes.NodesStorage,
                      '/v1/nodes/<string:nodeid>/storages',
                      endpoint='nodes_storages')
+    api.add_resource(v1_nodes.NodeRegister,
+                     '/v1/nodes/<string:node_id>/register',
+                     endpoint='node_register')
 
     # System(s) operations
     api.add_resource(v1_systems.SystemsList, '/v1/systems', endpoint='systems')
