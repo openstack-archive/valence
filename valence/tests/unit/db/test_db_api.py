@@ -18,6 +18,7 @@ import etcd
 import freezegun
 import mock
 
+from valence.common import exception
 from valence.db import api as db_api
 from valence.tests.unit.db import utils
 
@@ -216,11 +217,11 @@ class TestDBAPI(unittest.TestCase):
         node = utils.get_test_composed_node_db_info()
         mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
 
-        with self.assertRaises(Exception) as context:  # noqa: H202
+        with self.assertRaises(exception.NotFound) as context:  # noqa: H202
             db_api.Connection.get_composed_node_by_uuid(node['uuid'])
 
         self.assertTrue('Composed node not found {0} in database.'.format(
-            node['uuid']) in str(context.exception))
+            node['uuid']) in str(context.exception.detail))
         mock_etcd_read.assert_called_once_with(
             '/nodes/' + node['uuid'])
 

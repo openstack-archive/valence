@@ -236,3 +236,8 @@ class TestAPINodes(unittest.TestCase):
 
         nodes.Node.node_action("fake_uuid", action)
         mock_node_action.assert_called_once_with("1", action)
+
+    @mock.patch("valence.provision.driver.node_register")
+    def test_node_register(self, mock_node_register):
+        nodes.Node.node_register("fake_uuid", {"foo": "bar"})
+        mock_node_register.assert_called_once_with("fake_uuid", {"foo": "bar"})

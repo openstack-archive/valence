@@ -1,6 +1,5 @@
-# Copyright (c) 2017 Intel, Inc.
+# copyright (c) 2017 Intel, Inc.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
 #
@@ -12,16 +11,19 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from oslo_config import cfg
+import mock
 
-from valence.conf import api
-from valence.conf import etcd
-from valence.conf import ironic_client
-from valence.conf import podm
+from oslotest import base
 
-CONF = cfg.CONF
+from valence.provision.ironic import utils
 
-api.register_opts(CONF)
-etcd.register_opts(CONF)
-ironic_client.register_opts(CONF)
-podm.register_opts(CONF)
+
+class TestUtils(base.BaseTestCase):
+    def setUp(self):
+        super(TestUtils, self).setUp()
+
+    @mock.patch('valence.common.clients.OpenStackClients.ironic')
+    def test_create_ironicclient(self, mock_ironic):
+        ironic = utils.create_ironicclient()
+        self.assertTrue(ironic)
+        mock_ironic.assert_called_once_with()
