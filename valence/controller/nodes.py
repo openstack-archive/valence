@@ -17,6 +17,7 @@ import six
 from valence.common import utils
 from valence.controller import flavors
 from valence.db import api as db_api
+from valence.driver import driver
 from valence.redfish import redfish
 
 
@@ -167,3 +168,14 @@ class Node(object):
         # https://review.openstack.org/#/c/422547/
 
         return redfish.node_action(index, request_body)
+
+    @classmethod
+    def node_register(cls, node_uuid):
+        """Register a node to Ironic
+
+        :param node_uuid: UUID of composed node to register
+        :param request_body: parameter of register node with
+        :returns: response for Ironic
+        """
+        resp = driver.node_register(node_uuid)
+        return resp

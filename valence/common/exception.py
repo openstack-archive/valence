@@ -12,6 +12,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import functools
+import sys
+
+from keystoneclient import exceptions as keystone_exceptions
 from six.moves import http_client
 
 from valence.common import base
@@ -135,3 +139,24 @@ def confirmation(request_id=FAKE_REQUEST_ID, confirm_code='',
     confirm_obj.code = confirm_code
     confirm_obj.detail = confirm_detail
     return confirm_obj.as_dict()
+
+
+class AuthorizationFailure(ValenceError):
+    message = "%(client)s connection failed. %(message)s"
+
+
+def wrap_keystone_exception(func):
+    """Wrap keystone exceptions and throw Zun specific exceptions."""
+    @functools.wraps(func)
+    def wrapped(*args, **kw):
+        try:
+            return func(*args, **kw)
+        except keystone_exceptions.AuthorizationFailure:
+            raise AuthorizationFailure(
+                client=func.__name__, message="reason: %s" % sys.exc_info()[1])
+        except keystone_exceptions.ClientException:
+            raise AuthorizationFailure(
+                client=func.__name__,
+                message="unexpected keystone client error occurred: %s"
+                        % sys.exc_info()[1])
+    return wrapped
