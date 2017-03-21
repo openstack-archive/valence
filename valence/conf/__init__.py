@@ -16,10 +16,12 @@ from oslo_config import cfg
 
 from valence.conf import api
 from valence.conf import etcd
+from valence.conf import ironic_client
 from valence.conf import podm
 
 CONF = cfg.CONF
 
 api.register_opts(CONF)
 etcd.register_opts(CONF)
+ironic_client.register_opts(CONF)
 podm.register_opts(CONF)
