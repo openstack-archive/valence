@@ -456,7 +456,8 @@ def get_node_by_id(node_index, show_detail=True):
                 "network": [show_network_details(i.get("@odata.id")) for i in
                             respdata.get("Links", {}).get(
                                 "EthernetInterfaces", [])]
-            }
+            },
+            "computer_system": respdata.get("Links").get("ComputerSystem")
         })
 
     return node_detail
