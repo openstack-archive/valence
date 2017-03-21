@@ -33,22 +33,6 @@ def _check_creation(values):
     :returns: improved values that could be inserted to db
     """
 
-    if not ('name' in values and
-            'url' in values and
-            'authentication' in values):
-        raise exception.BadRequest(detail="Incomplete parameters")
-    # check authentication's format and content
-    try:
-        if not (values['authentication'][0]['type'] and
-                values['authentication'][0]['auth_items']):
-            LOG.error("invalid authentication when creating podmanager")
-            raise exception.BadRequest(detail="invalid "
-                                              "authentication properties")
-    except KeyError:
-        LOG.error("Incomplete parameters when creating podmanager")
-        raise exception.BadRequest(detail="invalid "
-                                          "authentication properties")
-
     pod_manager_list = get_podm_list()
     names = [podm['name'] for podm in pod_manager_list]
     urls = [podm['url'] for podm in pod_manager_list]

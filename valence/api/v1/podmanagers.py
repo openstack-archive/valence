@@ -21,6 +21,7 @@ from six.moves import http_client
 from valence.common import exception
 from valence.common import utils
 from valence.controller import podmanagers
+from valence.validation import validator
 
 
 LOG = logging.getLogger(__name__)
@@ -31,6 +32,7 @@ class PodManagersList(flask_restful.Resource):
     def get(self):
         return utils.make_response(http_client.OK, podmanagers.get_podm_list())
 
+    @validator.check_input('podmanager_schema')
     def post(self):
         values = flask.request.get_json()
         return utils.make_response(http_client.OK,
