@@ -53,28 +53,6 @@ class TestPodManagers(unittest.TestCase):
                                                      values['authentication'])
         mock_get_podm_list.assert_called_once_with()
 
-    def test_check_creation_incomplete_parameters(self):
-        incomplete_values = {
-            'name': 'name',
-            'url': 'url'
-        }
-        self.assertRaises(BadRequest,
-                          podmanagers._check_creation,
-                          incomplete_values)
-
-    def test_check_creation_invalid_authentication(self):
-        invalid_authentication_values = {
-            "name": "podm_name",
-            "url": "https://10.0.0.2",
-            'authentication': {
-                "username": "username",
-                "password": "password"
-            }
-        }
-        self.assertRaises(BadRequest,
-                          podmanagers._check_creation,
-                          invalid_authentication_values)
-
     @mock.patch('valence.controller.podmanagers.get_podm_list')
     def test_check_creation_duplicate_Exception(self, mock_get_podm_list):
         mock_get_podm_list.return_value = [

@@ -49,5 +49,12 @@ class Validator(object):
         try:
             self.validator.validate(data)
         except jsonschema.ValidationError as e:
+            if len(e.path) > 0:
+                detail = (("Invalid input for field/attribute '%(path)s' "
+                           "Value: '%(value)s'. %(message)s") %
+                          {'path': e.path.pop(), 'value': e.instance,
+                           'message': e.message})
+            else:
+                detail = e.message
             LOG.exception("Failed to validate the input")
-            raise exception.ValidationError(detail=e.message)
+            raise exception.ValidationError(detail=detail)
