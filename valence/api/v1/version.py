@@ -60,6 +60,9 @@ class V1Base(base.ObjectBase):
         'systems': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
+        'deployment': {
+            'validate': types.List(types.Custom(link.Link)).validate
+        }
     }
 
     @staticmethod
@@ -94,6 +97,9 @@ class V1Base(base.ObjectBase):
                                           v1_base_url,
                                           'flavors', '',
                                           bookmark=True)]
+        v1.deployment = [link.Link.make_link('self', v1_base_url,
+                                             'deployment', '',
+                                             bookmark=True)]
         v1.systems = [link.Link.make_link('self', v1_base_url,
                                           'systems', ''),
                       link.Link.make_link('bookmark',
