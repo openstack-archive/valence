@@ -23,7 +23,7 @@ def fake_flavor():
                 "type": "DDR2"
             },
             "processor": {
-                "total_cores": "10",
+                "total_cores": "2",
                 "model": "Intel"
             }
         }

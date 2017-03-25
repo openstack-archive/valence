@@ -29,6 +29,8 @@ Request
 
    - name: node_request_name
    - description: node_request_description
+   - flavor_id: flavor_uuid
+   - properties: node_properties
 
 **Example Node creation request:**
 

@@ -46,7 +46,7 @@ def get_test_composed_node(**kwargs):
                           'vlans': [{'status': 'Enabled',
                                      'vlanid': 99}]}],
              'processor': [{'instruction_set': None,
-                            'model': None,
+                            'model': 'None',
                             'speed_mhz': 3700,
-                            'total_core': 0}]})
+                            'total_core': 2}]})
     }
