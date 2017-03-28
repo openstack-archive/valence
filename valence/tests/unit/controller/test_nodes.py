@@ -16,6 +16,7 @@ import unittest
 
 import mock
 
+from valence.common import exception
 from valence.controller import nodes
 from valence.tests.unit.controller import fakes
 from valence.tests.unit.db import utils as test_utils
@@ -70,6 +71,14 @@ class TestAPINodes(unittest.TestCase):
                                                     description,
                                                     requirements)
         self.assertEqual(expected, result)
+
+    def test_compose_node_with_wrong_parameters(self):
+        """Test compose node with no name input"""
+        with self.assertRaises(exception.BadRequest) as context:
+            nodes.Node.compose_node({"no_name": "fake_value"})
+
+        self.assertTrue("Please specify a name of the node to compose"
+                        in context.exception.detail)
 
     @mock.patch("valence.db.api.Connection.create_composed_node")
     @mock.patch("valence.common.utils.generate_uuid")

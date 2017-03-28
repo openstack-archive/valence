@@ -211,7 +211,7 @@ node_request_description:
    description: |
      A description for a new composed node
    in: body
-   required: tree
+   required: false
    type: string
 node_request_name:
   description: |
