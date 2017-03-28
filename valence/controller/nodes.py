@@ -14,6 +14,7 @@
 
 import six
 
+from valence.common import exception
 from valence.common import utils
 from valence.controller import flavors
 from valence.db import api as db_api
@@ -72,8 +73,12 @@ class Node(object):
                 "processor": {}
             }
 
+        if not("name" in request_body and request_body["name"].strip()):
+            raise exception.BadRequest(
+                detail="Please specify a name of the node to create")
         name = request_body["name"]
-        description = request_body["description"]
+        # "description" is optional
+        description = request_body.get("description", "")
 
         compose_request = cls._create_compose_request(name,
                                                       description,
