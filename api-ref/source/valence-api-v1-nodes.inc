@@ -37,6 +37,11 @@ Request
 .. literalinclude:: mockup/composed-node-create-request.json
    :language: javascript
 
+**Example Node creation via flavor request:**
+
+.. literalinclude:: mockup/composed-node-create-via-flavor-request.json
+   :language: javascript
+
 Response
 --------
 
