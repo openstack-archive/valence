@@ -1,11 +1,11 @@
 {
-  "name": "test", 
+  "name": "test",
   "properties": {
     "memory": {
       "capacity_mib": "3000"
-    }, 
+    },
     "processor": {
-      "total_cores": "10", 
+      "total_cores": "10",
       "model": "Intel"
     }
   }
