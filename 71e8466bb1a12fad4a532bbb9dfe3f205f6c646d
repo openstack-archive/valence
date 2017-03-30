@@ -1,0 +1,9 @@
+Code-Review+1: XieYingYun <smokony@sina.com>
+Code-Review+2: Lin Yang <lin.a.yang@intel.com>
+Workflow+1: Lin Yang <lin.a.yang@intel.com>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Thu, 30 Mar 2017 18:15:10 +0000
+Reviewed-on: https://review.openstack.org/448435
+Project: openstack/valence
+Branch: refs/heads/master
