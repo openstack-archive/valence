@@ -41,6 +41,9 @@ def translate_to_models(etcd_resp, model_type):
         ret = models.Flavor(**data)
     elif model_type == models.ComposedNode.path:
         ret = models.ComposedNode(**data)
+    elif model_type == models.OpenstackFlavor.path:
+        ret = models.OpenstackFlavor(**data)
+        print ret
     else:
         # TODO(lin.a.yang): after exception module got merged, raise
         # valence specific InvalidParameter exception here
@@ -152,6 +155,24 @@ class EtcdDriver(object):
 
         return flavors
 
+    def list_openstack_flavors(self):
+        try:
+            resp = getattr(self.client.read(models.OpenstackFlavor.path),
+                           'children', None)
+        except etcd.EtcdKeyNotFound:
+            LOG.error("Path '/openstack_flavors' does not exist, the etcd server may "
+                      "not have been initialized appropriately.")
+            raise
+
+        openstack_flavors = []
+        for flavor in resp:
+            if flavor.value is not None:
+                openstack_flavors.append(translate_to_models(
+                    flavor, models.OpenstackFlavor.path))
+
+        return openstack_flavors
+
+
     def create_composed_node(self, values):
         composed_node = models.ComposedNode(**values)
         composed_node.save()
@@ -199,3 +220,25 @@ class EtcdDriver(object):
                     node, models.ComposedNode.path))
 
         return composed_nodes
+
+    def create_openstack_flavor(self, values):
+        values['uuid'] = uuidutils.generate_uuid()
+
+        openstack_flavor = models.OpenstackFlavor(**values)
+        openstack_flavor.save()
+
+        return openstack_flavor
+
+    def get_openstack_flavor_by_uuid(self, flavor_uuid):
+        try:
+            resp = self.client.read(models.OpenstackFlavor.etcd_path(flavor_uuid))
+        except etcd.EtcdKeyNotFound:
+            # TODO(ntpttr): Change this to a valence specific exception
+            # when the exceptions module is merged.
+            raise Exception('Flavor {0} not found.'.format(flavor_uuid))
+
+        return translate_to_models(resp, models.OpenstackFlavor.path)
+   
+    def delete_openstack_flavor(self, flavor_uuid):
+        flavor = self.get_openstack_flavor_by_uuid(flavor_uuid)
+        flavor.delete()

@@ -60,6 +60,9 @@ class V1Base(base.ObjectBase):
         'systems': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
+        'openstack_flavors': {
+             'validate':  types.List(types.Custom(link.Link)).validate
+        }
     }
 
     @staticmethod
@@ -94,6 +97,14 @@ class V1Base(base.ObjectBase):
                                           v1_base_url,
                                           'flavors', '',
                                           bookmark=True)]
+
+        v1.openstack_flavors = [link.Link.make_link('self', v1_base_url,
+                                          'openstack_flavors', ''),
+                      link.Link.make_link('bookmark',
+                                          v1_base_url,
+                                          'openstack_flavors', '',
+                                          bookmark=True)]
+
         v1.systems = [link.Link.make_link('self', v1_base_url,
                                           'systems', ''),
                       link.Link.make_link('bookmark',

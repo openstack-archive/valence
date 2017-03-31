@@ -159,3 +159,38 @@ class Connection(object):
         :returns: A list of all composed node.
         """
         return cls.dbdriver.list_composed_nodes()
+ 
+    @classmethod
+    def create_openstack_flavor(cls, values):
+        """Create a new openstack flavor.
+
+        :param values: The properties of the new flavor.
+        :returns: The created flavor.
+        """
+        return cls.dbdriver.create_openstack_flavor(values)
+
+    @classmethod
+    def list_openstack_flavors(cls):
+        """Get a list of all openstack flavors.
+
+        :returns: A list of all flavors.
+        """
+        return cls.dbdriver.list_openstack_flavors() 
+
+    @classmethod
+    def get_openstack_flavor_by_uuid(cls, flavoruuid):
+        """Get specific flavor by its uuid.
+
+        :param flavor_uuid: The uuid of the flavor.
+        :returns: The flavor with the specified uuid.
+        """
+        return cls.dbdriver.get_openstack_flavor_by_uuid(flavoruuid)
+
+    @classmethod
+    def delete_openstack_flavor(cls, flavor_uuid):
+        """Delete a flavor by its uuid.
+
+        :param flavor_uuid: The uuid of the flavor to delete.
+        """
+        cls.dbdriver.delete_openstack_flavor(flavor_uuid)
+
