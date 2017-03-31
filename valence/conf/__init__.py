@@ -16,6 +16,7 @@ from oslo_config import cfg
 
 from valence.conf import api
 from valence.conf import etcd
+from valence.conf import openstack
 from valence.conf import podm
 
 CONF = cfg.CONF
@@ -23,3 +24,4 @@ CONF = cfg.CONF
 api.register_opts(CONF)
 etcd.register_opts(CONF)
 podm.register_opts(CONF)
+openstack.register_opts(CONF)
