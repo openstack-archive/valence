@@ -14,4 +14,9 @@ requests==2.11.1
 six==1.10.0
 gunicorn==19.6.0
 python-etcd>=0.4.3 # MIT License
+<<<<<<< HEAD
 oslo.utils>=3.20.0 # Apache-2.0
+=======
+oslo.utils>=3.18.0 # Apache-2.0
+python-novaclient >= 7.1.0
+>>>>>>> 9804a72... [WIP] Create and validate flavors to cloud
