@@ -23,6 +23,7 @@ from valence.api import app as flaskapp
 import valence.api.root as api_root
 import valence.api.v1.flavors as v1_flavors
 import valence.api.v1.nodes as v1_nodes
+import valence.api.v1.openstack_flavors as v1_op_flavors
 import valence.api.v1.podmanagers as v1_podmanagers
 import valence.api.v1.storages as v1_storages
 import valence.api.v1.systems as v1_systems
@@ -87,6 +88,17 @@ api.add_resource(v1_flavors.Flavors, '/v1/flavors', endpoint='flavors')
 api.add_resource(v1_flavors.Flavors, '/v1/flavors/<string:flavorid>',
                  endpoint='flavor')
 
+api.add_resource(v1_op_flavors.Openstack_Flavors, '/v1/openstack_flavors',
+                 endpoint='openstack_flavors')
+api.add_resource(v1_op_flavors.Openstack_Flavors_Show,
+                 '/v1/openstack_flavors/<string:flavoruuid>',
+                 endpoint='openstack_flavor')
+api.add_resource(v1_op_flavors.RegisterFlavor,
+                 '/v1/openstack_flavors/<string:flavoruuid>/register',
+                 endpoint='openstack_flavor_register')
+api.add_resource(v1_op_flavors.Openstack_Flavors,
+                 '/v1/openstack_flavors/<string:flavoruuid>',
+                 endpoint='openstack_flavor_delete')
 # Storage(s) operations
 api.add_resource(v1_storages.StoragesList, '/v1/storages', endpoint='storages')
 api.add_resource(v1_storages.Storages,
