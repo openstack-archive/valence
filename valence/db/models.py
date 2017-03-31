@@ -191,6 +191,32 @@ class Flavor(ModelBaseWithTimeStamp):
     }
 
 
+class OpenstackFlavor(ModelBaseWithTimeStamp):
+
+    path = "/openstack_flavors"
+
+    fields = {
+        'uuid': {
+            'validate': types.Text.validate
+        },
+        'name': {
+            'validate': types.Text.validate
+        },
+        'ram':  {
+            'validate': types.Integer.validate
+        },
+        'disk': {
+            'validate': types.Integer.validate
+        },
+        'vcpus': {
+            'validate': types.Integer.validate
+        },
+        'extra_specs': {
+            'validate': types.Dict.validate
+        }
+    }
+
+
 class ComposedNode(ModelBaseWithTimeStamp):
 
     path = "/nodes"
