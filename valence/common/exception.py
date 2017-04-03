@@ -99,12 +99,19 @@ class NotFound(ValenceError):
 
 class BadRequest(ValenceError):
 
-    def __init__(self, detail='bad request', request_id=FAKE_REQUEST_ID):
+    def __init__(self, detail='bad request', request_id=FAKE_REQUEST_ID,
+                 code=None):
         self.request_id = request_id
         self.status = http_client.BAD_REQUEST
-        self.code = "BadRequest"
+        self.code = code or "BadRequest"
         self.title = "Malformed or Missing Payload in Request"
         self.detail = detail
+
+
+class ValidationError(BadRequest):
+    def __init__(self, detail='Validation Error', request_id=None):
+        super(ValidationError, self).__init__(detail=detail,
+                                              code='ValidationError')
 
 
 def _error(error_code, http_status, error_title, error_detail,
