@@ -21,16 +21,18 @@ from six.moves import http_client
 
 from valence.common import constants
 from valence.common import exception
-from valence import config as cfg
+import valence.conf
 from valence.redfish import redfish
 from valence.tests.unit.fakes import redfish_fakes as fakes
+
+CONF = valence.conf.CONF
 
 
 class TestRedfish(TestCase):
 
     def test_get_rfs_url(self):
-        cfg.podm_url = "https://127.0.0.1:8443"
-        expected = urljoin(cfg.podm_url, "redfish/v1/Systems/1")
+        CONF.podm.url = "https://127.0.0.1:8443"
+        expected = urljoin(CONF.podm.url, "redfish/v1/Systems/1")
 
         # test without service_ext
         result = redfish.get_rfs_url("/Systems/1/")
@@ -59,8 +61,8 @@ class TestRedfish(TestCase):
         self.assertEqual(expected, result)
 
     def test_get_rfs_url_with_tailing_slash(self):
-        cfg.podm_url = "https://127.0.0.1:8443/"
-        expected = urljoin(cfg.podm_url, "redfish/v1/Systems/1")
+        CONF.podm.url = "https://127.0.0.1:8443/"
+        expected = urljoin(CONF.podm.url, "redfish/v1/Systems/1")
 
         # test without service_ext
         result = redfish.get_rfs_url("/Systems/1/")
@@ -346,6 +348,7 @@ class TestRedfish(TestCase):
     def test_assemble_node_failed(self, mock_request, mock_get_url,
                                   mock_delete_node):
         """Test allocate resource conflict when compose node"""
+        CONF.set_override('url', 'http://localhost:8442/', group='podm')
         mock_get_url.return_value = '/redfish/v1/Nodes'
 
         # Fake response for getting nodes root
@@ -355,7 +358,7 @@ class TestRedfish(TestCase):
         fake_node_allocation_conflict = mock.MagicMock()
         fake_node_allocation_conflict.status_code = http_client.CREATED
         fake_node_allocation_conflict.headers['Location'] = \
-            os.path.normpath("/".join([cfg.podm_url, 'redfish/v1/Nodes/1']))
+            os.path.normpath("/".join([CONF.podm.url, 'redfish/v1/Nodes/1']))
 
         # Fake response for getting url of node assembling
         fake_node_detail = fakes.mock_request_get(fakes.fake_node_detail(),
@@ -381,6 +384,7 @@ class TestRedfish(TestCase):
     def test_assemble_node_success(self, mock_request, mock_get_url,
                                    mock_delete_node, mock_get_node_by_id):
         """Test compose node successfully"""
+        CONF.set_override('url', 'http://localhost:8442/', group='podm')
         mock_get_url.return_value = '/redfish/v1/Nodes'
 
         # Fake response for getting nodes root
@@ -390,7 +394,7 @@ class TestRedfish(TestCase):
         fake_node_allocation_conflict = mock.MagicMock()
         fake_node_allocation_conflict.status_code = http_client.CREATED
         fake_node_allocation_conflict.headers['Location'] = \
-            os.path.normpath("/".join([cfg.podm_url, 'redfish/v1/Nodes/1']))
+            os.path.normpath("/".join([CONF.podm.url, 'redfish/v1/Nodes/1']))
 
         # Fake response for getting url of node assembling
         fake_node_detail = fakes.mock_request_get(fakes.fake_node_detail(),
