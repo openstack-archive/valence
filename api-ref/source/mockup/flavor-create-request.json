@@ -1,0 +1,13 @@
+{
+  "name": "test",
+  "properties": {
+    "memory": {
+      "capacity_mib": "3000",
+      "type": "DDR2"
+    },
+    "processor": {
+      "total_cores": "10",
+      "model": "Intel"
+    }
+  }
+}
