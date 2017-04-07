@@ -19,6 +19,7 @@ from six.moves import http_client
 
 from valence.common import utils
 from valence.controller import nodes
+from valence.validation import validator
 
 
 class Nodes(Resource):
@@ -27,6 +28,7 @@ class Nodes(Resource):
         return utils.make_response(
             http_client.OK, nodes.Node.list_composed_nodes())
 
+    @validator.check_input('compose_node_schema')
     def post(self):
         return utils.make_response(
             http_client.OK, nodes.Node.compose_node(request.get_json()))
