@@ -70,5 +70,27 @@ podmanager_schema = {
 
 
 jsonschema.Draft4Validator.check_schema(podmanager_schema)
+
+compose_node_with_flavor = {
+    'type': 'object',
+    'properties': {
+        'name': {'type': 'string'},
+        'description': {'type': 'string'},
+        'flavor_id': {'type': 'string'}
+    },
+    'required': ['name', 'flavor_id'],
+    'additionalProperties': False,
+}
+
+compose_node_schema = {
+    'anyOf': [
+        compose_node_with_flavor,
+        flavor_schema,
+        ]
+}
+
+jsonschema.Draft4Validator.check_schema(compose_node_schema)
+
 SCHEMAS = {'flavor_schema': flavor_schema,
-           'podmanager_schema': podmanager_schema, }
+           'podmanager_schema': podmanager_schema,
+           'compose_node_schema': compose_node_schema, }
