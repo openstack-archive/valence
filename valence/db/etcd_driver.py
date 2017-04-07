@@ -20,6 +20,7 @@ import etcd
 from oslo_utils import uuidutils
 import six
 
+from valence.common import exception
 from valence.common import singleton
 import valence.conf
 from valence.db import models
@@ -72,9 +73,7 @@ class EtcdDriver(object):
             resp = self.client.read(models.PodManager.etcd_path(
                 podmanager_uuid))
         except etcd.EtcdKeyNotFound:
-            # TODO(lin.a.yang): after exception module got merged, raise
-            # valence specific DBNotFound exception here
-            raise Exception(
+            raise exception.PodManagerNotFound(
                 'Pod manager not found {0} in database.'.format(
                     podmanager_uuid))
 
@@ -113,9 +112,8 @@ class EtcdDriver(object):
         try:
             resp = self.client.read(models.Flavor.etcd_path(flavor_uuid))
         except etcd.EtcdKeyNotFound:
-            # TODO(ntpttr): Change this to a valence specific exception
-            # when the exceptions module is merged.
-            raise Exception('Flavor {0} not found.'.format(flavor_uuid))
+            raise exception.FlavorNotFound(
+                'Flavor {0} not found.'.format(flavor_uuid))
 
         return translate_to_models(resp, models.Flavor.path)
 
@@ -165,9 +163,7 @@ class EtcdDriver(object):
             resp = self.client.read(models.ComposedNode.etcd_path(
                 composed_node_uuid))
         except etcd.EtcdKeyNotFound:
-            # TODO(lin.a.yang): after exception module got merged, raise
-            # valence specific DBNotFound exception here
-            raise Exception(
+            raise exception.NodeNotFound(
                 'Composed node not found {0} in database.'.format(
                     composed_node_uuid))
 

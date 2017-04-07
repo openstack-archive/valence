@@ -18,6 +18,7 @@ import etcd
 import freezegun
 import mock
 
+from valence.common import exception
 from valence.db import api as db_api
 from valence.tests.unit.db import utils
 
@@ -90,11 +91,12 @@ class TestDBAPI(unittest.TestCase):
         podmanager = utils.get_test_podmanager()
         mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
 
-        with self.assertRaises(Exception) as context:  # noqa: H202
+        with self.assertRaises(
+            exception.PodManagerNotFound) as context:  # noqa: H202
             db_api.Connection.get_podmanager_by_uuid(podmanager['uuid'])
 
         self.assertTrue('Pod manager not found {0} in database.'.format(
-            podmanager['uuid']) in str(context.exception))
+            podmanager['uuid']) in str(context.exception.detail))
         mock_etcd_read.assert_called_with(
             '/pod_managers/' + podmanager['uuid'])
 
@@ -103,11 +105,12 @@ class TestDBAPI(unittest.TestCase):
         flavor = utils.get_test_flavor()
         mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
 
-        with self.assertRaises(Exception) as context:  # noqa: H202
+        with self.assertRaises(
+            exception.FlavorNotFound) as context:  # noqa: H202
             db_api.Connection.get_flavor_by_uuid(flavor['uuid'])
 
         self.assertTrue('Flavor {0} not found.'.format(
-            flavor['uuid']) in str(context.exception))
+            flavor['uuid']) in str(context.exception.detail))
         mock_etcd_read.assert_called_with('/flavors/' + flavor['uuid'])
 
     @mock.patch('etcd.Client.delete')
@@ -216,11 +219,12 @@ class TestDBAPI(unittest.TestCase):
         node = utils.get_test_composed_node_db_info()
         mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
 
-        with self.assertRaises(Exception) as context:  # noqa: H202
+        with self.assertRaises(
+            exception.NodeNotFound) as context:  # noqa: H202
             db_api.Connection.get_composed_node_by_uuid(node['uuid'])
 
         self.assertTrue('Composed node not found {0} in database.'.format(
-            node['uuid']) in str(context.exception))
+            node['uuid']) in str(context.exception.detail))
         mock_etcd_read.assert_called_once_with(
             '/nodes/' + node['uuid'])
 

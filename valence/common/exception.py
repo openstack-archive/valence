@@ -142,3 +142,21 @@ def confirmation(request_id=FAKE_REQUEST_ID, confirm_code='',
     confirm_obj.code = confirm_code
     confirm_obj.detail = confirm_detail
     return confirm_obj.as_dict()
+
+
+class PodManagerNotFound(NotFound):
+    def __init__(self, detail='Pod manager not found'):
+        self.detail = detail
+        self.title = "Pod Manager Not Found"
+
+
+class FlavorNotFound(NotFound):
+    def __init__(self, detail='Flavor not found'):
+        self.detail = detail
+        self.title = "Flavor Not Found"
+
+
+class NodeNotFound(NotFound):
+    def __init__(self, detail='Node not found'):
+        self.detail = detail
+        self.title = "Node Not Found"
