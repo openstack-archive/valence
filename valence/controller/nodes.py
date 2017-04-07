@@ -77,9 +77,6 @@ class Node(object):
                 "processor": {}
             }
 
-        if not("name" in request_body and request_body["name"].strip()):
-            raise exception.BadRequest(
-                detail="Please specify a name of the node to compose")
         name = request_body["name"]
         # "description" is optional
         description = request_body.get("description", "")

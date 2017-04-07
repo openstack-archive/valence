@@ -113,3 +113,49 @@ class TestPodmanagerApi(TestApiValidation):
         response = json.loads(response.data.decode())
         self.assertEqual(400, response['status'])
         self.assertEqual('ValidationError', response['code'])
+
+class TestNodeApi(TestApiValidation):
+
+    @mock.patch('valence.controller.nodes.Node.compose_node')
+    def test_compose_request_using_properties(self, mock_compose):
+        req = {
+            "name": "test_request",
+            "properties": {
+                "memory": {
+                    "capacity_mib": "4000",
+                    "type": "DDR3"
+                },
+                "processor": {
+                    "model": "Intel",
+                    "total_cores": "4"
+                }
+            }
+        }
+        mock_compose.return_value = req
+        resp = self.app.post('/v1/nodes',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        self.assertEqual(200, resp.status_code)
+
+    @mock.patch('valence.controller.nodes.Node.compose_node')
+    def test_compose_request_using_flavor(self, mock_compose):
+        req = {
+            "name": "test_request1",
+            "flavor_id": "test_flavor"
+        }
+        mock_compose.return_value = req
+        resp = self.app.post('/v1/nodes',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        self.assertEqual(200, resp.status_code)
+
+    def test_compose_request_invalid_params(self):
+        req = {
+            "name": "test_request1",
+        }
+        resp = self.app.post('/v1/nodes',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        response = json.loads(resp.data.decode())
+        self.assertEqual(400, response['status'])
+        self.assertEqual('ValidationError', response['code'])
