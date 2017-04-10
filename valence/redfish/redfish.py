@@ -13,7 +13,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import json
 import logging
 import os
 
@@ -82,33 +81,68 @@ def send_request(resource, method="GET", **kwargs):
 
 
 def filter_chassis(jsonContent, filterCondition):
-    returnJSONObj = {}
     returnMembers = []
     members = jsonContent['Members']
     for member in members:
         resource = member['@odata.id']
         resp = send_request(resource)
-        memberJsonObj = resp.json()
-        chassisType = memberJsonObj['ChassisType']
+        member_detail = resp.json()
+        chassisType = member_detail['ChassisType']
         if chassisType == filterCondition:
-            returnMembers.append(member)
-        returnJSONObj["Members"] = returnMembers
-        returnJSONObj["Members@odata.count"] = len(returnMembers)
-    return returnJSONObj
+            returnMembers.append(member_detail)
+    return returnMembers
 
 
-def racks():
+def list_racks(filters={}, show_detail=False):
     chassis_url = get_base_resource_url("Chassis")
-    jsonContent = send_request(chassis_url)
-    racks = filter_chassis(jsonContent, "Rack")
-    return json.dumps(racks)
+    resp = send_request(chassis_url)
+    json_content = resp.json()
+    raw_racks = filter_chassis(json_content, "Rack")
+    racks = []
+    filterPassed = True
+
+    for rack in raw_racks:
+
+        if any(filters):
+            filterPassed = utils.match_conditions(rack, filters)
+        if not filterPassed:
+            continue
+
+        rack_info = {}
+
+        rack_id = rack["Id"]
+        rack_name = rack["Name"]
+        rack_systems = get_systems_in_chassis(rack)
+        rack_info.update({"id": rack_id, "name": rack_name,
+                          "systems": rack_systems})
+        if show_detail:
+            manufacturer = rack["Manufacturer"]
+            model = rack["Model"]
+            description = rack["Description"]
+            serial_number = rack["SerialNumber"]
+            rack_info.update({"manufacturer": manufacturer,
+                              "model": model,
+                              "description": description,
+                              "serial_number": serial_number})
+        racks.append(rack_info)
+    return racks
 
 
-def pods():
-    chassis_url = get_base_resource_url("Chassis")
-    jsonContent = send_request(chassis_url)
-    pods = filter_chassis(jsonContent, "Pod")
-    return json.dumps(pods)
+def show_rack(rack_id):
+    return list_racks({"Id": rack_id}, show_detail=True)
+
+
+def get_systems_in_chassis(chassis, total_systems=[]):
+    for chassis_link in chassis["Links"]["Contains"]:
+        resp = send_request(chassis_link["@odata.id"])
+        chassis = resp.json()
+        total_systems = get_systems_in_chassis(chassis, total_systems)
+    for system_link in chassis["Links"]["ComputerSystems"]:
+        resp = send_request(system_link["@odata.id"])
+        system = resp.json()
+        if system["UUID"] not in total_systems:
+            total_systems.append(system["UUID"])
+    return total_systems
 
 
 def pod_status(pod_url, username, password):
