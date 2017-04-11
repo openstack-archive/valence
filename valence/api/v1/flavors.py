@@ -35,6 +35,13 @@ class Flavors(Resource):
         return utils.make_response(http_client.OK,
                                    flavors.create_flavor(request.get_json()))
 
+
+class Flavor(Resource):
+
+    def get(self, flavorid):
+        return utils.make_response(http_client.OK,
+                                   flavors.get_flavor(flavorid))
+
     def delete(self, flavorid):
         return utils.make_response(http_client.OK,
                                    flavors.delete_flavor(flavorid))
