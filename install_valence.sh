@@ -30,13 +30,19 @@ sed "s/\${CHUID}/$CURR_USER/"  "$DIR"/doc/source/init/valence.conf > /tmp/valenc
 sed -i "s#PYHOME#$PYHOME#" /tmp/valence.conf
 mv /tmp/valence.conf /etc/init/valence.conf
 
+# Generate initial sample config file.
+echo "Generating sample config file" >> $install_log
+pip install tox
+tox -egenconfig
+
 # create conf directory for valence if it doesn't exist
 if [ ! -d "/etc/valence" ]; then
     mkdir /etc/valence
 fi
 chown "$CURR_USER":"$CURR_USER" /etc/valence
 VALENCE_CONF=/etc/valence/valence.conf
-cp etc/valence/valence.conf.sample /etc/valence/valence.conf
+cp etc/valence.conf.sample /etc/valence/valence.conf
+
 sudo sed -i "s/#debug\s*=.*/debug=true/" $VALENCE_CONF
 sudo sed -i "s/#log_level\s*=.*/log_level=debug/" $VALENCE_CONF
 sudo sed -i "s/#log_file\s*=.*/log_file=/var/log/valence/valence.log/" $VALENCE_CONF
