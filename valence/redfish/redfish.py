@@ -357,9 +357,15 @@ def show_ram_details(ram_url):
                                          status_code=resp.status_code)
     respdata = resp.json()
     ram_details = {
+<<<<<<< d0b9f60bba7da640631db9e14bab2189a54dc74d
         "data_width_bit": respdata.get("DataWidthBits"),
         "speed_mhz": respdata.get("OperatingSpeedMHz"),
         "total_memory_mb": respdata.get("CapacityMiB")
+=======
+        "data_width_bit": respdata["DataWidthBits"],
+        "speed_mhz": respdata["OperatingSpeedMhz"],
+        "total_memory_mb": respdata["CapacityMiB"]
+>>>>>>> Fix issue in node-create
     }
 
     return ram_details
