@@ -248,7 +248,7 @@ def fake_processor():
 def fake_memory():
     return {
         "DataWidthBits": 0,
-        "OperatingSpeedMHz": 2400,
+        "OperatingSpeedMhz": 2400,
         "CapacityMiB": 8192
     }
 

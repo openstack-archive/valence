@@ -358,7 +358,7 @@ def show_ram_details(ram_url):
     respdata = resp.json()
     ram_details = {
         "data_width_bit": respdata["DataWidthBits"],
-        "speed_mhz": respdata["OperatingSpeedMHz"],
+        "speed_mhz": respdata["OperatingSpeedMhz"],
         "total_memory_mb": respdata["CapacityMiB"]
     }
 
