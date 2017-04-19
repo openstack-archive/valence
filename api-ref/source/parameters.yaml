@@ -35,6 +35,12 @@ pod_uuid:
   in: path
   required: true
   type: string
+node_index:
+  description: |
+    The redfish index of composed node.
+  in: path
+  required: true
+  type: string
 system_ident:
   description: |
     The UUID or name of Compute System.
