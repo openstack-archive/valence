@@ -60,6 +60,9 @@ class V1Base(base.ObjectBase):
         'systems': {
             'validate': types.List(types.Custom(link.Link)).validate
         },
+        'pod_managers': {
+            'validate': types.List(types.Custom(link.Link)).validate
+        },
     }
 
     @staticmethod
@@ -100,6 +103,11 @@ class V1Base(base.ObjectBase):
                                           v1_base_url,
                                           'systems', '',
                                           bookmark=True)]
+        v1.pod_managers = [link.Link.make_link('self', v1_base_url,
+                                               'pod_managers', ''),
+                           link.Link.make_link('bookmark', v1_base_url,
+                                               'pod_managers', '',
+                                               bookmark=True)]
         return v1
 
 
