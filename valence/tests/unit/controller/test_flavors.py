@@ -14,6 +14,7 @@ from unittest import TestCase
 
 import mock
 
+from valence.common import exception
 from valence.controller import flavors
 from valence.tests.unit.fakes import flavor_fakes as fakes
 
@@ -34,7 +35,10 @@ class TestFlavors(TestCase):
 
     @mock.patch('valence.db.api.Connection.delete_flavor')
     def test_delete_flavor(self, mock_db_delete_flavor):
-        expected = "Deleted flavor 00000000-0000-0000-0000-000000000000"
+        expected = exception.confirmation(
+            confirm_code="DELETED",
+            confirm_detail="This flavor {0} has been deleted successfully"
+                           .format("00000000-0000-0000-0000-000000000000"))
         result = flavors.delete_flavor("00000000-0000-0000-0000-000000000000")
         self.assertEqual(expected, result)
 

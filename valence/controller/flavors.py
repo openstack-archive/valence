@@ -14,6 +14,7 @@
 
 import logging
 
+from valence.common import exception
 from valence.db import api as db_api
 
 LOG = logging.getLogger(__name__)
@@ -36,7 +37,10 @@ def create_flavor(values):
 
 def delete_flavor(flavorid):
     db_api.Connection.delete_flavor(flavorid)
-    return "Deleted flavor {0}".format(flavorid)
+    return exception.confirmation(
+        confirm_code="DELETED",
+        confirm_detail="This flavor {0} has been deleted successfully"
+                       .format(flavorid))
 
 
 def update_flavor(flavorid, values):
