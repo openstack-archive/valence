@@ -334,10 +334,10 @@ def show_cpu_details(cpu_url):
                                          status_code=resp.status_code)
     respdata = resp.json()
     cpu_details = {
-        "instruction_set": respdata["InstructionSet"],
-        "model": respdata["Model"],
-        "speed_mhz": respdata["MaxSpeedMHz"],
-        "total_core": respdata["TotalCores"]
+        "instruction_set": respdata.get("InstructionSet"),
+        "model": respdata.get("Model"),
+        "speed_mhz": respdata.get("MaxSpeedMHz"),
+        "total_core": respdata.get("TotalCores")
     }
 
     return cpu_details
@@ -357,9 +357,9 @@ def show_ram_details(ram_url):
                                          status_code=resp.status_code)
     respdata = resp.json()
     ram_details = {
-        "data_width_bit": respdata["DataWidthBits"],
-        "speed_mhz": respdata["OperatingSpeedMHz"],
-        "total_memory_mb": respdata["CapacityMiB"]
+        "data_width_bit": respdata.get("DataWidthBits"),
+        "speed_mhz": respdata.get("OperatingSpeedMHz"),
+        "total_memory_mb": respdata.get("CapacityMiB")
     }
 
     return ram_details
@@ -379,25 +379,25 @@ def show_network_details(network_url):
                                          status_code=resp.status_code)
     respdata = resp.json()
     network_details = {
-        "speed_mbps": respdata["SpeedMbps"],
-        "mac": respdata["MACAddress"],
-        "status": respdata["Status"]["State"],
+        "speed_mbps": respdata.get("SpeedMbps"),
+        "mac": respdata.get("MACAddress"),
+        "status": respdata.get("Status", {}).get("State"),
         "ipv4": [{
-            "address": ipv4["Address"],
-            "subnet_mask": ipv4["SubnetMask"],
-            "gateway": ipv4["Gateway"]
-        } for ipv4 in respdata["IPv4Addresses"]]
+            "address": ipv4.get("Address"),
+            "subnet_mask": ipv4.get("SubnetMask"),
+            "gateway": ipv4.get("Gateway")
+        } for ipv4 in respdata.get("IPv4Addresses", [])]
     }
 
-    if respdata["VLANs"]:
+    if respdata.get("VLANs"):
         # Get vlan info
-        vlan_url_list = urls2list(respdata["VLANs"]["@odata.id"])
+        vlan_url_list = urls2list(respdata.get("VLANs", {}).get("@odata.id"))
         network_details["vlans"] = []
         for url in vlan_url_list:
             vlan_info = send_request(url).json()
             network_details["vlans"].append({
-                "vlanid": vlan_info["VLANId"],
-                "status": vlan_info["Status"]["State"]
+                "vlanid": vlan_info.get("VLANId"),
+                "status": vlan_info.get("Status", {}).get("State")
             })
 
     return network_details
@@ -423,13 +423,13 @@ def get_node_by_id(node_index, show_detail=True):
     respdata = resp.json()
 
     node_detail = {
-        "name": respdata["Name"],
-        "node_power_state": respdata["PowerState"],
+        "name": respdata.get("Name"),
+        "node_power_state": respdata.get("PowerState"),
         "links": [
             link.Link.make_link('self', flask.request.url_root,
-                                'nodes/' + respdata["UUID"], '').as_dict(),
+                                'nodes/' + respdata.get("UUID"), '').as_dict(),
             link.Link.make_link('bookmark', flask.request.url_root,
-                                'nodes/' + respdata["UUID"], '',
+                                'nodes/' + respdata.get("UUID"), '',
                                 bookmark=True).as_dict()
         ]
     }
@@ -437,22 +437,25 @@ def get_node_by_id(node_index, show_detail=True):
     if show_detail:
         node_detail.update({
             "index": node_index,
-            "description": respdata["Description"],
-            "node_state": respdata["ComposedNodeState"],
-            "boot_source": respdata["Boot"]["BootSourceOverrideTarget"],
-            "target_boot_source": respdata["Boot"]["BootSourceOverrideTarget"],
-            "health_status": respdata["Status"]["Health"],
+            "description": respdata.get("Description"),
+            "node_state": respdata.get("ComposedNodeState"),
+            "boot_source":
+                respdata.get("Boot", {}).get("BootSourceOverrideTarget"),
+            "target_boot_source":
+                respdata.get("Boot", {}).get("BootSourceOverrideTarget"),
+            "health_status": respdata.get("Status", {}).get("Health"),
             # TODO(lin.yang): "pooled_group_id" is used to check whether
             # resource can be assigned to composed node, which should be
             # supported after PODM API v2.1 released.
             "pooled_group_id": None,
             "metadata": {
-                "processor": [show_cpu_details(i["@odata.id"])
-                              for i in respdata["Links"]["Processors"]],
-                "memory": [show_ram_details(i["@odata.id"])
-                           for i in respdata["Links"]["Memory"]],
-                "network": [show_network_details(i["@odata.id"])
-                            for i in respdata["Links"]["EthernetInterfaces"]]
+                "processor": [show_cpu_details(i.get("@odata.id")) for i in
+                              respdata.get("Links", {}).get("Processors", [])],
+                "memory": [show_ram_details(i.get("@odata.id")) for i in
+                           respdata.get("Links", {}).get("Memory", [])],
+                "network": [show_network_details(i.get("@odata.id")) for i in
+                            respdata.get("Links", {}).get(
+                                "EthernetInterfaces", [])]
             }
         })
 
