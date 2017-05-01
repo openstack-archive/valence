@@ -1,0 +1,11 @@
+[Unit]
+Description=Valence Server
+
+[Service]
+Environment=PYTHON_HOME=/usr/local/bin/valence
+ExecStart=/usr/local/bin/valence
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
