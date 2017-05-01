@@ -1,0 +1,11 @@
+[Unit]
+Description=etcd key value store
+
+[Service]
+Type=notify
+ExecStart=/usr/local/bin/etcd
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
