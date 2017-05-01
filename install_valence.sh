@@ -29,6 +29,8 @@ sed "s/\${CHUID}/$CURR_USER/"  "$DIR"/doc/source/init/valence.conf > /tmp/valenc
 # Use alternate sed delimiter because path will have /
 sed -i "s#PYHOME#$PYHOME#" /tmp/valence.conf
 mv /tmp/valence.conf /etc/init/valence.conf
+# Valence service file required at this path for starting service using systemctl
+cp etc/services/valence.service /etc/systemd/system/valence.service
 
 # Generate initial sample config file.
 echo "Generating sample config file" >> $install_log
@@ -69,16 +71,21 @@ curl -L ${DOWNLOAD_URL}/${ETCD_VER}/etcd-${ETCD_VER}-linux-amd64.tar.gz -o /tmp/
 mkdir -p /var/etcd && tar xzvf /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz -C /var/etcd --strip-components=1
 chown "$CURR_USER":"$CURR_USER" /var/etcd
 mv /var/etcd/etcd /usr/local/bin/etcd && mv /var/etcd/etcdctl /usr/local/bin/etcdctl
+# Etcd service file required at this path for starting service using systemctl
+cp etc/services/etcd.service /etc/systemd/system/etcd.service
 
 sed "s/\${CHUID}/$CURR_USER/"  "$DIR"/doc/source/init/etcd.conf > /etc/init/etcd.conf
 
 echo "Starting etcd database" >> $install_log
 service etcd start
+ETCD_STATUS=$?
 sleep 2
 timeout=30
 attempt=1
-until [[ $(service etcd status) = "etcd start/running"* ]]
+until [[ $ETCD_STATUS = 0 ]]
 do
+  service etcd status
+  ETCD_STATUS=$?
   sleep 1
   attempt=$((attempt+1))
   if [[ $attempt -eq timeout ]]
