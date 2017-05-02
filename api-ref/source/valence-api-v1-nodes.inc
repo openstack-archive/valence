@@ -332,7 +332,7 @@ Response
 Manage Node
 ===========
 
-.. rest_method:: POST /v1/nodes/managed
+.. rest_method:: POST /v1/nodes/manage
 
 Manage a composed node already existing in the RSD rack by creating a
 Valence database entry for it, allowing Valence to perform all operations

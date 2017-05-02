@@ -160,3 +160,52 @@ class TestNodeApi(TestApiValidation):
         response = json.loads(resp.data.decode())
         self.assertEqual(400, response['status'])
         self.assertEqual('ValidationError', response['code'])
+
+    @mock.patch('valence.controller.nodes.Node.manage_node')
+    def test_node_manage_request(self, mock_manage):
+        req = {"node_index": "fake-index"}
+        mock_manage.return_value = {"uuid": "ea8e2a25-2901-438d-8157-de7ffd",
+                                    "links": "fake-links",
+                                    "name": "fake-node",
+                                    "index": "fake-index"}
+        resp = self.app.post('/v1/nodes/manage',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        mock_manage.assert_called_once_with(req)
+        self.assertEqual(200, resp.status_code)
+
+    def test_node_manage_request_invalid(self):
+        req = {"node_id": "fake-index"}
+        resp = self.app.post('/v1/nodes/manage',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        response = json.loads(resp.data.decode())
+        self.assertEqual(400, response['status'])
+        self.assertEqual('ValidationError', response['code'])
+
+    @mock.patch('valence.controller.nodes.Node.node_action')
+    def test_node_action_request(self, mock_action):
+        req = {
+            "Reset": {
+                "Type": "On"
+            }
+        }
+        mock_action.return_value = None
+        resp = self.app.post('/v1/nodes/fake-node/action',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        mock_action.assert_called_once_with('fake-node', req)
+        self.assertEqual(204, resp.status_code)
+
+    def test_node_action_request_invalid(self):
+        req = {
+            "Boot": {
+                "Type": "On"
+            }
+        }
+        resp = self.app.post('/v1/nodes/fake-node/action',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        response = json.loads(resp.data.decode())
+        self.assertEqual(400, response['status'])
+        self.assertEqual('ValidationError', response['code'])

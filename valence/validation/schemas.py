@@ -68,7 +68,6 @@ podmanager_schema = {
     'additionalProperties': False,
 }
 
-
 jsonschema.Draft4Validator.check_schema(podmanager_schema)
 
 compose_node_with_flavor = {
@@ -91,6 +90,54 @@ compose_node_schema = {
 
 jsonschema.Draft4Validator.check_schema(compose_node_schema)
 
+node_manage_schema = {
+    'type': 'object',
+    'properties': {
+        'node_index': {'type': 'string'},
+    },
+    'required': ['node_index'],
+    'additionalProperties': False,
+}
+
+jsonschema.Draft4Validator.check_schema(node_manage_schema)
+
+node_action_schema = {
+    'type': 'object',
+    'properties': {
+        'Boot': {
+            'type': 'object',
+            'properties': {
+                'Enabled': {
+                    'enum': ['Once', 'Continuous']
+                    },
+                'Target': {
+                    'enum': ['Pxe', 'Hdd', 'None']
+                    },
+            },
+            'required': ['Enabled', 'Target'],
+            'additionalProperties': False,
+        },
+        'Reset': {
+            'type': 'object',
+            'properties': {
+                'Type': {
+                    'enum': ['On', 'ForceOn', 'ForceOff', 'GracefulRestart']
+                    },
+            },
+            'required': ['Type'],
+            'additionalProperties': False,
+        },
+    },
+    'oneOf': [
+        {'required': ['Boot']},
+        {'required': ['Reset']}],
+    'additionalProperties': False,
+}
+
+jsonschema.Draft4Validator.check_schema(node_action_schema)
+
 SCHEMAS = {'flavor_schema': flavor_schema,
            'podmanager_schema': podmanager_schema,
-           'compose_node_schema': compose_node_schema, }
+           'compose_node_schema': compose_node_schema,
+           'node_manage_schema': node_manage_schema,
+           'node_action_schema': node_action_schema, }
