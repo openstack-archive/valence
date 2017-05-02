@@ -48,6 +48,7 @@ class Node(Resource):
 
 class NodeAction(Resource):
 
+    @validator.check_input('node_action_schema')
     def post(self, node_uuid):
         return utils.make_response(
             http_client.OK,
@@ -56,6 +57,7 @@ class NodeAction(Resource):
 
 class NodeManage(Resource):
 
+    @validator.check_input('node_manage_schema')
     def post(self):
         return utils.make_response(
             http_client.OK, nodes.Node.manage_node(request.get_json()))
