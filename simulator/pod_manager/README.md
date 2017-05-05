@@ -5,9 +5,10 @@ PodManager Mocked Up Environment
 As we know, PodManager now has two announced API spec versions 1.2.1 and
  2.1, so we mocked up both of them to match valence's whole requirement.
 
-Please note that the mocked up date just use for test and development.
-The two mocked up PodManager environment are use same Flask framework
-with same layout logic. Understand on can easily understand another.
+Please note that the mocked up environment is just for testing and development.
+The two mocked up PodManager environment are using same Flask framework
+with same layout logic. Both versions can be easily understood by understanding 
+one of them.
 
 And our final result for this simulator would generate a PodManager
 which looks like this : http://imgur.com/a/FP4c9
