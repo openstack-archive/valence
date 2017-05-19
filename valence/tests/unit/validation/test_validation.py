@@ -3,6 +3,7 @@ import json
 
 import mock
 from oslotest import base
+from six.moves import http_client
 
 from valence.api import app as flask_app
 from valence.common import constants
@@ -32,7 +33,7 @@ class TestFlavorApi(TestApiValidation):
         response = self.app.post('/v1/flavors',
                                  content_type='application/json',
                                  data=json.dumps(flavor))
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(http_client.OK, response.status_code)
         mock_create.assert_called_once_with(flavor)
 
     def test_flavor_create_incorrect_param(self):
@@ -44,7 +45,7 @@ class TestFlavorApi(TestApiValidation):
                                  content_type='application/json',
                                  data=json.dumps(self.flavor))
         response = json.loads(response.data.decode())
-        self.assertEqual(400, response['status'])
+        self.assertEqual(http_client.BAD_REQUEST, response['status'])
         self.assertEqual('ValidationError', response['code'])
 
         # Test invalid key
@@ -53,7 +54,7 @@ class TestFlavorApi(TestApiValidation):
                                  content_type='application/json',
                                  data=json.dumps(self.flavor))
         response = json.loads(response.data.decode())
-        self.assertEqual(400, response['status'])
+        self.assertEqual(http_client.BAD_REQUEST, response['status'])
         self.assertEqual('ValidationError', response['code'])
 
 
@@ -84,7 +85,7 @@ class TestPodmanagerApi(TestApiValidation):
         response = self.app.post('/v1/pod_managers',
                                  content_type='application/json',
                                  data=json.dumps(values))
-        self.assertEqual(200, response.status_code)
+        self.assertEqual(http_client.OK, response.status_code)
 
     def test_check_creation_incomplete_parameters(self):
         incomplete_values = {
@@ -95,7 +96,7 @@ class TestPodmanagerApi(TestApiValidation):
                                  content_type='application/json',
                                  data=json.dumps(incomplete_values))
         response = json.loads(response.data.decode())
-        self.assertEqual(400, response['status'])
+        self.assertEqual(http_client.BAD_REQUEST, response['status'])
         self.assertEqual('ValidationError', response['code'])
 
     def test_check_creation_invalid_authentication(self):
@@ -111,7 +112,7 @@ class TestPodmanagerApi(TestApiValidation):
                                  content_type='application/json',
                                  data=json.dumps(invalid_auth_values))
         response = json.loads(response.data.decode())
-        self.assertEqual(400, response['status'])
+        self.assertEqual(http_client.BAD_REQUEST, response['status'])
         self.assertEqual('ValidationError', response['code'])
 
 
@@ -136,7 +137,7 @@ class TestNodeApi(TestApiValidation):
         resp = self.app.post('/v1/nodes',
                              content_type='application/json',
                              data=json.dumps(req))
-        self.assertEqual(200, resp.status_code)
+        self.assertEqual(http_client.OK, resp.status_code)
 
     @mock.patch('valence.controller.nodes.Node.compose_node')
     def test_compose_request_using_flavor(self, mock_compose):
@@ -148,7 +149,7 @@ class TestNodeApi(TestApiValidation):
         resp = self.app.post('/v1/nodes',
                              content_type='application/json',
                              data=json.dumps(req))
-        self.assertEqual(200, resp.status_code)
+        self.assertEqual(http_client.OK, resp.status_code)
 
     def test_compose_request_invalid_params(self):
         req = {
@@ -158,5 +159,54 @@ class TestNodeApi(TestApiValidation):
                              content_type='application/json',
                              data=json.dumps(req))
         response = json.loads(resp.data.decode())
-        self.assertEqual(400, response['status'])
+        self.assertEqual(http_client.BAD_REQUEST, response['status'])
+        self.assertEqual('ValidationError', response['code'])
+
+    @mock.patch('valence.controller.nodes.Node.manage_node')
+    def test_node_manage_request(self, mock_manage):
+        req = {"node_index": "fake-index"}
+        mock_manage.return_value = {"uuid": "ea8e2a25-2901-438d-8157-de7ffd",
+                                    "links": "fake-links",
+                                    "name": "fake-node",
+                                    "index": "fake-index"}
+        resp = self.app.post('/v1/nodes/manage',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        mock_manage.assert_called_once_with(req)
+        self.assertEqual(http_client.OK, resp.status_code)
+
+    def test_node_manage_request_invalid(self):
+        req = {"node_id": "fake-index"}
+        resp = self.app.post('/v1/nodes/manage',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        response = json.loads(resp.data.decode())
+        self.assertEqual(http_client.BAD_REQUEST, response['status'])
+        self.assertEqual('ValidationError', response['code'])
+
+    @mock.patch('valence.controller.nodes.Node.node_action')
+    def test_node_action_request(self, mock_action):
+        req = {
+            "Reset": {
+                "Type": "On"
+            }
+        }
+        mock_action.return_value = None
+        resp = self.app.post('/v1/nodes/fake-node/action',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        mock_action.assert_called_once_with('fake-node', req)
+        self.assertEqual(http_client.NO_CONTENT, resp.status_code)
+
+    def test_node_action_request_invalid(self):
+        req = {
+            "Boot": {
+                "Type": "On"
+            }
+        }
+        resp = self.app.post('/v1/nodes/fake-node/action',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        response = json.loads(resp.data.decode())
+        self.assertEqual(http_client.BAD_REQUEST, response['status'])
         self.assertEqual('ValidationError', response['code'])
