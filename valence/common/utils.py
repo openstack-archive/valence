@@ -22,7 +22,6 @@ import logging
 
 import flask
 from oslo_utils import uuidutils
-import six
 
 LOG = logging.getLogger(__name__)
 
@@ -101,7 +100,7 @@ def make_response(status_code, content="", headers=None):
     # Set additional header for http response
     if headers:
         if isinstance(headers, dict):
-            for header, value in six.iteritems(headers):
+            for header, value in headers.items():
                 response.headers[header] = value
         else:
             raise ValueError("Response headers should be dict object.")
