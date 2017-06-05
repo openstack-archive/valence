@@ -61,21 +61,21 @@ def _check_updation(values):
 
 
 def get_podm_list():
-    return map(lambda x: x.as_dict(), db_api.Connection.list_podmanager())
+    return db_api.Connection.list_podmanager()
 
 
 def get_podm_by_uuid(uuid):
-    return db_api.Connection.get_podmanager_by_uuid(uuid).as_dict()
+    return db_api.Connection.get_podmanager_by_uuid(uuid)
 
 
 def create_podm(values):
     values = _check_creation(values)
-    return db_api.Connection.create_podmanager(values).as_dict()
+    return db_api.Connection.create_podmanager(values)
 
 
 def update_podm(uuid, values):
     values = _check_updation(values)
-    return db_api.Connection.update_podmanager(uuid, values).as_dict()
+    return db_api.Connection.update_podmanager(uuid, values)
 
 
 def delete_podm_by_uuid(uuid):

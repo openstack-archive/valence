@@ -38,12 +38,11 @@ class TestDBAPI(unittest.TestCase):
         mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
 
         result = db_api.Connection.create_podmanager(podmanager)
-        self.assertEqual(podmanager, result.as_dict())
+        self.assertEqual(utils.get_test_podm_without_auth(), result)
         mock_etcd_read.assert_called_with(
             '/pod_managers/' + podmanager['uuid'])
         mock_etcd_write.assert_called_with(
-            '/pod_managers/' + podmanager['uuid'],
-            json.dumps(result.as_dict()))
+            '/pod_managers/' + podmanager['uuid'], json.dumps(podmanager))
 
     @freezegun.freeze_time('2017-01-01')
     @mock.patch('etcd.Client.write')
@@ -68,9 +67,9 @@ class TestDBAPI(unittest.TestCase):
 
         mock_etcd_read.return_value = utils.get_etcd_read_result(
             podmanager['uuid'], json.dumps(podmanager))
-        result = db_api.Connection.get_podmanager_by_uuid(podmanager['uuid'])
+        res = db_api.Connection.get_podmanager_by_uuid(podmanager['uuid'])
 
-        self.assertEqual(podmanager, result.as_dict())
+        self.assertEqual(utils.get_test_podm_without_auth(), res)
         mock_etcd_read.assert_called_with(
             '/pod_managers/' + podmanager['uuid'])
 
@@ -149,13 +148,12 @@ class TestDBAPI(unittest.TestCase):
 
         result = db_api.Connection.update_podmanager(
             podmanager['uuid'], {'url': 'new_url'})
-
-        self.assertEqual(podmanager, result.as_dict())
+        self.assertEqual(utils.get_test_podm_without_auth(), result)
         mock_etcd_read.assert_called_with(
             '/pod_managers/' + podmanager['uuid'])
         mock_etcd_write.assert_called_with(
             '/pod_managers/' + podmanager['uuid'],
-            json.dumps(result.as_dict()))
+            json.dumps(result))
 
     @freezegun.freeze_time("2017-01-01")
     @mock.patch('etcd.Client.write')
