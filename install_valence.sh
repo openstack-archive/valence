@@ -25,7 +25,7 @@ echo "Detected PYTHON HOME: $PYHOME" >> $install_log
 
 # Copy the config files
 echo "Setting up valence config" >> $install_log
-sed "s/\${CHUID}/$CURR_USER/"  "$DIR"/doc/source/init/valence.conf > /tmp/valence.conf
+sed "s/\${CHUID}/$CURR_USER/"  "$DIR"/etc/services-startup-conf/valence.conf > /tmp/valence.conf
 # Use alternate sed delimiter because path will have /
 sed -i "s#PYHOME#$PYHOME#" /tmp/valence.conf
 mv /tmp/valence.conf /etc/init/valence.conf
@@ -70,7 +70,7 @@ mkdir -p /var/etcd && tar xzvf /tmp/etcd-${ETCD_VER}-linux-amd64.tar.gz -C /var/
 chown "$CURR_USER":"$CURR_USER" /var/etcd
 mv /var/etcd/etcd /usr/local/bin/etcd && mv /var/etcd/etcdctl /usr/local/bin/etcdctl
 
-sed "s/\${CHUID}/$CURR_USER/"  "$DIR"/doc/source/init/etcd.conf > /etc/init/etcd.conf
+sed "s/\${CHUID}/$CURR_USER/"  "$DIR"/etc/services-startup-conf/etcd.conf > /etc/init/etcd.conf
 
 echo "Starting etcd database" >> $install_log
 service etcd start
