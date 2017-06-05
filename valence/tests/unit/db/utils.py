@@ -47,7 +47,12 @@ def get_test_podmanager(**kwargs):
         'uuid': kwargs.get('uuid', 'ea8e2a25-2901-438d-8157-de7ffd68d051'),
         'name': kwargs.get('name', 'fake_name'),
         'url': kwargs.get('url', 'fake_url'),
-        'auth': kwargs.get('auth', 'fake_auth'),
+        'authentication': [{
+            "auth_items": {
+                "password": "fake-pass",
+                "username": "fake-admin",
+            },
+            "type": "basic"}],
         'status': kwargs.get('size', 'fake_status'),
         'description': kwargs.get('description', 'fake_description'),
         'location': kwargs.get('location', 'fake_location'),
@@ -56,6 +61,12 @@ def get_test_podmanager(**kwargs):
         'created_at': kwargs.get('created_at', '2016-01-01 00:00:00 UTC'),
         'updated_at': kwargs.get('updated_at', '2016-01-01 00:00:00 UTC'),
     }
+
+
+def get_test_podm_without_auth():
+    details = get_test_podmanager()
+    details.pop('authentication')
+    return details
 
 
 def get_test_flavor(**kwargs):

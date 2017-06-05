@@ -52,6 +52,12 @@ def translate_to_models(etcd_resp, model_type):
     return ret
 
 
+def _hide_auth_details(resp):
+    resp = resp.as_dict()
+    resp.pop('authentication', None)
+    return resp
+
+
 @six.add_metaclass(singleton.Singleton)
 class EtcdDriver(object):
     """etcd Driver."""
@@ -62,13 +68,12 @@ class EtcdDriver(object):
     def create_podmanager(self, values):
         if not values.get('uuid'):
             values['uuid'] = uuidutils.generate_uuid()
-
         podmanager = models.PodManager(**values)
         podmanager.save()
+        # Don't display authentication details to user for security.
+        return _hide_auth_details(podmanager)
 
-        return podmanager
-
-    def get_podmanager_by_uuid(self, podmanager_uuid):
+    def get_podmanager_by_uuid(self, podmanager_uuid, hidden=False):
         try:
             resp = self.client.read(models.PodManager.etcd_path(
                 podmanager_uuid))
@@ -79,17 +84,21 @@ class EtcdDriver(object):
                 'Pod manager not found {0} in database.'.format(
                     podmanager_uuid))
 
-        return translate_to_models(resp, models.PodManager.path)
+        resp = translate_to_models(resp, models.PodManager.path)
+        if hidden:
+            return resp
+        else:
+            return _hide_auth_details(resp)
 
     def delete_podmanager(self, podmanager_uuid):
-        podmanager = self.get_podmanager_by_uuid(podmanager_uuid)
+        podmanager = self.get_podmanager_by_uuid(podmanager_uuid, True)
         podmanager.delete()
 
     def update_podmanager(self, podmanager_uuid, values):
-        podmanager = self.get_podmanager_by_uuid(podmanager_uuid)
+        podmanager = self.get_podmanager_by_uuid(podmanager_uuid, True)
         podmanager.update(values)
 
-        return podmanager
+        return _hide_auth_details(podmanager)
 
     def list_podmanager(self):
         # TODO(lin.a.yang): support filter for listing podmanager
@@ -105,8 +114,9 @@ class EtcdDriver(object):
         podmanagers = []
         for podm in resp:
             if podm.value is not None:
-                podmanagers.append(translate_to_models(
-                    podm, models.PodManager.path))
+                data = _hide_auth_details(translate_to_models(
+                                          podm, models.PodManager.path))
+                podmanagers.append(data)
 
         return podmanagers
 

@@ -20,6 +20,7 @@ import mock
 
 from valence.common import exception
 from valence.db import api as db_api
+from valence.db import models
 from valence.tests.unit.db import utils
 
 
@@ -33,17 +34,15 @@ class TestDBAPI(unittest.TestCase):
         fake_utcnow = '2017-01-01 00:00:00 UTC'
         podmanager['created_at'] = fake_utcnow
         podmanager['updated_at'] = fake_utcnow
-
         # Mark this uuid don't exist in etcd db
         mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
-
+        podm = models.PodManager(**podmanager)
         result = db_api.Connection.create_podmanager(podmanager)
-        self.assertEqual(podmanager, result.as_dict())
+        self.assertItemsEqual(utils.get_test_podm_without_auth(), result)
         mock_etcd_read.assert_called_with(
             '/pod_managers/' + podmanager['uuid'])
         mock_etcd_write.assert_called_with(
-            '/pod_managers/' + podmanager['uuid'],
-            json.dumps(result.as_dict()))
+            '/pod_managers/' + podmanager['uuid'], json.dumps(podm.as_dict()))
 
     @freezegun.freeze_time('2017-01-01')
     @mock.patch('etcd.Client.write')
@@ -68,9 +67,9 @@ class TestDBAPI(unittest.TestCase):
 
         mock_etcd_read.return_value = utils.get_etcd_read_result(
             podmanager['uuid'], json.dumps(podmanager))
-        result = db_api.Connection.get_podmanager_by_uuid(podmanager['uuid'])
+        res = db_api.Connection.get_podmanager_by_uuid(podmanager['uuid'])
 
-        self.assertEqual(podmanager, result.as_dict())
+        self.assertEqual(utils.get_test_podm_without_auth(), res)
         mock_etcd_read.assert_called_with(
             '/pod_managers/' + podmanager['uuid'])
 
@@ -147,15 +146,15 @@ class TestDBAPI(unittest.TestCase):
         podmanager['updated_at'] = fake_utcnow
         podmanager.update({'url': 'new_url'})
 
+        podm = models.PodManager(**podmanager)
         result = db_api.Connection.update_podmanager(
             podmanager['uuid'], {'url': 'new_url'})
-
-        self.assertEqual(podmanager, result.as_dict())
+        self.assertItemsEqual(utils.get_test_podm_without_auth(), result)
         mock_etcd_read.assert_called_with(
             '/pod_managers/' + podmanager['uuid'])
         mock_etcd_write.assert_called_with(
             '/pod_managers/' + podmanager['uuid'],
-            json.dumps(result.as_dict()))
+            json.dumps(podm.as_dict()))
 
     @freezegun.freeze_time("2017-01-01")
     @mock.patch('etcd.Client.write')
