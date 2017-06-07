@@ -30,9 +30,12 @@ sed "s/\${CHUID}/$CURR_USER/"  "$DIR"/etc/services-startup-conf/valence.conf > /
 sed -i "s#PYHOME#$PYHOME#" /tmp/valence.conf
 mv /tmp/valence.conf /etc/init/valence.conf
 
+# Install dependencies
+apt-get install -y python-dev
+pip install wrapt tox rfc3986 babel keystoneauth1
+
 # Generate initial sample config file.
 echo "Generating sample config file" >> $install_log
-pip install tox
 tox -egenconfig
 
 # create conf directory for valence if it doesn't exist
