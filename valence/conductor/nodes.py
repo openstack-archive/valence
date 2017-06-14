@@ -22,7 +22,6 @@ from valence.controller import flavors
 from valence.db import api as db_api
 from valence.provision import driver
 from valence.redfish import redfish
-from valence.conductor.rpcapi import ComputeAPI as compute_api
 
 LOG = logging.getLogger(__name__)
 
@@ -65,17 +64,39 @@ class Node(object):
         """Compose new node
 
         param request_body: parameter for node composition
-        return: compose node request status
         """
+        
+        if "flavor_id" in request_body:
+            flavor = flavors.get_flavor(request_body["flavor_id"])
+            requirements = flavor["properties"]
+        elif "properties" in request_body:
+            requirements = request_body["properties"]
+        else:
+            requirements = {
+                "memory": {},
+                "processor": {}
+            }
 
-        uuid = utils.generate_uuid()
-        request_body["uuid"] = uuid
-        compute_api.compose_node("compute", request_body)
-        res = {
-                "status":"compose request accepted",
-                "uuid": uuid
-              }
-        return res
+        name = request_body["name"]
+        # "description" is optional
+        description = request_body.get("description")
+
+        compose_request = cls._create_compose_request(name,
+                                                      description,
+                                                      requirements)
+
+        # Call redfish to compose new node
+        composed_node = redfish.compose_node(compose_request)
+        composed_node["name"] = request_body["name"]
+        composed_node["uuid"] = request_body["uuid"]
+        # Only store the minimum set of composed node info into backend db,
+        # since other fields like power status may be changed and valence is
+        # not aware.
+        node_db = {"uuid": composed_node["uuid"],
+                   "name": composed_node["name"],
+                   "index": composed_node["index"],
+                   "links": composed_node["links"]}
+        db_api.Connection.create_composed_node(node_db)
 
     @classmethod
     def manage_node(cls, request_body):
