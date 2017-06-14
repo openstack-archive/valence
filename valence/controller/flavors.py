@@ -12,37 +12,24 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import logging
-
-from valence.common import exception
-from valence.db import api as db_api
-
-LOG = logging.getLogger(__name__)
-
+from valence.conductor.rpcapi import ComputeAPI as compute_api
 
 def list_flavors():
-    flavor_models = db_api.Connection.list_flavors()
-    return [flavor.as_dict() for flavor in flavor_models]
-
+    flavor_models = compute_api.list_flavors()
+    return flavor_models
 
 def get_flavor(flavorid):
-    flavor = db_api.Connection.get_flavor_by_uuid(flavorid)
-    return flavor.as_dict()
-
+    flavor = compute_api.get_flavor(flavorid)
+    return flavor
 
 def create_flavor(values):
-    flavor = db_api.Connection.create_flavor(values)
-    return flavor.as_dict()
-
+    flavor = compute_api.create_flavor(values)
+    return flavor
 
 def delete_flavor(flavorid):
-    db_api.Connection.delete_flavor(flavorid)
-    return exception.confirmation(
-        confirm_code="DELETED",
-        confirm_detail="This flavor {0} has been deleted successfully"
-                       .format(flavorid))
-
+    res = compute_api.delete_flavor(flavorid)
+    return res
 
 def update_flavor(flavorid, values):
-    flavor = db_api.Connection.update_flavor(flavorid, values)
-    return flavor.as_dict()
+    flavor = compute_api.update_flavor(flavorid, values)
+    return flavor
