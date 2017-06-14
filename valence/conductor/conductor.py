@@ -12,29 +12,13 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from valence.conductor.rpcapi import ComputeAPI as compute_api
+
+from valence.conductor import flavors
+from valence.conductor import nodes
+from valence.conductor import podmanagers
 
 
-def list_flavors():
-    flavor_models = compute_api.list_flavors()
-    return flavor_models
+class ComputeAPI(flavors.Flavor, nodes.Node, podmanagers.Podmanager):
 
-
-def get_flavor(flavorid):
-    flavor = compute_api.get_flavor(flavorid)
-    return flavor
-
-
-def create_flavor(values):
-    flavor = compute_api.create_flavor(values)
-    return flavor
-
-
-def delete_flavor(flavorid):
-    res = compute_api.delete_flavor(flavorid)
-    return res
-
-
-def update_flavor(flavorid, values):
-    flavor = compute_api.update_flavor(flavorid, values)
-    return flavor
+    def __init__(self):
+        super(ComputeAPI, self).__init__()
