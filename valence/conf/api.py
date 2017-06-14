@@ -59,8 +59,20 @@ log_option = [
                default='debug',
                help=_('The granularity of Error log outputs.')),
     cfg.StrOpt('log_format',
-               default='%(asctime)s %(name)-4s %(levelname)-4s %(message)s',
+               default='%(asctime)s %(name)s %(filename)s:%(lineno)d'
+                       + ' [%(levelname)s] %(message)s',
                help=_('The log format.')),
+    cfg.DictOpt('field_styles',
+                default={'asctime': {'color': ''}},
+                help=_('The log field styles.')),
+    cfg.DictOpt('level_styles',
+                default={'notice': {'color': 'blue', 'bold': True},
+                         'info': {'color': ""},
+                         'error': {'color': 'red'},
+                         'debug': {'color': 'green'},
+                         'warning': {'color': 'yellow'},
+                         'verbose': {'color': 'magenta'}},
+                help=_('The log level styles.')),
 ]
 
 api_group = cfg.OptGroup(name='api',

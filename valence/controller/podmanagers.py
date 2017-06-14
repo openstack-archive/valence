@@ -12,14 +12,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import logging
-
-from valence.common import constants
 from valence.common import exception
-from valence.db import api as db_api
-from valence.redfish import redfish
-
-LOG = logging.getLogger(__name__)
+from valence.conductor.rpcapi import ComputeAPI as compute_api
 
 
 def _check_creation(values):
@@ -41,7 +35,6 @@ def _check_creation(values):
 
     # input status
     values['status'] = get_podm_status(values['url'], values['authentication'])
-
     return values
 
 
@@ -61,26 +54,24 @@ def _check_updation(values):
 
 
 def get_podm_list():
-    return map(lambda x: x.as_dict(), db_api.Connection.list_podmanager())
+    return compute_api.get_podm_list()
 
 
 def get_podm_by_uuid(uuid):
-    return db_api.Connection.get_podmanager_by_uuid(uuid).as_dict()
+    return compute_api.get_podm_by_uuid(uuid)
 
 
 def create_podm(values):
-    values = _check_creation(values)
-    return db_api.Connection.create_podmanager(values).as_dict()
+    return compute_api.create_podm(values)
 
 
 def update_podm(uuid, values):
-    values = _check_updation(values)
-    return db_api.Connection.update_podmanager(uuid, values).as_dict()
+    return compute_api.update_podm(uuid, values)
 
 
 def delete_podm_by_uuid(uuid):
     # TODO(hubian) this need to break the links between podm and its Nodes
-    return db_api.Connection.delete_podmanager(uuid)
+    return compute_api.delete_podm_by_uuid(uuid)
 
 
 def get_podm_status(url, authentication):
@@ -91,12 +82,4 @@ def get_podm_status(url, authentication):
 
     :returns: status of the pod manager
     """
-    for auth in authentication:
-        # TODO(Hubian) Only consider and support basic auth type here.
-        # After decided to support other auth type this would be improved.
-        if auth['type'] == constants.PODM_AUTH_BASIC_TYPE:
-            username = auth['auth_items']['username']
-            password = auth['auth_items']['password']
-            return redfish.pod_status(url, username, password)
-
-    return constants.PODM_STATUS_UNKNOWN
+    return compute_api.get_podm_status(url, authentication)

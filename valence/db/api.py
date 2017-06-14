@@ -159,3 +159,47 @@ class Connection(object):
         :returns: A list of all composed node.
         """
         return cls.dbdriver.list_composed_nodes()
+
+    @classmethod
+    def get_task_by_uuid(cls, task_uuid):
+        """Get specific task by its taskid.
+
+        :param task_uuid: The uuid of the task.
+        :returns: The task with the specified taskid.
+        """
+        return cls.dbdriver.get_task_by_uuid(task_uuid)
+
+    @classmethod
+    def delete_task(cls, task_uuid):
+        """Delete a task by its uuid.
+
+        :param task_uuid: The uuid of the task to delete.
+        """
+        cls.dbdriver.delete_task(task_uuid)
+
+    @classmethod
+    def list_tasks(cls):
+        """Get a list of all tasks.
+
+        :returns: A list of all tasks.
+        """
+        return cls.dbdriver.list_tasks()
+
+    @classmethod
+    def update_task(cls, task_uuid, values):
+        """Update properties of a specified task.
+
+        :param task_uuid: The uuid of the task to update.
+        :param values: The properties to be updated.
+        :returns: The updated task.
+        """
+        return cls.dbdriver.update_task(task_uuid, values)
+
+    @classmethod
+    def create_task(cls, values):
+        """Create a new task.
+
+        :param values: The properties of the new task.
+        :returns: The created task.
+        """
+        return cls.dbdriver.create_task(values)

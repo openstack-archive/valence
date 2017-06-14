@@ -212,3 +212,26 @@ class ComposedNode(ModelBaseWithTimeStamp):
             'validate': types.Text.validate
         }
     }
+
+
+class Task(ModelBaseWithTimeStamp):
+
+    path = "/tasks"
+
+    fields = {
+        'uuid': {
+            'validate': types.Text.validate
+        },
+        'status': {
+            'validate': types.Text.validate
+        },
+        'request': {
+            'validate': types.Text.validate
+        },
+        'request_body': {
+            'validate': types.Dict.validate
+        },
+        'Failure_reason': {
+            'validate': types.Text.validate
+        }
+    }

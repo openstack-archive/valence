@@ -15,7 +15,7 @@ from unittest import TestCase
 import mock
 
 from valence.common import exception
-from valence.controller import flavors
+from valence.conductor.flavors import Flavor as flavors
 from valence.tests.unit.fakes import flavor_fakes as fakes
 
 
