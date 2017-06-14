@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Intel, Inc.
+# Copyright (c) 2016 Intel, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -12,18 +12,19 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from oslo_config import cfg
+from valence.conductor.rpcapi import ComputeAPI as compute_api
 
-from valence.conf import api
-from valence.conf import conductor
-from valence.conf import etcd
-from valence.conf import ironic_client
-from valence.conf import podm
 
-CONF = cfg.CONF
+def list_tasks():
+    tasks = compute_api.list_tasks()
+    return tasks
 
-api.register_opts(CONF)
-etcd.register_opts(CONF)
-ironic_client.register_opts(CONF)
-podm.register_opts(CONF)
-conductor.register_opts(CONF)
+
+def get_task(taskid):
+    task = compute_api.get_task(taskid)
+    return task
+
+
+def delete_task(taskid):
+    res = compute_api.delete_task(taskid)
+    return res

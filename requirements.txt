@@ -20,3 +20,7 @@ oslo.i18n>=2.1.0 # Apache-2.0
 python-ironicclient>=1.11.0  # Apache-2.0
 python-keystoneclient>=3.8.0 # Apache-2.0
 stevedore>=1.20.0 # Apache-2.0
+zerorpc>=0.6.1 # Apache-2.0
+zmq>=0.0.0 # Apache-2.0
+coloredlogs>=7.0 # Apache-2.0
+verboselogs>=1.6 # Apache-2.0

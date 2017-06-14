@@ -44,6 +44,8 @@ def translate_to_models(etcd_resp, model_type):
         ret = models.Flavor(**data)
     elif model_type == models.ComposedNode.path:
         ret = models.ComposedNode(**data)
+    elif model_type == models.Task.path:
+        ret = models.Task(**data)
     else:
         # TODO(lin.a.yang): after exception module got merged, raise
         # valence specific InvalidParameter exception here
@@ -202,3 +204,46 @@ class EtcdDriver(object):
                     node, models.ComposedNode.path))
 
         return composed_nodes
+
+    def get_task_by_uuid(self, task_uuid):
+        try:
+            resp = self.client.read(models.Task.etcd_path(task_uuid))
+        except etcd.EtcdKeyNotFound:
+            # TODO(ntpttr): Change this to a valence specific exception
+            # when the exceptions module is merged.
+            raise Exception('Task {0} not found.'.format(task_uuid))
+
+        return translate_to_models(resp, models.Task.path)
+
+    def create_task(self, values):
+        task = models.Task(**values)
+        task.save()
+
+        return task
+
+    def delete_task(self, task_uuid):
+        task = self.get_task_by_uuid(task_uuid)
+        task.delete()
+
+    def update_task(self, task_uuid, values):
+        task = self.get_task_by_uuid(task_uuid)
+        task.update(values)
+
+        return task
+
+    def list_tasks(self):
+        try:
+            resp = getattr(self.client.read(models.Task.path),
+                           'children', None)
+        except etcd.EtcdKeyNotFound:
+            LOG.error("Path '/tasks' does not exist, the etcd server may "
+                      "not have been initialized appropriately.")
+            raise
+
+        tasks = []
+        for task in resp:
+            if task.value is not None:
+                tasks.append(translate_to_models(
+                             task, models.Task.path))
+
+        return tasks
