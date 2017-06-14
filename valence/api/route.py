@@ -27,6 +27,7 @@ import valence.api.v1.podmanagers as v1_podmanagers
 import valence.api.v1.racks as v1_racks
 import valence.api.v1.storages as v1_storages
 import valence.api.v1.systems as v1_systems
+import valence.api.v1.tasks as v1_tasks
 import valence.api.v1.version as v1_version
 from valence.common import exception
 from valence.common import utils
@@ -96,6 +97,11 @@ api.add_resource(v1_systems.Systems, '/v1/systems/<string:systemid>',
 api.add_resource(v1_flavors.Flavors, '/v1/flavors', endpoint='flavors')
 api.add_resource(v1_flavors.Flavor, '/v1/flavors/<string:flavorid>',
                  endpoint='flavor')
+
+# Task(s) operations
+api.add_resource(v1_tasks.Tasks, '/v1/tasks', endpoint='tasks')
+api.add_resource(v1_tasks.Task, '/v1/tasks/<string:taskid>',
+                 endpoint='task')
 
 # Storage(s) operations
 api.add_resource(v1_storages.StoragesList, '/v1/storages', endpoint='storages')

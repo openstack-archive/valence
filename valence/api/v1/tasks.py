@@ -12,29 +12,29 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from valence.conductor.rpcapi import ComputeAPI as compute_api
+import logging
+
+from flask_restful import Resource
+from six.moves import http_client
+
+from valence.common import utils
+from valence.controller import tasks
+
+LOG = logging.getLogger(__name__)
 
 
-def list_flavors():
-    flavor_models = compute_api.list_flavors()
-    return flavor_models
+class Task(Resource):
+
+    def get(self, taskid):
+        return utils.make_response(http_client.OK,
+                                   tasks.get_task(taskid))
+
+    def delete(self, taskid):
+        return utils.make_response(http_client.OK,
+                                   tasks.delete_task(taskid))
 
 
-def get_flavor(flavorid):
-    flavor = compute_api.get_flavor(flavorid)
-    return flavor
+class Tasks(Resource):
 
-
-def create_flavor(values):
-    flavor = compute_api.create_flavor(values)
-    return flavor
-
-
-def delete_flavor(flavorid):
-    res = compute_api.delete_flavor(flavorid)
-    return res
-
-
-def update_flavor(flavorid, values):
-    flavor = compute_api.update_flavor(flavorid, values)
-    return flavor
+    def get(self):
+        return utils.make_response(http_client.OK, tasks.list_tasks())

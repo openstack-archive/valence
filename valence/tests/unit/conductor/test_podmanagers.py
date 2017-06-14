@@ -17,13 +17,13 @@ import mock
 
 from valence.common import constants
 from valence.common.exception import BadRequest
-from valence.controller import podmanagers
+from valence.conductor.podmanagers import Podmanager as podmanagers
 
 
 class TestPodManagers(unittest.TestCase):
 
-    @mock.patch('valence.controller.podmanagers.get_podm_list')
-    @mock.patch('valence.controller.podmanagers.get_podm_status')
+    @mock.patch('valence.conductor.podmanagers.Podmanager.get_podm_list')
+    @mock.patch('valence.conductor.podmanagers.Podmanager.get_podm_status')
     def test_check_creation(self, mock_get_podm_status, mock_get_podm_list):
         mock_get_podm_list.return_value = [
             {"name": "test1",
@@ -53,7 +53,7 @@ class TestPodManagers(unittest.TestCase):
                                                      values['authentication'])
         mock_get_podm_list.assert_called_once_with()
 
-    @mock.patch('valence.controller.podmanagers.get_podm_list')
+    @mock.patch('valence.conductor.podmanagers.Podmanager.get_podm_list')
     def test_check_creation_duplicate_Exception(self, mock_get_podm_list):
         mock_get_podm_list.return_value = [
             {"name": "test1",

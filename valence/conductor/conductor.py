@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Intel, Inc.
+# Copyright (c) 2016 Intel, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -12,18 +12,17 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from oslo_config import cfg
 
-from valence.conf import api
-from valence.conf import conductor
-from valence.conf import etcd
-from valence.conf import ironic_client
-from valence.conf import podm
+from valence.conductor import flavors
+from valence.conductor import nodes
+from valence.conductor import podmanagers
+from valence.conductor import tasks
 
-CONF = cfg.CONF
 
-api.register_opts(CONF)
-etcd.register_opts(CONF)
-ironic_client.register_opts(CONF)
-podm.register_opts(CONF)
-conductor.register_opts(CONF)
+class ComputeAPI(flavors.Flavor,
+                 nodes.Node,
+                 podmanagers.Podmanager,
+                 tasks.Task):
+
+    def __init__(self):
+        super(ComputeAPI, self).__init__()
