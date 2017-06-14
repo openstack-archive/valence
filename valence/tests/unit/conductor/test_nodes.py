@@ -17,7 +17,7 @@ import unittest
 import mock
 
 from valence.common import exception
-from valence.controller import nodes
+from valence.conductor import nodes
 from valence.tests.unit.db import utils as test_utils
 from valence.tests.unit.fakes import flavor_fakes
 from valence.tests.unit.fakes import node_fakes
@@ -75,7 +75,7 @@ class TestAPINodes(unittest.TestCase):
 
     @mock.patch("valence.db.api.Connection.create_composed_node")
     @mock.patch("valence.common.utils.generate_uuid")
-    @mock.patch("valence.controller.nodes.Node.list_composed_nodes")
+    @mock.patch("valence.conductor.nodes.Node.list_composed_nodes")
     @mock.patch("valence.redfish.redfish.get_node_by_id")
     def test_manage_node(self, mock_get_node, mock_list_nodes,
                          mock_generate_uuid, mock_db_create_composed_node):
@@ -98,7 +98,7 @@ class TestAPINodes(unittest.TestCase):
         nodes.Node.manage_node({"node_index": "1"})
         mock_db_create_composed_node.assert_called_once_with(node_db)
 
-    @mock.patch("valence.controller.nodes.Node.list_composed_nodes")
+    @mock.patch("valence.conductor.nodes.Node.list_composed_nodes")
     @mock.patch("valence.redfish.redfish.get_node_by_id")
     def test_manage_already_managed_node(self, mock_get_node, mock_list_nodes):
         manage_node = node_fakes.get_test_composed_node()
@@ -114,9 +114,8 @@ class TestAPINodes(unittest.TestCase):
                           {"node_index": "1"})
 
     @mock.patch("valence.db.api.Connection.create_composed_node")
-    @mock.patch("valence.common.utils.generate_uuid")
     @mock.patch("valence.redfish.redfish.compose_node")
-    def test_compose_node(self, mock_redfish_compose_node, mock_generate_uuid,
+    def test_compose_node(self, mock_redfish_compose_node,
                           mock_db_create_composed_node):
         """Test compose node successfully"""
         node_hw = node_fakes.get_test_composed_node()
@@ -127,23 +126,20 @@ class TestAPINodes(unittest.TestCase):
 
         mock_redfish_compose_node.return_value = node_hw
         uuid = 'ea8e2a25-2901-438d-8157-de7ffd68d051'
-        mock_generate_uuid.return_value = uuid
 
         result = nodes.Node.compose_node(
             {"name": node_hw["name"],
-             "description": node_hw["description"]})
-        expected = nodes.Node._show_node_brief_info(node_hw)
-
+             "description": node_hw["description"],
+             "uuid": uuid})
+        expected = None
         self.assertEqual(expected, result)
         mock_db_create_composed_node.assert_called_once_with(node_db)
 
     @mock.patch("valence.db.api.Connection.create_composed_node")
-    @mock.patch("valence.common.utils.generate_uuid")
     @mock.patch("valence.redfish.redfish.compose_node")
-    @mock.patch("valence.controller.flavors.get_flavor")
+    @mock.patch("valence.conductor.flavors.Flavor.get_flavor")
     def test_compose_node_with_flavor(self, mock_get_flavor,
                                       mock_redfish_compose_node,
-                                      mock_generate_uuid,
                                       mock_db_create_composed_node):
         """Test node composition using a flavor for requirements"""
         node_hw = node_fakes.get_test_composed_node()
@@ -154,7 +150,6 @@ class TestAPINodes(unittest.TestCase):
 
         mock_redfish_compose_node.return_value = node_hw
         uuid = 'ea8e2a25-2901-438d-8157-de7ffd68d051'
-        mock_generate_uuid.return_value = uuid
 
         flavor = flavor_fakes.fake_flavor()
         mock_get_flavor.return_value = flavor
@@ -162,9 +157,9 @@ class TestAPINodes(unittest.TestCase):
         result = nodes.Node.compose_node(
             {"name": node_hw["name"],
              "description": node_hw["description"],
-             "flavor_id": flavor["uuid"]})
-        expected = nodes.Node._show_node_brief_info(node_hw)
-
+             "flavor_id": flavor["uuid"],
+             "uuid": uuid})
+        expected = None
         self.assertEqual(expected, result)
         mock_db_create_composed_node.assert_called_once_with(node_db)
         mock_get_flavor.assert_called_once_with(flavor["uuid"])
