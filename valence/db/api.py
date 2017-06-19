@@ -159,3 +159,48 @@ class Connection(object):
         :returns: A list of all composed node.
         """
         return cls.dbdriver.list_composed_nodes()
+
+    @classmethod
+    def create_storage_resource(cls, values):
+        """Create a new storage resource object.
+
+        :values: The properties for this storage resource.
+        :returns: A storage resource created.
+        """
+        return cls.dbdriver.create_storage_resource(values)
+
+    @classmethod
+    def get_storage_resource_by_uuid(cls, storage_resource_uuid):
+        """Get specific storage resource by its uuid.
+
+        :param storage_resource_uuid: The uuid of the storage resource.
+        :returns: A storage resource with this uuid.
+        """
+        return cls.dbdriver.get_storage_resource_by_uuid(storage_resource_uuid)
+
+    @classmethod
+    def delete_storage_resource(cls, storage_resource_uuid):
+        """Delete specific storage resource by its uuid.
+
+        :param storage_resource_uuid: The uuid of the storage resource.
+        """
+        cls.dbdriver.delete_storage_resource(storage_resource_uuid)
+
+    @classmethod
+    def update_storage_resource(cls, storage_resource_uuid, values):
+        """Update properties of a storage resource.
+
+        :param storage_resource_uuid: The uuid of the storage resource.
+        :values: The properties to be updated.
+        :returns: A storage resource model after it's updated.
+        """
+        return cls.dbdriver.update_storage_resource(storage_resource_uuid,
+                                                    values)
+
+    @classmethod
+    def list_storage_resources(cls):
+        """Get a list of all storage resources.
+
+        :returns: A list of all storage resource.
+        """
+        return cls.dbdriver.list_storage_resources()

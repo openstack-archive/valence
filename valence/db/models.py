@@ -212,3 +212,23 @@ class ComposedNode(ModelBaseWithTimeStamp):
             'validate': types.Text.validate
         }
     }
+
+
+class StorageResource(ModelBaseWithTimeStamp):
+
+    path = "/storage"
+
+    fields = {
+        'uuid': {
+            'validate': types.Text.validate
+        },
+        'type': {
+            'validate': types.Text.validate
+        },
+        'link': {
+            'validate': types.Text.validate
+        },
+        'pod_manager': {
+            'validate': types.Text.validate
+        }
+    }
