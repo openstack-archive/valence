@@ -44,6 +44,8 @@ def translate_to_models(etcd_resp, model_type):
         ret = models.Flavor(**data)
     elif model_type == models.ComposedNode.path:
         ret = models.ComposedNode(**data)
+    elif model_type == models.StorageResource.path:
+        ret = models.StorageResource(**data)
     else:
         # TODO(lin.a.yang): after exception module got merged, raise
         # valence specific InvalidParameter exception here
@@ -202,3 +204,48 @@ class EtcdDriver(object):
                     node, models.ComposedNode.path))
 
         return composed_nodes
+
+    def create_storage_resource(self, values):
+        storage_resource = models.StorageResource(**values)
+        storage_resource.save()
+
+        return storage_resource
+
+    def get_storage_resource_by_uuid(self, storage_resource_uuid):
+        try:
+            resp = self.client.read(models.StorageResource.etcd_path(
+                storage_resource_uuid))
+        except etcd.EtcdKeyNotFound:
+            raise exception.NotFound(
+                'Storage resource {0} not found in database.'.format(
+                    storage_resource_uuid))
+
+        return translate_to_models(resp, models.StorageResource.path)
+
+    def delete_storage_resource(self, storage_resource_uuid):
+        storage_resource = self.get_storage_resource_by_uuid(storage_resource_uuid)
+        storage_resource.delete()
+
+    def update_storage_resource(self, storage_resource_uuid, values):
+        storage_resource = self.get_storage_resource_by_uuid(storage_resource_uuid)
+        storage_resource.update(values)
+
+        return storage_resource
+
+    def list_storage_resource(self):
+        try:
+            resp = getattr(self.client.read(models.StorageResource.path),
+                           'children', None)
+        except etcd.EtcdKeyNotFound:
+            LOG.error("Path '/storage' does not exist, the etcd server "
+                      "may not have been initialized appropriately.")
+            raise
+
+        storage_resources = []
+        for resource in resp:
+            if resource.value is not None:
+                storage_resource.append(translate_to_models(
+                    node, models.StorageResource.path))
+
+        return storage_resources
+

@@ -259,3 +259,85 @@ class TestDBAPI(unittest.TestCase):
         mock_etcd_write.assert_called_with(
             '/nodes/' + node['uuid'],
             json.dumps(result.as_dict()))
+
+    @freezegun.freeze_time("2017-01-01")
+    @mock.patch('etcd.Client.write')
+    @mock.patch('etcd.Client.read')
+    def test_create_storage_resource(self, mock_etcd_read, mock_etcd_write):
+        storage_resource = utils.get_test_storage_resource()
+        fake_utcnow = '2017-01-01 00:00:00 UTC'
+        storage_resource['created_at'] = fake_utcnow
+        storage_resource['updated_at'] = fake_utcnow
+
+        # Mark that this uuid doesn't exist in etcd db
+        mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
+
+        result = db_api.Connection.create_storage_resource(storage_resource)
+        self.assertEqual(storage_resource, result.as_dict())
+        mock_etcd_read.assert_called_once_with(
+            '/storage/' + storage_resource['uuid'])
+        mock_etcd_write.assert_called_once_with(
+            '/storage/' + storage_resource['uuid'],
+            json.dumps(result.as_dict()))
+
+    @mock.patch('etcd.Client.read')
+    def test_get_storage_resource_by_uuid(self, mock_etcd_read):
+        storage_resource = utils.get_test_storage_resource()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            storage_resource['uuid'], json.dumps(storage_resource))
+        result = db_api.Connection.get_storage_resource_by_uuid(
+            storage_resource['uuid'])
+
+        self.assertEqual(storage_resource, result.as_dict())
+        mock_etcd_read.assert_called_once_with(
+            '/storage/' + storage_resource['uuid'])
+
+    @mock.patch('etcd.Client.read')
+    def test_get_storage_resource_not_found(self, mock_etcd_read):
+        storage_resource = utils.get_test_storage_resource()
+        mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
+
+        with self.assertRaises(exception.NotFound) as context:  # noqa: H202
+            db_api.Connection.get_storage_resource_by_uuid(storage_resource['uuid'])
+
+        self.assertTrue('Storage resource {0} not found in database.'.format(
+            storage_resource['uuid']) in str(context.exception.detail))
+        mock_etcd_read.assert_called_once_with(
+            '/storage/' + storage_resource['uuid'])
+
+    @mock.patch('etcd.Client.delete')
+    @mock.patch('etcd.Client.read')
+    def test_delete_storage_resource(self, mock_etcd_read, mock_etcd_delete):
+        storage_resource = utils.get_test_storage_resource()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            storage_resource['uuid'], json.dumps(storage_resource))
+        db_api.Connection.delete_storage_resource(storage_resource['uuid'])
+
+        mock_etcd_delete.assert_called_with(
+            '/storage/' + storage_resource['uuid'])
+
+    @freezegun.freeze_time("2017-01-01")
+    @mock.patch('etcd.Client.write')
+    @mock.patch('etcd.Client.read')
+    def test_update_storage_resource(self, mock_etcd_read, mock_etcd_write):
+        storage_resource = utils.get_test_storage_resource()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            storage_resource['uuid'], json.dumps(storage_resource))
+
+        fake_utcnow = '2017-01-01 00:00:00 UTC'
+        storage_resource['updated_at'] = fake_utcnow
+        storage_resource.update({'type': 'new_type'})
+
+        result = db_api.Connection.update_storage_resource(
+            storage_resource['uuid'], {'type': 'new_type'})
+
+        self.assertEqual(storage_resource, result.as_dict())
+        mock_etcd_read.assert_called_with(
+            '/storage/' + storage_resource['uuid'])
+        mock_etcd_write.assert_called_with(
+            '/storage/' + storage_resource['uuid'],
+            json.dumps(result.as_dict()))
+
