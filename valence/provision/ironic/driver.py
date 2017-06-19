@@ -67,7 +67,7 @@ class IronicDriver(driver.ProvisioningDriver):
             port_args = {'node_uuid': ironic_node.uuid,
                          'address': node_info['metadata']['network'][0]['mac']}
             ironic.port.create(**port_args)
-            db_api.Connection.update_composed_node(node_uuid,
+            db_api.Connection.update_podm_resource(node_uuid,
                                                    {'managed_by': 'ironic'})
             return exception.confirmation(
                 confirm_code="Node Registered",

@@ -183,79 +183,80 @@ class TestDBAPI(unittest.TestCase):
     @freezegun.freeze_time("2017-01-01")
     @mock.patch('etcd.Client.write')
     @mock.patch('etcd.Client.read')
-    def test_create_composed_node(self, mock_etcd_read, mock_etcd_write):
-        node = utils.get_test_composed_node_db_info()
+    def test_create_podm_resource(self, mock_etcd_read, mock_etcd_write):
+        resource = utils.get_test_podm_resource()
         fake_utcnow = '2017-01-01 00:00:00 UTC'
-        node['created_at'] = fake_utcnow
-        node['updated_at'] = fake_utcnow
+        resource['created_at'] = fake_utcnow
+        resource['updated_at'] = fake_utcnow
 
         # Mark this uuid don't exist in etcd db
         mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
 
-        result = db_api.Connection.create_composed_node(node)
-        self.assertEqual(node, result.as_dict())
+        result = db_api.Connection.create_podm_resource(resource)
+        self.assertEqual(resource, result.as_dict())
         mock_etcd_read.assert_called_once_with(
-            '/nodes/' + node['uuid'])
+            '/resources/' + resource['uuid'])
         mock_etcd_write.assert_called_once_with(
-            '/nodes/' + node['uuid'],
+            '/resources/' + resource['uuid'],
             json.dumps(result.as_dict()))
 
     @mock.patch('etcd.Client.read')
-    def test_get_composed_node_by_uuid(self, mock_etcd_read):
-        node = utils.get_test_composed_node_db_info()
+    def test_get_podm_resource_by_uuid(self, mock_etcd_read):
+        resource = utils.get_test_podm_resource()
 
         mock_etcd_read.return_value = utils.get_etcd_read_result(
-            node['uuid'], json.dumps(node))
-        result = db_api.Connection.get_composed_node_by_uuid(node['uuid'])
+            resource['uuid'], json.dumps(resource))
+        result = db_api.Connection.get_podm_resource_by_uuid(resource['uuid'])
 
-        self.assertEqual(node, result.as_dict())
+        self.assertEqual(resource, result.as_dict())
         mock_etcd_read.assert_called_once_with(
-            '/nodes/' + node['uuid'])
+            '/resources/' + resource['uuid'])
 
     @mock.patch('etcd.Client.read')
-    def test_get_composed_node_not_found(self, mock_etcd_read):
-        node = utils.get_test_composed_node_db_info()
+    def test_get_podm_resource_not_found(self, mock_etcd_read):
+        resource = utils.get_test_podm_resource()
         mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
 
         with self.assertRaises(exception.NotFound) as context:  # noqa: H202
-            db_api.Connection.get_composed_node_by_uuid(node['uuid'])
+            db_api.Connection.get_podm_resource_by_uuid(resource['uuid'])
 
-        self.assertTrue('Composed node not found {0} in database.'.format(
-            node['uuid']) in str(context.exception.detail))
+        self.assertTrue(
+            'Pod Manager Resource {0} not found in database.'.format(
+                resource['uuid']) in str(context.exception.detail))
         mock_etcd_read.assert_called_once_with(
-            '/nodes/' + node['uuid'])
+            '/resources/' + resource['uuid'])
 
     @mock.patch('etcd.Client.delete')
     @mock.patch('etcd.Client.read')
-    def test_delete_composed_node(self, mock_etcd_read, mock_etcd_delete):
-        node = utils.get_test_composed_node_db_info()
+    def test_delete_podm_resource(self, mock_etcd_read, mock_etcd_delete):
+        resource = utils.get_test_podm_resource()
 
         mock_etcd_read.return_value = utils.get_etcd_read_result(
-            node['uuid'], json.dumps(node))
-        db_api.Connection.delete_composed_node(node['uuid'])
+            resource['uuid'], json.dumps(resource))
+        db_api.Connection.delete_podm_resource(resource['uuid'])
 
         mock_etcd_delete.assert_called_with(
-            '/nodes/' + node['uuid'])
+            '/resources/' + resource['uuid'])
 
     @freezegun.freeze_time("2017-01-01")
     @mock.patch('etcd.Client.write')
     @mock.patch('etcd.Client.read')
-    def test_update_composed_node(self, mock_etcd_read, mock_etcd_write):
-        node = utils.get_test_composed_node_db_info()
+    def test_update_podm_resource(self, mock_etcd_read, mock_etcd_write):
+        resource = utils.get_test_podm_resource()
 
         mock_etcd_read.return_value = utils.get_etcd_read_result(
-            node['uuid'], json.dumps(node))
+            resource['uuid'], json.dumps(resource))
 
         fake_utcnow = '2017-01-01 00:00:00 UTC'
-        node['updated_at'] = fake_utcnow
-        node.update({'index': '2'})
+        resource['updated_at'] = fake_utcnow
+        resource.update({'resource_url': '/redfish/v1/Nodes/2'})
 
-        result = db_api.Connection.update_composed_node(
-            node['uuid'], {'index': '2'})
+        result = db_api.Connection.update_podm_resource(
+            resource['uuid'], {'resource_url': '/redfish/v1/Nodes/2'})
 
-        self.assertEqual(node, result.as_dict())
+        self.assertEqual(resource, result.as_dict())
         mock_etcd_read.assert_called_with(
-            '/nodes/' + node['uuid'])
+            '/resources/' + resource['uuid'])
         mock_etcd_write.assert_called_with(
-            '/nodes/' + node['uuid'],
+            '/resources/' + resource['uuid'],
             json.dumps(result.as_dict()))

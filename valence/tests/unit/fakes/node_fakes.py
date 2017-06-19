@@ -12,13 +12,17 @@
 
 
 def get_test_composed_node(**kwargs):
+    # TODO(ntpttr): When multipodm is implemented and podm uuid is stored
+    # in the database for resources, update podm_uuid value here.
     return {
         'uuid': kwargs.get('uuid', 'ea8e2a25-2901-438d-8157-de7ffd68d051'),
+        'podm_uuid': kwargs.get('podm_uuid', 'UPDATE ME'),
         'name': kwargs.get('name', 'fake_name'),
         'description': kwargs.get('description', 'fake_description'),
         'boot_source': kwargs.get('boot_source', 'Hdd'),
         'health_status': kwargs.get('health_status', 'OK'),
-        'index': kwargs.get('index', '1'),
+        'resource_url': kwargs.get('resource_url', '/redfish/v1/Nodes/1'),
+        'resource_type': kwargs.get('resource_type', 'composed_node'),
         'node_power_state': kwargs.get('node_power_state', 'On'),
         'node_state': kwargs.get('node_state', 'Assembling'),
         'pooled_group_id': kwargs.get('bookmark_link', 'None'),
@@ -55,17 +59,23 @@ def get_test_node_list(**kwargs):
     return [
         {
             'uuid': kwargs.get('uuid', '11111111-1111-1111-1111-111111111111'),
-            'name': kwargs.get('name', 'node_1'),
-            'index': kwargs.get('index', '1')
+            'podm_uuid': kwargs.get('podm_uuid',
+                                    '11111111-1111-1111-1111-111111111111'),
+            'resource_url': kwargs.get('resource_url', '/redfish/v1/Nodes/1'),
+            'resource_type': kwargs.get('resource_type', 'composed_node')
         },
         {
             'uuid': kwargs.get('uuid', '22222222-2222-2222-2222-222222222222'),
-            'name': kwargs.get('name', 'node_2'),
-            'index': kwargs.get('index', '2')
+            'podm_uuid': kwargs.get('podm_uuid',
+                                    '22222222-2222-2222-2222-222222222222'),
+            'resource_url': kwargs.get('resource_url', '/redfish/v1/Nodes/2'),
+            'resource_type': kwargs.get('resource_type', 'composed_node')
         },
         {
             'uuid': kwargs.get('uuid', '33333333-3333-3333-3333-333333333333'),
-            'name': kwargs.get('name', 'node_3'),
-            'index': kwargs.get('index', '3')
+            'podm_uuid': kwargs.get('podm_uuid',
+                                    '22222222-2222-2222-2222-222222222222'),
+            'resource_url': kwargs.get('resource_url', '/redfish/v1/Nodes/3'),
+            'resource_type': kwargs.get('resource_type', 'composed_node')
         }
     ]

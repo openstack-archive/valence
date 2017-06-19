@@ -30,6 +30,8 @@ CONF = valence.conf.CONF
 
 class TestRedfish(TestCase):
 
+    CONF.podm.url = "https://127.0.0.1:8443"
+
     def test_get_rfs_url(self):
         CONF.podm.url = "https://127.0.0.1:8443"
         expected = urljoin(CONF.podm.url, "redfish/v1/Systems/1")
@@ -257,16 +259,17 @@ class TestRedfish(TestCase):
             "/redfish/v1/Systems/1/EthernetInterfaces/1")
         self.assertEqual(expected, result)
 
-    @mock.patch('valence.redfish.redfish.get_base_resource_url')
     @mock.patch('valence.redfish.redfish.send_request')
-    def test_delete_composednode_ok(self, mock_request, mock_get_url):
-        mock_get_url.return_value = '/redfish/v1/Nodes'
+    def test_delete_composednode_ok(self, mock_request):
+        CONF.podm.url = 'https://localhost:8442'
         delete_result = fakes.fake_delete_composednode_ok()
         fake_delete_response = fakes.mock_request_get(delete_result,
                                                       http_client.NO_CONTENT)
         mock_request.return_value = fake_delete_response
-        result = redfish.delete_composed_node(101)
-        mock_request.assert_called_with('/redfish/v1/Nodes/101', 'DELETE')
+        result = redfish.delete_composed_node('/redfish/v1/Nodes/101')
+        mock_request.assert_called_with(
+            'https://localhost:8442/redfish/v1/Nodes/101',
+            'DELETE')
         expected = {
             "code": "DELETED",
             "detail": "This composed node has been deleted successfully.",
@@ -280,13 +283,14 @@ class TestRedfish(TestCase):
     @mock.patch('valence.redfish.redfish.send_request')
     def test_delete_composednode_fail(self, mock_request, mock_get_url,
                                       mock_make_response):
+        CONF.podm.url = 'https://127.0.0.1:8442'
         mock_get_url.return_value = '/redfish/v1/Nodes'
         delete_result = fakes.fake_delete_composednode_fail()
         fake_resp = fakes.mock_request_get(delete_result,
                                            http_client.INTERNAL_SERVER_ERROR)
         mock_request.return_value = fake_resp
         self.assertRaises(exception.RedfishException,
-                          redfish.delete_composed_node, 101)
+                          redfish.delete_composed_node, 'redfish/v1/Nodes/101')
         self.assertFalse(mock_make_response.called)
 
     @mock.patch('requests.get')
@@ -427,12 +431,13 @@ class TestRedfish(TestCase):
     def test_list_node(self, mock_get_url, mock_url2list, mock_get_node_by_id):
         """Test list node"""
         mock_get_url.return_value = '/redfish/v1/Nodes'
-        mock_url2list.return_value = ['redfish/v1/Nodes/1']
+        mock_url2list.return_value = ['/redfish/v1/Nodes/1']
         mock_get_node_by_id.side_effect = ["node1_detail"]
 
         result = redfish.list_nodes()
 
-        mock_get_node_by_id.assert_called_with("1", show_detail=False)
+        mock_get_node_by_id.assert_called_with(
+            "/redfish/v1/Nodes/1", show_detail=False)
         self.assertEqual(["node1_detail"], result)
 
     @mock.patch('valence.redfish.redfish.send_request')

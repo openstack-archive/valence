@@ -23,7 +23,7 @@ CONF = valence.conf.CONF
 etcd_directories = [
     models.PodManager.path,
     models.Flavor.path,
-    models.ComposedNode.path
+    models.PodmResource.path
 ]
 
 etcd_client = etcd.Client(CONF.etcd.host, CONF.etcd.port)

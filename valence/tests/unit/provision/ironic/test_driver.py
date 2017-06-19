@@ -44,11 +44,11 @@ class TestDriver(base.BaseTestCase):
                           self.ironic.node_register,
                           'fake-uuid', {})
 
-    @mock.patch("valence.db.api.Connection.update_composed_node")
+    @mock.patch("valence.db.api.Connection.update_podm_resource")
     @mock.patch("valence.controller.nodes.Node.get_composed_node_by_uuid")
     @mock.patch("valence.provision.ironic.utils.create_ironicclient")
     def test_node_register(self, mock_client,
-                           mock_node_get, mock_node_update):
+                           mock_node_get, mock_resource_update):
         ironic = mock.MagicMock()
         mock_client.return_value = ironic
         mock_node_get.return_value = {
@@ -66,7 +66,7 @@ class TestDriver(base.BaseTestCase):
             'request_id': '00000000-0000-0000-0000-000000000000'}, resp)
         mock_client.assert_called_once()
         mock_node_get.assert_called_once_with('fake-uuid')
-        mock_node_update.assert_called_once_with('fake-uuid',
-                                                 {'managed_by': 'ironic'})
+        mock_resource_update.assert_called_once_with('fake-uuid',
+                                                     {'managed_by': 'ironic'})
         ironic.node.create.assert_called_once()
         ironic.port.create.assert_called_once_with(**port_arg)

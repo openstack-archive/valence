@@ -131,7 +131,7 @@ Response
     - target_boot_source: node_target_boot_source
     - pooled_group_id: pooled_group_id
     - health_status: node_health_status
-    - url_id : node_url_id
+    - node_url : node_url
     - created_at: created_at
     - updated_at: updated_at
     - provision_state: node_provision_state
@@ -186,7 +186,7 @@ Response
     - target_boot_source: node_target_boot_source
     - pooled_group_id: pooled_group_id
     - health_status: node_health_status
-    - url_id : node_url_id
+    - node_url : node_url
     - created_at: created_at
     - updated_at: updated_at
     - provision_state: node_provision_state
@@ -347,7 +347,7 @@ Request
 
 .. rest_parameters:: parameters.yaml
 
-    - node_index: node_index
+    - node_url: node_url
 
 Response
 --------

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!usr/bin/env python
 # Copyright (c) 2016 Intel, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -403,15 +403,13 @@ def show_network_details(network_url):
     return network_details
 
 
-def get_node_by_id(node_index, show_detail=True):
+def get_node_by_id(node_url, show_detail=True):
     """Get composed node details of specific index.
 
-    :param node_index: numeric index of new composed node.
+    :param node_url: Redfish URL of composed node.
     :param show_detail: show more node detail when set to True.
     :returns: node detail info.
     """
-    nodes_base_url = get_base_resource_url('Nodes')
-    node_url = os.path.normpath('/'.join([nodes_base_url, node_index]))
     resp = send_request(node_url)
 
     LOG.debug(resp.status_code)
@@ -436,7 +434,7 @@ def get_node_by_id(node_index, show_detail=True):
 
     if show_detail:
         node_detail.update({
-            "index": node_index,
+            "resource_url": node_url,
             "description": respdata.get("Description"),
             "node_state": respdata.get("ComposedNodeState"),
             "boot_source":
@@ -514,8 +512,6 @@ def compose_node(request_body):
     # Allocated node successfully
     # node_url -- relative redfish url e.g redfish/v1/Nodes/1
     node_url = allocate_resp.headers['Location'].lstrip(CONF.podm.url)
-    # node_index -- numeric index of new node e.g 1
-    node_index = node_url.split('/')[-1]
     LOG.debug('Successfully allocated node:' + node_url)
 
     # Get url of assembling node
@@ -529,7 +525,7 @@ def compose_node(request_body):
 
     if assemble_resp.status_code != http_client.NO_CONTENT:
         # Delete node if assemble failed
-        delete_composed_node(node_index)
+        delete_composed_node(node_url)
         raise exception.RedfishException(assemble_resp.json(),
                                          status_code=resp.status_code)
     else:
@@ -537,12 +533,11 @@ def compose_node(request_body):
         LOG.debug('Successfully assembled node: ' + node_url)
 
     # Return new composed node index
-    return get_node_by_id(node_index)
+    return get_node_by_id(node_url)
 
 
-def delete_composed_node(nodeid):
-    nodes_url = get_base_resource_url("Nodes")
-    delete_url = nodes_url + '/' + str(nodeid)
+def delete_composed_node(node_url):
+    delete_url = CONF.podm.url + node_url
     resp = send_request(delete_url, "DELETE")
     if resp.status_code == http_client.NO_CONTENT:
         # we should return 200 status code instead of 204, because 204 means
@@ -563,16 +558,13 @@ def list_nodes():
     nodes_url = get_base_resource_url("Nodes")
     node_url_list = urls2list(nodes_url)
 
-    for url in node_url_list:
-        node_index = url.split('/')[-1]
-        nodes.append(get_node_by_id(node_index, show_detail=False))
+    for node_url in node_url_list:
+        nodes.append(get_node_by_id(node_url, show_detail=False))
 
     return nodes
 
 
-def reset_node(nodeid, request):
-    nodes_url = get_base_resource_url("Nodes")
-    node_url = os.path.normpath("/".join([nodes_url, nodeid]))
+def reset_node(node_url, request):
     resp = send_request(node_url)
 
     if resp.status_code != http_client.OK:
@@ -614,9 +606,7 @@ def reset_node(nodeid, request):
                            "successfully.".format(action_type))
 
 
-def set_boot_source(nodeid, request):
-    nodes_url = get_base_resource_url("Nodes")
-    node_url = os.path.normpath("/".join([nodes_url, nodeid]))
+def set_boot_source(node_url, request):
     resp = send_request(node_url)
 
     if resp.status_code != http_client.OK:
@@ -659,7 +649,7 @@ def set_boot_source(nodeid, request):
         # Set boot source successfully
         LOG.debug("Set boot source of composed node {0} to '{1}' with enabled "
                   "state '{2}' successfully."
-                  .format(nodes_url, boot_target, boot_enabled))
+                  .format(node_url, boot_target, boot_enabled))
         return exception.confirmation(
             confirm_code="Set Boot Source of Composed Node",
             confirm_detail="The boot source of composed node has been set to "
@@ -667,7 +657,7 @@ def set_boot_source(nodeid, request):
                            .format(boot_target, boot_enabled))
 
 
-def node_action(nodeid, request):
+def node_action(node_url, request):
     # Only support one action in single request
     if len(list(request.keys())) != 1:
         raise exception.BadRequest(
@@ -690,4 +680,4 @@ def node_action(nodeid, request):
                    "Valence api specification to correct this content of node "
                    "action request.".format(action))
 
-    return functions[action](nodeid, request)
+    return functions[action](node_url, request)

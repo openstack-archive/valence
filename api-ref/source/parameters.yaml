@@ -35,12 +35,6 @@ pod_uuid:
   in: path
   required: true
   type: string
-node_index:
-  description: |
-    The redfish index of composed node.
-  in: path
-  required: true
-  type: string
 system_ident:
   description: |
     The UUID or name of Compute System.
@@ -250,10 +244,10 @@ node_target_boot_source:
   in: body
   required: true
   type: string
-node_url_id:
+node_url:
   description: |
-    The URL id point to redfish API.
-    Ex: while url_id is "node1" ,the full path talk to redfish service should be  "/redfish/v1/Nodes/node1"
+    The redfish URL of the node.
+    Ex: while url_id is "node1" , the full path talk to redfish service should be  "/redfish/v1/Nodes/node1"
   in: body
   required: true
   type: string

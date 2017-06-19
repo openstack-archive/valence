@@ -191,24 +191,21 @@ class Flavor(ModelBaseWithTimeStamp):
     }
 
 
-class ComposedNode(ModelBaseWithTimeStamp):
+class PodmResource(ModelBaseWithTimeStamp):
 
-    path = "/nodes"
+    path = "/resources"
 
     fields = {
         'uuid': {
             'validate': types.Text.validate
         },
-        'name': {
+        'podm_uuid': {
             'validate': types.Text.validate
         },
-        'index': {
+        'resource_url': {
             'validate': types.Text.validate
         },
-        'links': {
-            'validate': types.List(types.Dict).validate
-        },
-        'managed_by': {
+        'resource_type': {
             'validate': types.Text.validate
         }
     }

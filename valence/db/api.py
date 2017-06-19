@@ -117,45 +117,45 @@ class Connection(object):
         return cls.dbdriver.list_flavors()
 
     @classmethod
-    def create_composed_node(cls, values):
-        """Create a new composed node.
+    def create_podm_resource(cls, values):
+        """Create a new pod manager resource.
 
-        :values: The properties for this new composed node.
-        :returns: A composed node created.
+        :values: The properties for this new resource.
+        :returns: A pod manager resource created.
         """
-        return cls.dbdriver.create_composed_node(values)
+        return cls.dbdriver.create_podm_resource(values)
 
     @classmethod
-    def get_composed_node_by_uuid(cls, composed_node_uuid):
-        """Get specific composed node by its uuid
+    def get_podm_resource_by_uuid(cls, podm_resource_uuid):
+        """Get specific pod manager resource by its uuid.
 
-        :param composed_node_uuid: The uuid of composed node.
-        :returns: A composed node with this uuid.
+        :param podm_resource_uuid: The uuid of the resource.
+        :returns: A pod manager resource with this uuid.
         """
-        return cls.dbdriver.get_composed_node_by_uuid(composed_node_uuid)
+        return cls.dbdriver.get_podm_resource_by_uuid(podm_resource_uuid)
 
     @classmethod
-    def delete_composed_node(cls, composed_node_uuid):
-        """Delete specific composed node by its uuid
+    def delete_podm_resource(cls, podm_resource_uuid):
+        """Delete specific pod manager resource by its uuid.
 
-        :param composed_node_uuid: The uuid of composed node.
+        :param podm_resource_uuid: The uuid of the resource.
         """
-        cls.dbdriver.delete_composed_node(composed_node_uuid)
+        cls.dbdriver.delete_podm_resource(podm_resource_uuid)
 
     @classmethod
-    def update_composed_node(cls, composed_node_uuid, values):
-        """Update properties of a composed node.
+    def update_podm_resource(cls, podm_resource_uuid, values):
+        """Update properties of a pod manager resource.
 
-        :param composed_node_uuid: The uuid of composed node.
+        :param podm_resource_uuid: The uuid of the resource.
         :values: The properties to be updated.
-        :returns: A composed node model after updated.
+        :returns: A pod manager resource model after the update.
         """
-        return cls.dbdriver.update_composed_node(composed_node_uuid, values)
+        return cls.dbdriver.update_podm_resource(podm_resource_uuid, values)
 
     @classmethod
-    def list_composed_nodes(cls):
-        """Get a list of all composed nodes.
+    def list_podm_resources(cls, resource_type=None):
+        """Get a list of all pod manager resource by type.
 
-        :returns: A list of all composed node.
+        :returns: A list of all pod manager resource of the given type.
         """
-        return cls.dbdriver.list_composed_nodes()
+        return cls.dbdriver.list_podm_resources(resource_type)

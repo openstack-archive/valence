@@ -101,7 +101,7 @@ do
 done
 
 echo "Adding database directories" >> $install_log
-etcdctl --endpoints=127.0.0.1:2379 mkdir /nodes
+etcdctl --endpoints=127.0.0.1:2379 mkdir /resources
 etcdctl --endpoints=127.0.0.1:2379 mkdir /flavors
 etcdctl --endpoints=127.0.0.1:2379 mkdir /pod_managers
 

@@ -42,8 +42,8 @@ def translate_to_models(etcd_resp, model_type):
         ret = models.PodManager(**data)
     elif model_type == models.Flavor.path:
         ret = models.Flavor(**data)
-    elif model_type == models.ComposedNode.path:
-        ret = models.ComposedNode(**data)
+    elif model_type == models.PodmResource.path:
+        ret = models.PodmResource(**data)
     else:
         # TODO(lin.a.yang): after exception module got merged, raise
         # valence specific InvalidParameter exception here
@@ -155,50 +155,48 @@ class EtcdDriver(object):
 
         return flavors
 
-    def create_composed_node(self, values):
-        composed_node = models.ComposedNode(**values)
-        composed_node.save()
+    def create_podm_resource(self, values):
+        podm_resource = models.PodmResource(**values)
+        podm_resource.save()
 
-        return composed_node
+        return podm_resource
 
-    def get_composed_node_by_uuid(self, composed_node_uuid):
+    def get_podm_resource_by_uuid(self, podm_resource_uuid):
         try:
-            resp = self.client.read(models.ComposedNode.etcd_path(
-                composed_node_uuid))
+            resp = self.client.read(models.PodmResource.etcd_path(
+                podm_resource_uuid))
         except etcd.EtcdKeyNotFound:
             # TODO(lin.a.yang): after exception module got merged, raise
             # valence specific DBNotFound exception here
             raise exception.NotFound(
-                'Composed node not found {0} in database.'.format(
-                    composed_node_uuid))
+                'Pod Manager Resource {0} not found in database.'.format(
+                    podm_resource_uuid))
 
-        return translate_to_models(resp, models.ComposedNode.path)
+        return translate_to_models(resp, models.PodmResource.path)
 
-    def delete_composed_node(self, composed_node_uuid):
-        composed_node = self.get_composed_node_by_uuid(composed_node_uuid)
-        composed_node.delete()
+    def delete_podm_resource(self, podm_resource_uuid):
+        podm_resource = self.get_podm_resource_by_uuid(podm_resource_uuid)
+        podm_resource.delete()
 
-    def update_composed_node(self, composed_node_uuid, values):
-        composed_node = self.get_composed_node_by_uuid(composed_node_uuid)
-        composed_node.update(values)
+    def update_podm_resource(self, podm_resource_uuid, values):
+        podm_resource = self.get_podm_resource_by_uuid(podm_resource_uuid)
+        podm_resource.update(values)
 
-        return composed_node
+        return podm_resource
 
-    def list_composed_nodes(self):
-        # TODO(lin.a.yang): support filter for listing composed_node
-
+    def list_podm_resources(self, resource_type=None):
         try:
-            resp = getattr(self.client.read(models.ComposedNode.path),
+            resp = getattr(self.client.read(models.PodmResource.path),
                            'children', None)
         except etcd.EtcdKeyNotFound:
-            LOG.error("Path '/nodes' does not exist, seems etcd server "
+            LOG.error("Path '/resources' does not exist, seems etcd server "
                       "was not initialized appropriately.")
             raise
 
-        composed_nodes = []
-        for node in resp:
-            if node.value is not None:
-                composed_nodes.append(translate_to_models(
-                    node, models.ComposedNode.path))
+        podm_resources = []
+        for resource in resp:
+            if resource.value is not None:
+                podm_resources.append(translate_to_models(
+                    resource, models.PodmResource.path))
 
-        return composed_nodes
+        return podm_resources
