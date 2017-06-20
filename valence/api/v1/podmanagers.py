@@ -46,7 +46,7 @@ class PodManager(flask_restful.Resource):
                                    podmanagers.get_podm_by_uuid(podm_uuid))
 
     def patch(self, podm_uuid):
-        values = flask.request.form.to_dict()
+        values = flask.request.get_json()
         return utils.make_response(http_client.OK,
                                    podmanagers.update_podm(podm_uuid, values))
 
