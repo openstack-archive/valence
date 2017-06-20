@@ -47,7 +47,13 @@ def get_test_podmanager(**kwargs):
         'uuid': kwargs.get('uuid', 'ea8e2a25-2901-438d-8157-de7ffd68d051'),
         'name': kwargs.get('name', 'fake_name'),
         'url': kwargs.get('url', 'fake_url'),
-        'auth': kwargs.get('auth', 'fake_auth'),
+        'authentication': [{
+            'auth_items': {
+                'password': 'fake-pass',
+                'username': 'fake-admin',
+            },
+            'type': 'basic',
+        }],
         'status': kwargs.get('size', 'fake_status'),
         'description': kwargs.get('description', 'fake_description'),
         'location': kwargs.get('location', 'fake_location'),
