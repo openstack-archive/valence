@@ -1,0 +1,34 @@
+{
+    "@odata.context": "/redfish/v1/$metadata#Chassis",
+    "@odata.id": "/redfish/v1/Chassis",
+    "@odata.type": "#ChassisCollection.ChassisCollection",
+    "Members": [
+        {
+            "@odata.id": "/redfish/v1/Chassis/Rack1"
+        },
+        {
+            "@odata.id": "/redfish/v1/Chassis/Rack2"
+        },
+        {
+            "@odata.id": "/redfish/v1/Chassis/Chassis1"
+        },
+        {
+            "@odata.id": "/redfish/v1/Chassis/Chassis2"
+        },
+        {
+            "@odata.id": "/redfish/v1/Chassis/Drawer1"
+        },
+        {
+            "@odata.id": "/redfish/v1/Chassis/Drawer2"
+        },
+        {
+            "@odata.id": "/redfish/v1/Chassis/NVMEChassis1"
+        },
+        {
+            "@odata.id": "/redfish/v1/Chassis/NVMEChassis2"
+        }
+    ],
+    "Members@odata.count": 8,
+    "Name": "Chassis Collection"
+
+}
