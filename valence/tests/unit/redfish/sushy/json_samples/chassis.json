@@ -1,0 +1,73 @@
+{
+    "@odata.context": "/redfish/v1/$metadata#Chassis/Members/$entity",
+    "@odata.id": "/redfish/v1/Chassis/Chassis1",
+    "@odata.type": "#Chassis.1.0.0.Chassis",
+    "AssetTag": "FlexChassis1",
+    "ChassisType": "Drawer",
+    "Description": "this is a chassis",
+    "Id": "Chassis1",
+    "IndicatorLED": "On",
+    "Links": {
+        "ComputerSystems": [
+            {
+                "@odata.id": "/redfish/v1/Systems/system1"
+            },
+            {
+                "@odata.id": "/redfish/v1/Systems/system2"
+            },
+            {
+                "@odata.id": "/redfish/v1/Systems/system3"
+            },
+            {
+                "@odata.id": "/redfish/v1/Systems/system4"
+            }
+        ],
+        "ContainedBy": {
+            "@odata.id": "/redfish/v1/Chassis/Rack1"
+        },
+        "Contains": [
+            {
+                "@odata.id": "/redfish/v1/Chassis/Chassis1"
+            }
+        ],
+        "ManagedBy": [
+            {
+                "@odata.id": "/redfish/v1/Managers/manager1"
+            }
+        ],
+        "ManagersIn": [
+            {
+                "@odata.id": "/redfish/v1/Managers/manager1"
+            }
+        ],
+        "Oem": { },
+        "Switches": [
+            {
+                "@odata.id": "/redfish/v1/EthernetSwitches/switch1"
+            }
+        ]
+    },
+    "Manufacturer": "Intel Corporaion",
+    "Model": "Lenovo FLEX 8731",
+    "Name": "FLEX-1",
+    "Oem": {
+        "Intel:RackScale": {
+            "@odata.type": "#Intel.Oem.Chassis",
+            "Location": {
+                "Rack": "Rack1",
+                "UHeight": "10 U",
+                "ULocation": "25 U",
+                "UWidth": "1 U"
+            },
+            "UUID": "e1c2d764-5c72-36d6-9945-a78255edab51"
+        }
+    },
+    "PartNumber": "5c72-36d6",
+    "SKU": "e1c2d764-5c72",
+    "SerialNumber": "a78255edab51",
+    "Status": {
+        "Health": "OK",
+        "HealthRollup": "OK",
+        "State": "Enabled"
+    }
+}
