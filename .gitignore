@@ -21,6 +21,7 @@ lib64
 # Installer logs
 pip-log.txt
 install_valence.log
+etc/valence.conf.sample
 
 # Unit test / coverage reports
 .coverage

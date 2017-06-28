@@ -45,7 +45,7 @@ if [ ! -d "/etc/valence" ]; then
 fi
 chown "$CURR_USER":"$CURR_USER" /etc/valence
 VALENCE_CONF=/etc/valence/valence.conf
-cp "$DIR"/etc/valence.conf.sample /etc/valence/valence.conf
+mv "$DIR"/etc/valence.conf.sample "$VALENCE_CONF"
 
 sudo sed -i "s/#debug\s*=.*/debug=true/" $VALENCE_CONF
 sudo sed -i "s/#log_level\s*=.*/log_level=debug/" $VALENCE_CONF
