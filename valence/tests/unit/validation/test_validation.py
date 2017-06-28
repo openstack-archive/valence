@@ -154,6 +154,7 @@ class TestNodeApi(TestApiValidation):
     def test_compose_request_invalid_params(self):
         req = {
             "name": "test_request1",
+            "properties": {"invalid_key": "invalid_value"}
         }
         resp = self.app.post('/v1/nodes',
                              content_type='application/json',
