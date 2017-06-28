@@ -95,10 +95,42 @@ compose_node_with_flavor = {
     'additionalProperties': False,
 }
 
+compose_node_with_properties = {
+    'type': 'object',
+    'properties': {
+        'name': {'type': 'string'},
+        'description': {'type': 'string'},
+        'properties': {
+            'type': 'object',
+            'properties': {
+                'memory': {
+                    'type': 'object',
+                    'properties': {
+                        'capacity_mib': {'type': 'string'},
+                        'type': {'type': 'string'}
+                    },
+                    'additionalProperties': False,
+                },
+                'processor': {
+                    'type': 'object',
+                    'properties': {
+                        'total_cores': {'type': 'string'},
+                        'model': {'type': 'string'},
+                    },
+                    'additionalProperties': False,
+                },
+            },
+            'additionalProperties': False,
+        },
+    },
+    'required': ['name'],
+    'additionalProperties': False,
+}
+
 compose_node_schema = {
     'anyOf': [
         compose_node_with_flavor,
-        flavor_schema,
+        compose_node_with_properties
         ]
 }
 
