@@ -88,7 +88,7 @@ List Compute System Inventory Details
 
 .. rest_method::  GET /v1/systems/{system_ident}/inventory
 
-Shows invneotyr data for a Compute System.
+Shows inventory data for a Compute System.
 This will return the full representation of the resources include processor
 memory, storage objects
 
