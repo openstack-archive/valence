@@ -35,7 +35,7 @@ Valence installation
 
  1. Install software dependencies
 
-    ``$ sudo apt-get install git python-pip``
+    ``$ sudo apt-get install git python-pip python-dev build-essential``
 
  2. Clone the Valence code from git repo.
 
