@@ -1,0 +1,32 @@
+{
+  "@odata.context": "/redfish/v1/$metadata#ComposedNodeCollection.ComposedNodeCollection",
+  "@odata.id": "/redfish/v1/Nodes",
+  "@odata.type": "#ComposedNodeCollection.CComposedNodeCollection",
+  "Members@odata.count": 6,
+  "Name": "Composed Node Collection",
+  "Members": [
+    {
+      "@odata.id": "/redfish/v1/Nodes/node1"
+    },
+    {
+      "@odata.id": "/redfish/v1/Nodes/node2"
+    },
+    {
+      "@odata.id": "/redfish/v1/Nodes/node3"
+    },
+    {
+      "@odata.id": "/redfish/v1/Nodes/node4"
+    },
+    {
+      "@odata.id": "/redfish/v1/Nodes/node5"
+    },
+    {
+      "@odata.id": "/redfish/v1/Nodes/node6"
+    }
+  ],
+  "Actions": {
+    "#ComposedNodesCollection.Allocate": {
+      "target": "/redfish/v1/Nodes/Actions/Allocate"
+    }
+  }
+}

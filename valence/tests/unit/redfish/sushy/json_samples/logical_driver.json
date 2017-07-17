@@ -1,0 +1,43 @@
+{
+  "@odata.context": "/redfish/v1/$metadata#LogicalDrives/Links/Members/$entity",
+  "@odata.id": "/redfish/v1/Services/1/LogicalDrives/ld1",
+  "@odata.type": "#LogicalDrive.LogicalDrive",
+  "Id": "ld1",
+  "Name": "Logical Drive",
+  "Description": "Logical Drive",
+  "Status": {
+    "State": "Enabled",
+    "Health": "OK",
+  },
+  "Type": "LVM",
+  "Mode": "RAID0",
+  "Protected": false,
+  "CapacityGiB": 8096,
+  "Image": "Ubuntu 12.04.4LTS / Linux 3.11 / 2014.1",
+  "Bootable": true,
+  "Snapshot": false,
+  "Oem": {},
+  "Links": {
+    "LogicalDrives": [
+    ],
+    "PhysicalDrives": [
+      {
+        "@odata.id": "/redfish/v1/Services/1/Drives/2"
+      }
+    ],
+    "MasterDrive": {
+      "@odata.id": "/redfish/v1/Services/1/LogicalDrives/12"
+    },
+    "UsedBy": [
+      {
+        "@odata.id": "/redfish/v1/Services/1/LogicalDrives/14"
+      }
+    ],
+    "Targets": [
+      {
+        "@odata.id": "/redfish/v1/Services/1/Targets/2"
+      }
+    ],
+    "Oem": {}
+  }
+}

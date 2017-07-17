@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (c) 2016 Intel, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -17,6 +16,7 @@ import sushy
 from sushy import exceptions
 
 from resources import chassis
+from resources import node
 
 
 class RedfishInstance(sushy.Sushy):
@@ -61,3 +61,52 @@ class RedfishInstance(sushy.Sushy):
         return chassis.Chassis(self._conn,
                                identity,
                                redfish_version=self.redfish_version)
+
+    def _get_node_collection_path(self):
+        """Helper function to find the node Collection path"""
+        node_col = self.json.get('Nodes')
+        if not node_col:
+            raise exceptions.MissingAttributeError(attribute='Nodes',
+                                                   resource=self._path)
+        return node_col.get('@odata.id')
+
+    def get_node_collection(self):
+        """Get the Nodes Collection object
+
+        :return: a Node collection object
+        """
+        return node.NodeCollection(self._conn,
+                                   self._get_node_collection_path(),
+                                   redfish_version=self.redfish_version)
+
+    def get_node(self, identity):
+        """Given the identity return a node object
+
+        :param identity: the identity of the node resource
+        :return: The node object
+        """
+        return node.Node(self._conn,
+                         identity,
+                         redfish_version=self.redfish_version)
+
+    def decompose(self, identity):
+        """Given the identity to decompose the node
+
+        :param identity: the identity of the node resource
+
+        :raises RedfishException when decompose operation is failed
+
+        :return: exception.confirmation if successfully
+        """
+        return self.get_node(identity).decompose()
+
+    def compose_new_node(self, compose_request_body):
+        """compose a new node
+
+        :param compose_request_body: The request content to compose new node,
+                                     which should follow podm format.
+                                     Valence api directly pass it to podm.
+
+        :return: the composed node object
+        """
+        self.get_node_collection().compose_new_node(compose_request_body)

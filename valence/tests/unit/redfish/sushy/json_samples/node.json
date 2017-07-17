@@ -1,0 +1,104 @@
+{
+  "@odata.context": "/redfish/v1/$metadata#Nodes/Members/$entity",
+  "@odata.id": "/redfish/v1/Nodes/node1",
+  "@odata.type": "#ComposedNode.1.0.0.ComposedNode",
+  "Actions": {
+    "#ComposedNode.Assemble": {
+      "target": "/redfish/v1/Systems/1/Actions/ComposedNode.Assemble"
+    },
+    "#ComposedNode.Reset": {
+      "ResetType@Redfish.AllowableValues": [
+        "On",
+        "ForceOff",
+        "GracefulRestart",
+        "ForceRestart",
+        "Nmi",
+        "ForceOn",
+        "PushPowerButton",
+        "GracefulShutdown"
+      ],
+      "target": "/redfish/v1/Systems/1/Actions/ComposedNode.Reset"
+    }
+  },
+  "AssetTag": "free form asset tag",
+  "BiosVersion": "P79 v1.00 (09/20/2013) - the same as Computer System",
+  "Boot": {
+    "BootSourceOverrideEnabled": "Disabled",
+    "BootSourceOverrideTarget": "None",
+    "BootSourceOverrideTarget@Redfish.AllowableValues": [
+      "None",
+      "Pxe",
+      "Hdd"
+    ]
+  },
+  "ComposedNodeState": "Allocated",
+  "Description": "Nova node1",
+  "HostName": "",
+  "Id": "node1",
+  "Links": {
+    "ComputerSystem": {
+      "@odata.id": "/redfish/v1/Systems/system1"
+    },
+    "EthernetInterfaces": [
+      {
+        "@odata.id": "/redfish/v1/Systems/System1/EthernetInterfaces/LAN1"
+      }
+    ],
+    "LocalDrives": [
+      {
+        "@odata.id": "/redfish/v1/Systems/System1/StorageControllers/Controller1/Drives/Drive1"
+      }
+    ],
+    "ManagedBy": [
+      {
+        "@odata.id": "/redfish/v1/Managers/PODM"
+      }
+    ],
+    "Memory": [
+      {
+        "@odata.id": "/redfish/v1/Systems/System1/DimmConfig/Dimm1"
+      }
+    ],
+    "Oem": {},
+    "Processors": [
+      {
+        "@odata.id": "/redfish/v1/Systems/System1/Processors/CPU1"
+      }
+    ],
+    "RemoteDrives": [
+      {
+        "@odata.id": "/redfish/v1/Services/RSS1/Targets/target1"
+      }
+    ]
+  },
+  "Manufacturer": "Manufacturer Name - the same as Computer System",
+  "Memory": {
+    "Status": {
+      "Health": "OK",
+      "State": "Enabled"
+    },
+    "TotalSystemMemoryGiB": 32
+  },
+  "Model": "Model Name - the same as Computer System",
+  "Name": "ServerNode1",
+  "Oem": {},
+  "PartNumber": "Computer1 - the same as Computer System",
+  "PowerState": "On",
+  "Processors": {
+    "Count": 2,
+    "Model": "Multi-Core Intel(R) Xeon(R) processor 7xxx Series",
+    "Status": {
+      "Health": "OK",
+      "State": "Enabled"
+    }
+  },
+  "SKU": "SKU - the same as Computer System",
+  "SerialNumber": "2M220100SL - the same as Computer System",
+  "Status": {
+    "Health": "OK",
+    "HealthRollUp": "OK",
+    "State": "Enabled"
+  },
+  "SystemType": "Logical",
+  "UUID": "d54b02e9-ec52-36e4-9cf8-aac1fd9707ef"
+}
