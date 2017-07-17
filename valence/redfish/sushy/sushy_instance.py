@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (c) 2016 Intel, Inc.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -61,3 +60,4 @@ class RedfishInstance(sushy.Sushy):
         return chassis.Chassis(self._conn,
                                identity,
                                redfish_version=self.redfish_version)
+
