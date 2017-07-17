@@ -71,7 +71,7 @@ class ChassisCollection(base.ResourceCollectionBase):
         return Chassis
 
     def __init__(self, connector, path, redfish_version=None):
-        """A class representing a ComputerchassisCollection
+        """A class representing a Chassis Collection
 
         :param connector: A Connector instance
         :param path: The canonical path to the chassis collection resource
