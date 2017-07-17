@@ -1,0 +1,10 @@
+Code-Review+1: hubian <hubian1@lenovo.com>
+Code-Review+2: Lin Yang <lin.a.yang@intel.com>
+Code-Review+2: Anusha Ramineni <anusha.ramineni@nectechnologies.in>
+Workflow+1: Anusha Ramineni <anusha.ramineni@nectechnologies.in>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Mon, 17 Jul 2017 06:47:54 +0000
+Reviewed-on: https://review.openstack.org/475720
+Project: openstack/valence
+Branch: refs/heads/master
