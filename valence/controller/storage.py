@@ -37,9 +37,7 @@ class Storage(object):
         if storage_db['resource_type'] == "remote_drive":
             storage_hw = redfish.get_remote_drive(storage_db["resource_url"])
         elif storage_db['resource_type'] == "nvme_drive":
-            # TODO(ntpttr): When NVMe is added we will check for its type here,
-            # and get it through its own redfish call before returning it.
-            return
+            storage_hw = redfish.get_nvme_drive(storage_db["resource_url"])
         else:
             raise exception.BadResourceType(
                 detail="Requested resource not a type of storage")
@@ -59,13 +57,22 @@ class Storage(object):
 
         {
           'resource_url': <Redfish URL of storage to manage>
+          'resource_type': <Type of storage to manage>
         }
 
         return: Info on managed storage.
         """
 
-        storage_resource = redfish.get_drive_by_id(
-            request_body['resource_url'])
+        # Call out and get the resource to make sure it's valid and exists
+        if request_body['resource_type'] == 'remote_drive':
+            storage_resource = redfish.get_remote_drive(
+                request_body['resource_url'])
+        elif request_body['resource_type'] == 'nvme_drive':
+            storage_resource = redfish.get_nvme_drive(
+                request_body['resource_url'])
+        else:
+            raise exception.BadResourceType(
+                detail="Requested resource not a type of storage")
         # Check to see that the drive to manage doesn't already exist in
         # the Valence database.
         current_storage = cls.list_storage_resources()

@@ -300,6 +300,16 @@ def list_remote_drives():
     return remote_drives
 
 
+def list_nvme_drives():
+    nvme_drives = []
+    chassis_list = get_chassis_list()
+    for chassis in chassis_list:
+        drive_url_list = urls2list(chassis["Drives"])
+        for drive_url in drive_url_list:
+            nvme_drives.append(get_nvme_drive(drive_url)
+    return nvme_drives
+
+
 def get_remote_drive(drive_url, show_details=True):
     resp = send_request(drive_url)
     remote_drive = resp.json()
@@ -322,41 +332,53 @@ def get_remote_drive(drive_url, show_details=True):
     return drive
 
 
+def get_nvme_drive(drive_url):
+    resp = send_request(drive_url)
+    nvme_drive = resp.json()
+
+    if nvme_drive["Protocol"] != "NVMe"
+
 def get_chassis_list():
     chassis_url = get_base_resource_url("Chassis")
-    chassis_lnk_lst = urls2list(chassis_url)
-    lst_chassis = []
+    chassis_link_list = urls2list(chassis_url)
+    chassis_list = []
 
-    for clnk in chassis_lnk_lst:
-        resp = send_request(clnk)
+    for chassis_link in chassis_link_list:
+        resp = send_request(chassis_link)
         data = resp.json()
         LOG.info(data)
         if "Links" in data:
             contains = []
             containedby = {}
             computersystems = []
+            drives = []
             linksdata = data["Links"]
             if "Contains" in linksdata and linksdata["Contains"]:
-                for c in linksdata["Contains"]:
-                    contains.append(c['@odata.id'].split("/")[-1])
+                for item in linksdata["Contains"]:
+                    contains.append(item['@odata.id'].split("/")[-1])
 
             if "ContainedBy" in linksdata and linksdata["ContainedBy"]:
                 odata = linksdata["ContainedBy"]['@odata.id']
                 containedby = odata.split("/")[-1]
 
             if "ComputerSystems" in linksdata and linksdata["ComputerSystems"]:
-                for c in linksdata["ComputerSystems"]:
-                    computersystems.append(c['@odata.id'])
+                for system in linksdata["ComputerSystems"]:
+                    computersystems.append(system['@odata.id'])
+
+            if "Drives" in linksdata and linksdata["Drives"]:
+                for drive in linksdata["Drives"]:
+                    drives.append(drive["@odata.id"])
 
             name = data["ChassisType"] + ":" + data["Id"]
-            c = {"name": name,
-                 "ChassisType": data["ChassisType"],
-                 "ChassisID": data["Id"],
-                 "Contains": contains,
-                 "ContainedBy": containedby,
-                 "ComputerSystems": computersystems}
-            lst_chassis.append(c)
-    return lst_chassis
+            chassis = {"name": name,
+                       "ChassisType": data["ChassisType"],
+                       "ChassisID": data["Id"],
+                       "Contains": contains,
+                       "ContainedBy": containedby,
+                       "ComputerSystems": computersystems
+                       "Drives": drives}
+            chassis_list.append(chassis)
+    return chassis_list
 
 
 def get_systembyid(systemid):
