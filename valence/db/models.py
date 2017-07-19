@@ -135,8 +135,8 @@ class PodManager(ModelBaseWithTimeStamp):
         'url': {
             'validate': types.Text.validate
         },
-        'auth': {
-            'validate': types.Text.validate
+        'authentication': {
+            'validate': types.List(types.Dict).validate
         },
         'status': {
             'validate': types.Text.validate
