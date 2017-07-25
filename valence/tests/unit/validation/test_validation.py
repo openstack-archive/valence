@@ -213,6 +213,20 @@ class TestNodeApi(TestApiValidation):
         mock_action.assert_called_once_with('fake-node', req)
         self.assertEqual(http_client.NO_CONTENT, resp.status_code)
 
+    @mock.patch('valence.controller.nodes.Node.node_action')
+    def test_node_action_request(self, mock_action):
+        req = {
+            "attach": {
+                "resource_id": "test-device-1"
+            }
+        }
+        mock_action.return_value = None
+        resp = self.app.post('/v1/nodes/fake-node/action',
+                             content_type='application/json',
+                             data=json.dumps(req))
+        mock_action.assert_called_once_with('fake-node', req)
+        self.assertEqual(http_client.NO_CONTENT, resp.status_code)
+
     def test_node_action_request_invalid(self):
         req = {
             "Boot": {
