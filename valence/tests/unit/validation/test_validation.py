@@ -136,6 +136,7 @@ class TestNodeApi(TestApiValidation):
     def test_compose_request_using_properties(self, mock_compose):
         req = {
             "name": "test_request",
+            "podm_id": "test-podm",
             "properties": {
                 "memory": {
                     "capacity_mib": "4000",
@@ -179,11 +180,13 @@ class TestNodeApi(TestApiValidation):
 
     @mock.patch('valence.controller.nodes.Node.manage_node')
     def test_node_manage_request(self, mock_manage):
-        req = {"node_index": "fake-index"}
+        req = {"node_index": "fake-index",
+               "podm_id": "test-podm-id"}
         mock_manage.return_value = {"uuid": "ea8e2a25-2901-438d-8157-de7ffd",
                                     "links": "fake-links",
                                     "name": "fake-node",
-                                    "index": "fake-index"}
+                                    "index": "fake-index",
+                                    "podm_id": "test-podm-id"}
         resp = self.app.post('/v1/nodes/manage',
                              content_type='application/json',
                              data=json.dumps(req))
