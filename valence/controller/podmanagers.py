@@ -39,6 +39,9 @@ def _check_creation(values):
     if values['name'] in names or values['url'] in urls:
         raise exception.BadRequest('duplicated name or url !')
 
+    # If podmanager 'type' is None, update as default
+    values['type'] = values.get('type', 'default')
+
     # input status
     values['status'] = get_podm_status(values['url'], values['authentication'])
 

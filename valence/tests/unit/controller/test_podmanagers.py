@@ -47,6 +47,7 @@ class TestPodManagers(unittest.TestCase):
 
         result_values = copy.deepcopy(values)
         result_values['status'] = constants.PODM_STATUS_ONLINE
+        result_values['type'] = 'default'
 
         self.assertEqual(podmanagers._check_creation(values), result_values)
         mock_get_podm_status.assert_called_once_with(values['url'],
