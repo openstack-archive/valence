@@ -135,6 +135,9 @@ class PodManager(ModelBaseWithTimeStamp):
         'url': {
             'validate': types.Text.validate
         },
+        'driver': {
+            'validate': types.Text.validate
+        },
         'authentication': {
             'validate': types.List(types.Dict).validate
         },

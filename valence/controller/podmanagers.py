@@ -39,6 +39,11 @@ def _check_creation(values):
     if values['name'] in names or values['url'] in urls:
         raise exception.BadRequest('duplicated name or url !')
 
+    # If podmanager 'driver' is None, update as "redfishv1" which is default
+    # driver used to manage resources.
+    # 'driver' can take values like "redfishv1", "redfishv2" etc.
+    values['driver'] = values.get('driver', 'redfishv1')
+
     # input status
     values['status'] = get_podm_status(values['url'], values['authentication'])
 
