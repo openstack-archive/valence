@@ -2,7 +2,7 @@ Valence Style Commandments
 ===========================
 
 Read the OpenStack Style Commandments
-http://docs.openstack.org/developer/hacking/
+https://docs.openstack.org/hacking/latest/
 
 - [H305] Organize your imports according to 'Import order template' mentioned
-  in http://docs.openstack.org/developer/hacking/#import-order-template
+  in https://docs.openstack.org/hacking/latest/user/hacking.html#import-order-template
