@@ -173,10 +173,29 @@ node_action_schema = {
             'required': ['Type'],
             'additionalProperties': False,
         },
+        'attach': {
+            'type': 'object',
+            'properties': {
+                'resource_id': {'type': 'string'},
+            },
+            'required': ['resource_id'],
+            'additionalProperties': False,
+        },
+        'detach': {
+            'type': 'object',
+            'properties': {
+                'resource_id': {'type': 'string'},
+            },
+            'required': ['resource_id'],
+            'additionalProperties': False,
+        },
     },
     'oneOf': [
         {'required': ['Boot']},
-        {'required': ['Reset']}],
+        {'required': ['Reset']},
+        {'required': ['attach']},
+        {'required': ['detach']},
+    ],
     'additionalProperties': False,
 }
 
