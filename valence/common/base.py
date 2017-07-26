@@ -12,8 +12,6 @@
 
 import json
 
-import six
-
 
 class ObjectBase(object):
 
@@ -33,7 +31,7 @@ class ObjectBase(object):
 
     def update(self, values):
         """Make the object behave like a dict."""
-        for key, value in six.iteritems(values):
+        for key, value in values.items():
             setattr(self, key, value)
 
     def _as_dict(self):

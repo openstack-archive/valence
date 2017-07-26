@@ -14,7 +14,6 @@
 
 import logging
 
-import six
 
 from valence.common import exception
 from valence.common import utils
@@ -30,7 +29,7 @@ class Node(object):
 
     @staticmethod
     def _show_node_brief_info(node_info):
-        return {key: node_info[key] for key in six.iterkeys(node_info)
+        return {key: node_info[key] for key in node_info.keys()
                 if key in ["uuid", "name", "index", "links"]}
 
     @staticmethod
