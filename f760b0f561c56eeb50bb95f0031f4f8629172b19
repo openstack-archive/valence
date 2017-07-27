@@ -1,0 +1,10 @@
+Code-Review+2: Nate Potter <nathaniel.potter@intel.com>
+Code-Review+1: hubian <hubian1@lenovo.com>
+Code-Review+2: Anusha Ramineni <anusha.ramineni@nectechnologies.in>
+Workflow+1: Anusha Ramineni <anusha.ramineni@nectechnologies.in>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Thu, 27 Jul 2017 04:27:13 +0000
+Reviewed-on: https://review.openstack.org/478680
+Project: openstack/valence
+Branch: refs/heads/master
