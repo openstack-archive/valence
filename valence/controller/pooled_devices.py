@@ -14,10 +14,15 @@
 
 import logging
 
+from futurist import periodics
+
+from valence.common import async
 from valence.common import exception
+import valence.conf
 from valence.db import api as db_api
 from valence.podmanagers import manager
 
+CONF = valence.conf.CONF
 LOG = logging.getLogger(__name__)
 
 
@@ -50,6 +55,22 @@ class PooledDevices(object):
         return db_api.Connection.get_device_by_uuid(device_id).as_dict()
 
     @classmethod
+    @async.async
+    def start_devices_background_sync(cls, podm_id=None):
+        """Starts asynchronous one_time sync
+
+        As set in configuration this function will sync pooled resources
+        one time if background periodic sync is disabled.
+
+        :param podm_id: to asynchronously sync devices of particular podm
+        """
+        if not CONF.podm.enable_periodic_sync:
+            cls.synchronize_devices(podm_id)
+        return
+
+    @classmethod
+    @periodics.periodic(spacing=CONF.podm.sync_interval, enabled=True,
+                        run_immediately=True)
     def synchronize_devices(cls, podm_id=None):
         """Sync devices connected to podmanager(s)
 

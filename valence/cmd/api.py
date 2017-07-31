@@ -15,13 +15,16 @@
 
 import logging
 
+import eventlet
+eventlet.monkey_patch(os=False)
 import gunicorn.app.base
 
 from valence.api.route import app as application
+from valence.common import async
 import valence.conf
+from valence.controller import pooled_devices
 
 CONF = valence.conf.CONF
-
 LOG = logging.getLogger(__name__)
 
 
@@ -42,6 +45,24 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
         return self.application
 
 
+@async.async
+def start_devices_periodic_task():
+    """Starts asynchronous periodic sync on app startup
+
+    If enabled in configuration this function will start periodic sync
+    of pooled resources in background.
+
+    """
+    if CONF.podm.enable_periodic_sync:
+        async.start_periodic_worker([(
+            pooled_devices.PooledDevices.synchronize_devices, None, None)])
+    return
+
+
+def sync_devices(server):
+    start_devices_periodic_task()
+
+
 def main():
     options = {
         'bind': '%s:%s' % (CONF.api.bind_host, CONF.api.bind_port),
@@ -50,6 +71,8 @@ def main():
         'workers': CONF.api.workers,
         'loglevel': CONF.api.log_level,
         'errorlog': CONF.api.log_file,
+        'worker_class': 'eventlet',
+        'when_ready': sync_devices,
     }
     LOG.info(("Valence Server on http://%(host)s:%(port)s"),
              {'host': CONF.api.bind_host, 'port': CONF.api.bind_port})
