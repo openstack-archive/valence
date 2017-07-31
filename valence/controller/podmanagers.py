@@ -46,7 +46,6 @@ def _check_creation(values):
 
     # input status
     values['status'] = get_podm_status(values['url'], values['authentication'])
-
     return values
 
 
