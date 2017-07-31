@@ -19,7 +19,11 @@ import flask_cors
 import flask_restful
 from six.moves import http_client
 
+# Note: setup app needs to be called before the valence imports
+# for config options initialization to take place.
 from valence.api import app as flaskapp
+app = flaskapp.get_app()
+
 import valence.api.root as api_root
 import valence.api.v1.devices as v1_devices
 import valence.api.v1.flavors as v1_flavors
