@@ -14,13 +14,16 @@
 
 import logging
 
+from valence.common import async
 from valence.common import exception
 from valence.common import utils
+import valence.conf
 from valence.controller import nodes
 from valence.controller import pooled_devices
 from valence.db import api as db_api
 from valence.podmanagers import manager
 
+CONF = valence.conf.CONF
 LOG = logging.getLogger(__name__)
 
 
@@ -63,8 +66,7 @@ def create_podmanager(values):
     values['status'] = mng.podm.get_status()
     podm = db_api.Connection.create_podmanager(values).as_dict()
     # updates all devices corresponding to this podm in DB
-    # TODO(Akhil): Make this as asynchronous action
-    pooled_devices.PooledDevices.update_device_info(podm['uuid'])
+    update_podm_resources_to_db(podm['uuid'])
     return podm
 
 
@@ -83,3 +85,17 @@ def delete_podmanager(uuid):
         nodes.Node(node['uuid']).delete_composed_node(node['uuid'])
 
     return db_api.Connection.delete_podmanager(uuid)
+
+
+@async.async
+def update_podm_resources_to_db(podm_id):
+    """Starts asynchronous one_time sync
+
+    As set in configuration this function will sync pooled resources
+    one time if background periodic sync is disabled.
+
+    :param podm_id: to asynchronously sync devices of particular podm
+    """
+    if not CONF.podm.enable_periodic_sync:
+        pooled_devices.PooledDevices.synchronize_devices(podm_id)
+    return

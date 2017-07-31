@@ -42,6 +42,14 @@ podm_opts = [
                default='/redfish/v1/',
                help=_('The URL extension that specifies the '
                       'Redfish API version that valence will interact with')),
+    cfg.BoolOpt('enable_periodic_sync',
+                default=False,
+                help=_('To enable periodic task to automatically sync'
+                       'resources of podmanager with DB.')),
+    cfg.IntOpt('sync_interval',
+               default=30,
+               help=_('Time interval(in seconds) after which devices will be'
+                      'synced periodically.')),
 ]
 
 
