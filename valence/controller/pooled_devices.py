@@ -14,6 +14,7 @@
 
 import logging
 
+from valence.common import async
 from valence.common import exception
 from valence.db import api as db_api
 from valence.podmanagers import manager
@@ -48,6 +49,11 @@ class PooledDevices(object):
         :return: DB device info
         """
         return db_api.Connection.get_device_by_uuid(device_id).as_dict()
+
+    @classmethod
+    @async.async
+    def asynchronous_sync_devices(cls, podm_id=None):
+        cls.synchronize_devices(podm_id)
 
     @classmethod
     def synchronize_devices(cls, podm_id=None):

@@ -15,6 +15,8 @@
 
 import logging
 
+import eventlet
+eventlet.monkey_patch()
 import gunicorn.app.base
 
 from valence.api.route import app as application
@@ -50,6 +52,7 @@ def main():
         'workers': CONF.api.workers,
         'loglevel': CONF.api.log_level,
         'errorlog': CONF.api.log_file,
+        'worker_class': 'eventlet',
     }
     LOG.info(("Valence Server on http://%(host)s:%(port)s"),
              {'host': CONF.api.bind_host, 'port': CONF.api.bind_port})
