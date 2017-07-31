@@ -63,8 +63,7 @@ def create_podmanager(values):
     values['status'] = mng.podm.get_status()
     podm = db_api.Connection.create_podmanager(values).as_dict()
     # updates all devices corresponding to this podm in DB
-    # TODO(Akhil): Make this as asynchronous action
-    pooled_devices.PooledDevices.update_device_info(podm['uuid'])
+    pooled_devices.PooledDevices.start_devices_periodic_task(podm['uuid'])
     return podm
 
 
