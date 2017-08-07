@@ -14,7 +14,6 @@
 
 import logging
 
-
 from valence.common import exception
 from valence.common import utils
 from valence.controller import flavors
@@ -115,15 +114,15 @@ class Node(object):
 
         return: Info on managed node.
         """
-
         composed_node = redfish.get_node_by_id(request_body["node_index"])
         # Check to see that the node to manage doesn't already exist in the
         # Valence database.
+        error_msg = ("Node '%s' already managed by Valence")
         current_nodes = cls.list_composed_nodes()
         for node in current_nodes:
             if node['index'] == composed_node['index']:
                 raise exception.ResourceExists(
-                    detail="Node already managed by Valence.")
+                    error_msg % node['index'])
 
         composed_node["uuid"] = utils.generate_uuid()
 

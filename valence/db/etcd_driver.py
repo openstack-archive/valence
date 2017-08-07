@@ -45,10 +45,8 @@ def translate_to_models(etcd_resp, model_type):
     elif model_type == models.ComposedNode.path:
         ret = models.ComposedNode(**data)
     else:
-        # TODO(lin.a.yang): after exception module got merged, raise
-        # valence specific InvalidParameter exception here
-        raise Exception(
-            'The model_type value: {0} is invalid.'.format(model_type))
+        raise exception.ValenceException("Invalid model path '%s' specified.",
+                                         model_type)
     return ret
 
 
@@ -68,16 +66,13 @@ class EtcdDriver(object):
 
         return podmanager
 
-    def get_podmanager_by_uuid(self, podmanager_uuid):
+    def get_podmanager_by_uuid(self, podm_uuid):
         try:
-            resp = self.client.read(models.PodManager.etcd_path(
-                podmanager_uuid))
+            resp = self.client.read(models.PodManager.etcd_path(podm_uuid))
         except etcd.EtcdKeyNotFound:
-            # TODO(lin.a.yang): after exception module got merged, raise
-            # valence specific DBNotFound exception here
-            raise Exception(
-                'Pod manager not found {0} in database.'.format(
-                    podmanager_uuid))
+            msg = 'Pod Manager {0} not found in database.'.format(podm_uuid)
+            LOG.exception(msg)
+            raise exception.NotFound(msg)
 
         return translate_to_models(resp, models.PodManager.path)
 
@@ -98,9 +93,10 @@ class EtcdDriver(object):
             resp = getattr(self.client.read(models.PodManager.path),
                            'children', None)
         except etcd.EtcdKeyNotFound:
-            LOG.error("Path '/pod_managers' does not exist, seems etcd server "
-                      "was not initialized appropriately.")
-            raise
+            msg = ("Path '/pod_managers' does not exist, seems etcd server "
+                   "was not initialized appropriately.")
+            LOG.error(msg)
+            raise exception.ServiceUnavailable(msg)
 
         podmanagers = []
         for podm in resp:
@@ -114,9 +110,9 @@ class EtcdDriver(object):
         try:
             resp = self.client.read(models.Flavor.etcd_path(flavor_uuid))
         except etcd.EtcdKeyNotFound:
-            # TODO(ntpttr): Change this to a valence specific exception
-            # when the exceptions module is merged.
-            raise Exception('Flavor {0} not found.'.format(flavor_uuid))
+            msg = 'Flavor {0} not found in database.'.format(flavor_uuid)
+            LOG.exception(msg)
+            raise exception.NotFound(msg)
 
         return translate_to_models(resp, models.Flavor.path)
 
@@ -143,9 +139,10 @@ class EtcdDriver(object):
             resp = getattr(self.client.read(models.Flavor.path),
                            'children', None)
         except etcd.EtcdKeyNotFound:
-            LOG.error("Path '/flavors' does not exist, the etcd server may "
-                      "not have been initialized appropriately.")
-            raise
+            msg = ("Path '/flavors' does not exist, the etcd server may "
+                   "not have been initialized appropriately.")
+            LOG.error(msg)
+            raise exception.ServiceUnavailable(msg)
 
         flavors = []
         for flavor in resp:
@@ -166,11 +163,10 @@ class EtcdDriver(object):
             resp = self.client.read(models.ComposedNode.etcd_path(
                 composed_node_uuid))
         except etcd.EtcdKeyNotFound:
-            # TODO(lin.a.yang): after exception module got merged, raise
-            # valence specific DBNotFound exception here
-            raise exception.NotFound(
-                'Composed node not found {0} in database.'.format(
-                    composed_node_uuid))
+            msg = ("Composed node '{0}' not found in database.".format(
+                   composed_node_uuid))
+            LOG.exception(msg)
+            raise exception.NotFound(msg)
 
         return translate_to_models(resp, models.ComposedNode.path)
 
@@ -191,9 +187,10 @@ class EtcdDriver(object):
             resp = getattr(self.client.read(models.ComposedNode.path),
                            'children', None)
         except etcd.EtcdKeyNotFound:
-            LOG.error("Path '/nodes' does not exist, seems etcd server "
-                      "was not initialized appropriately.")
-            raise
+            msg = ("Path '/nodes' does not exist, the etcd server may "
+                   "not have been initialized appropriately.")
+            LOG.error(msg)
+            raise exception.ServiceUnavailable(msg)
 
         composed_nodes = []
         for node in resp:
