@@ -47,7 +47,9 @@ def main():
         'bind': '%s:%s' % (CONF.api.bind_host, CONF.api.bind_port),
         'reload': CONF.api.debug,
         'timeout': CONF.api.timeout,
-        'workers': CONF.api.workers
+        'workers': CONF.api.workers,
+        'loglevel': CONF.api.log_level,
+        'errorlog': CONF.api.log_file,
     }
     LOG.info(("Valence Server on http://%(host)s:%(port)s"),
              {'host': CONF.api.bind_host, 'port': CONF.api.bind_port})
