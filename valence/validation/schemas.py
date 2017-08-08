@@ -89,7 +89,8 @@ compose_node_with_flavor = {
     'properties': {
         'name': {'type': 'string'},
         'description': {'type': 'string'},
-        'flavor_id': {'type': 'string'}
+        'flavor_id': {'type': 'string'},
+        'podm_id': {'type': 'string'}
     },
     'required': ['name', 'flavor_id'],
     'additionalProperties': False,
@@ -100,6 +101,7 @@ compose_node_with_properties = {
     'properties': {
         'name': {'type': 'string'},
         'description': {'type': 'string'},
+        'podm_id': {'type': 'string'},
         'properties': {
             'type': 'object',
             'properties': {
@@ -140,6 +142,7 @@ node_manage_schema = {
     'type': 'object',
     'properties': {
         'node_index': {'type': 'string'},
+        'podm_id': {'type': 'string'},
     },
     'required': ['node_index'],
     'additionalProperties': False,

@@ -202,6 +202,9 @@ class ComposedNode(ModelBaseWithTimeStamp):
         'name': {
             'validate': types.Text.validate
         },
+        'podm_id': {
+            'validate': types.Text.validate
+        },
         'index': {
             'validate': types.Text.validate
         },
