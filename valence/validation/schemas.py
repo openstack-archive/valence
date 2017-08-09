@@ -56,6 +56,7 @@ podmanager_schema = {
             'type': 'string',
             'format': 'uri',
             },
+        'driver': {'type': 'string'},
         'authentication': {
             'type': 'array',
             'minItems': 1,
