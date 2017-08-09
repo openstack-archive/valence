@@ -33,6 +33,8 @@ class ValenceError(Exception, base.ObjectBase):
        http://specs.openstack.org/openstack/api-wg/guidelines/errors.html
 
     """
+    _msg_fmt = "An unknown exception occured"
+    status = http_client.INTERNAL_SERVER_ERROR
 
     fields = {
         'request_id': {
@@ -51,6 +53,17 @@ class ValenceError(Exception, base.ObjectBase):
             'validate': types.Text.validate
         }
     }
+
+    def __init__(self, detail=None, status=None, title=None, code=None,
+                 request_id=None):
+        self.status = status or self.status
+        self.title = title or self._msg_fmt
+        self.code = code or http_client.responses.get(self.status)
+        self.detail = detail
+        self.request_id = request_id or FAKE_REQUEST_ID
+
+    def __str__(self):
+        return self.title + ':' + self.detail
 
 
 class ValenceConfirmation(base.ObjectBase):
@@ -75,73 +88,50 @@ class ValenceConfirmation(base.ObjectBase):
 
 
 class ValenceException(ValenceError):
-    def __init__(self, detail, status=None,
-                 request_id=FAKE_REQUEST_ID):
-        self.request_id = request_id
-        self.status = status or http_client.SERVICE_UNAVAILABLE
-        self.code = "ValenceError"
-        self.title = http_client.responses.get(self.status)
-        self.detail = detail
+    pass
+
+
+class ServiceUnavailable(ValenceError):
+    status = http_client.SERVICE_UNAVAILABLE
+    _msg_fmt = "Connection Error"
 
 
 class RedfishException(ValenceError):
 
-    def __init__(self, responsejson, request_id=FAKE_REQUEST_ID,
-                 status_code=http_client.BAD_REQUEST):
-        Exception.__init__(self)
-        self.request_id = request_id
-        self.status = status_code
+    def __init__(self, responsejson, request_id=None, status_code=None):
         data = responsejson['error']
         self.code = data['code']
         self.title = data['message']
-        message_detail = " ".join(
-                         [i['Message']
-                          for i in data['@Message.ExtendedInfo']])
-        self.detail = message_detail
+        message_detail = " ".join([i['Message']
+                                  for i in data['@Message.ExtendedInfo']])
+
+        super(RedfishException, self).__init__(message_detail, status_code,
+                                               self.title, self.code,
+                                               request_id)
 
 
 class ResourceExists(ValenceError):
-    def __init__(self, detail='resource already exists', request_id=None):
-        self.request_id = request_id
-        self.status_code = http_client.METHOD_NOT_ALLOWED
-        self.code = http_client.METHOD_NOT_ALLOWED
-        self.title = "Resource already exists"
-        self.detail = detail
+    status = http_client.CONFLICT
+    _msg_fmt = "Resource Already Exists"
 
 
 class NotFound(ValenceError):
-
-    def __init__(self, detail='resource not found',
-                 request_id=FAKE_REQUEST_ID):
-        self.request_id = request_id
-        self.status = http_client.NOT_FOUND
-        self.code = "NotFound"
-        self.title = "Resource NOT Found"
-        self.detail = detail
+    status = http_client.NOT_FOUND
+    _msg_fmt = "Resource could not be found"
 
 
 class BadRequest(ValenceError):
-
-    def __init__(self, detail='bad request', request_id=FAKE_REQUEST_ID,
-                 code=None):
-        self.request_id = request_id
-        self.status = http_client.BAD_REQUEST
-        self.code = code or "BadRequest"
-        self.title = "Malformed or Missing Payload in Request"
-        self.detail = detail
+    status = http_client.BAD_REQUEST
+    _msg_fmt = "Bad Request"
 
 
 class ValidationError(BadRequest):
-    def __init__(self, detail='Validation Error', request_id=None):
-        super(ValidationError, self).__init__(detail=detail,
-                                              code='ValidationError')
+    _msg_fmt = "Validation Error"
 
 
 class AuthorizationFailure(ValenceError):
-    def __init__(self, detail, request_id=None):
-        message = "Keystone authorization error. %s" % detail
-        super(AuthorizationFailure, self).__init__(detail=message,
-                                                   code='AuthorizationFailure')
+    status = http_client.UNAUTHORIZED
+    _msg_fmt = "Authorization Error"
 
 
 def _error(error_code, http_status, error_title, error_detail,

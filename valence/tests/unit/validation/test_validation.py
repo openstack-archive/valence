@@ -60,7 +60,7 @@ class TestFlavorApi(TestApiValidation):
                                  data=json.dumps(self.flavor))
         response = json.loads(response.data.decode())
         self.assertEqual(http_client.BAD_REQUEST, response['status'])
-        self.assertEqual('ValidationError', response['code'])
+        self.assertEqual('Validation Error', response['title'])
 
         # Test invalid key
         flavor['properties']['invalid_key'] = 'invalid'
@@ -69,7 +69,7 @@ class TestFlavorApi(TestApiValidation):
                                  data=json.dumps(self.flavor))
         response = json.loads(response.data.decode())
         self.assertEqual(http_client.BAD_REQUEST, response['status'])
-        self.assertEqual('ValidationError', response['code'])
+        self.assertEqual('Validation Error', response['title'])
 
 
 class TestPodmanagerApi(TestApiValidation):
@@ -111,7 +111,7 @@ class TestPodmanagerApi(TestApiValidation):
                                  data=json.dumps(incomplete_values))
         response = json.loads(response.data.decode())
         self.assertEqual(http_client.BAD_REQUEST, response['status'])
-        self.assertEqual('ValidationError', response['code'])
+        self.assertEqual('Validation Error', response['title'])
 
     def test_check_creation_invalid_authentication(self):
         invalid_auth_values = {
@@ -127,7 +127,7 @@ class TestPodmanagerApi(TestApiValidation):
                                  data=json.dumps(invalid_auth_values))
         response = json.loads(response.data.decode())
         self.assertEqual(http_client.BAD_REQUEST, response['status'])
-        self.assertEqual('ValidationError', response['code'])
+        self.assertEqual('Validation Error', response['title'])
 
 
 class TestNodeApi(TestApiValidation):
@@ -176,7 +176,7 @@ class TestNodeApi(TestApiValidation):
                              data=json.dumps(req))
         response = json.loads(resp.data.decode())
         self.assertEqual(http_client.BAD_REQUEST, response['status'])
-        self.assertEqual('ValidationError', response['code'])
+        self.assertEqual('Validation Error', response['title'])
 
     @mock.patch('valence.controller.nodes.Node.manage_node')
     def test_node_manage_request(self, mock_manage):
@@ -200,7 +200,7 @@ class TestNodeApi(TestApiValidation):
                              data=json.dumps(req))
         response = json.loads(resp.data.decode())
         self.assertEqual(http_client.BAD_REQUEST, response['status'])
-        self.assertEqual('ValidationError', response['code'])
+        self.assertEqual('Validation Error', response['title'])
 
     @mock.patch('valence.controller.nodes.Node.node_action')
     def test_node_action_request(self, mock_action):
@@ -255,4 +255,4 @@ class TestNodeApi(TestApiValidation):
                              data=json.dumps(req))
         response = json.loads(resp.data.decode())
         self.assertEqual(http_client.BAD_REQUEST, response['status'])
-        self.assertEqual('ValidationError', response['code'])
+        self.assertEqual('Validation Error', response['title'])
