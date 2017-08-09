@@ -40,15 +40,14 @@ def setup_app():
     TEN_KB = 10 * 1024
 
     # Configure logging
-    if os.path.isfile(CONF.api.log_file) and os.access(CONF.api.log_file,
-                                                       os.W_OK):
+    if os.path.isfile(CONF.log_file) and os.access(CONF.log_file, os.W_OK):
         handler = logging.handlers.RotatingFileHandler(
             CONF.api.log_file, maxBytes=TEN_KB, backupCount=1)
-        handler.setLevel(log_level_map.get(CONF.api.log_level))
-        formatter = logging.Formatter(CONF.api.log_format)
+        handler.setLevel(log_level_map.get(CONF.log_level))
+        formatter = logging.Formatter(CONF.log_format)
         handler.setFormatter(formatter)
         app.logger.addHandler(handler)
-    app.logger.setLevel(log_level_map.get(CONF.api.log_level))
+    app.logger.setLevel(log_level_map.get(CONF.log_level))
 
     @app.before_request
     def before_request_logging():

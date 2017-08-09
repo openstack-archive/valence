@@ -48,23 +48,21 @@ api_service_opts = [
                help=_('Configuration file for WSGI definition of API.')),
     cfg.BoolOpt('debug',
                 default=False,
-                help=_('Enable debug mode for valence-api service.'))
+                help=_('Start API server in debug mode.'))
 ]
 
 log_option = [
     cfg.StrOpt('log_file',
-               default='/var/log/valence/valence.log',
-               help=_('The log file location for valence-api service')),
+               default='/var/log/valence/valence-api.log',
+               help=_('The log file location for valence API server')),
     cfg.StrOpt('log_level',
-               default='debug',
-               help=_('The granularity of Error log outputs.')),
-    cfg.StrOpt('log_format',
-               default='%(asctime)s %(name)-4s %(levelname)-4s %(message)s',
-               help=_('The log format.')),
+               default='info',
+               choices=['info', 'critical', 'warning', 'debug', 'error'],
+               help=_('The granularity of API server log outputs.')),
 ]
 
 api_group = cfg.OptGroup(name='api',
-                         title='Options for the valence-api service')
+                         title='Options for the valence API ')
 
 
 ALL_OPTS = (api_service_opts + log_option)
