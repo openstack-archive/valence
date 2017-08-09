@@ -17,11 +17,12 @@
 
 """
 
-
 import logging
 
 import flask
 from oslo_utils import uuidutils
+
+from valence.common import constants
 
 LOG = logging.getLogger(__name__)
 
@@ -111,3 +112,16 @@ def make_response(status_code, content="", headers=None):
 def generate_uuid():
     """Generate uniform format uuid"""
     return uuidutils.generate_uuid()
+
+
+def get_basic_auth_credentials(authentication):
+    """parse out the basic auth from podm's authentication array properties
+
+    :param authentication: podm's authentication
+    :return: username, password to connect to the podm
+    """
+    for auth_property in authentication:
+        if auth_property['type'] == constants.PODM_AUTH_BASIC_TYPE:
+            username = auth_property['auth_items']['username']
+            password = auth_property['auth_items']['password']
+            return username, password

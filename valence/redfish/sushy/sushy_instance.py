@@ -16,7 +16,7 @@
 import sushy
 from sushy import exceptions
 
-from resources import chassis
+from valence.redfish.sushy.resources import chassis
 
 
 class RedfishInstance(sushy.Sushy):

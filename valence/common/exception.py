@@ -120,6 +120,10 @@ class NotFound(ValenceError):
     _msg_fmt = "Resource could not be found"
 
 
+class DriverNotFound(NotFound):
+    _msg_fmt = "Unsupported Driver Specified"
+
+
 class BadRequest(ValenceError):
     status = http_client.BAD_REQUEST
     _msg_fmt = "Bad Request"
