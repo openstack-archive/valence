@@ -16,7 +16,9 @@ import logging
 
 from flask import request
 from flask_restful import Resource
+from six.moves import http_client
 
+from valence.common import utils
 from valence.redfish import redfish
 
 LOG = logging.getLogger(__name__)
@@ -25,10 +27,12 @@ LOG = logging.getLogger(__name__)
 class SystemsList(Resource):
 
     def get(self):
-        return redfish.systems_list(request.args)
+        return utils.make_response(http_client.OK,
+                                   redfish.systems_list(request.args))
 
 
 class Systems(Resource):
 
     def get(self, systemid):
-        return redfish.get_systembyid(systemid)
+        return utils.make_response(http_client.OK,
+                                   redfish.get_systembyid(systemid))
