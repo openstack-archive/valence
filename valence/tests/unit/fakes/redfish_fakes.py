@@ -51,6 +51,87 @@ def fake_service_root():
     }
 
 
+def fake_boot_field():
+
+    class FakeBootField(object):
+        def __init__(self):
+            self.enabled = "fake_boot_enabled"
+            self.mode = "fake_boot_mode"
+            self.target = "fake_boot_target"
+
+    return FakeBootField()
+
+
+def fake_memory_summary():
+
+    class FakeMemorySummary(object):
+        def __init__(self):
+            self.health = "fake_memory_health"
+            self.size_gib = "fake_memory_size_gib"
+
+    return FakeMemorySummary()
+
+
+def fake_processors():
+
+    class FakeProcessors(object):
+
+        @property
+        def summary(self):
+            return fake_processor_summary()
+
+    return FakeProcessors()
+
+
+def fake_processor_summary():
+
+    class FakeProcessorSummary(object):
+        def __init__(self):
+            self.count = "fake_processor_count"
+            self.architecture = "fake_processor_architecture"
+
+    return FakeProcessorSummary()
+
+
+def fake_system(identity, name):
+
+    class FakeSystem(object):
+        def __init__(self, identity, name):
+            self.asset_tag = "fake_asset_tag"
+            self.bios_version = "fake_bios_version"
+            self.boot = fake_boot_field()
+            self.description = "fake_description"
+            self.hostname = "fake_hostname"
+            self.identity = identity
+            self.indicator_led = "fake_indicator_led"
+            self.manufacturer = "fake_manufacturer"
+            self.name = name
+            self.part_number = "fake_part_number"
+            self.power_state = "fake_power_state"
+            self.serial_number = "fake_serial_number"
+            self.sku = "fake_sku"
+            self.memory_summary = fake_memory_summary()
+            self.processors = fake_processors()
+
+    return FakeSystem(identity, name)
+
+
+def fake_system_col():
+
+    class FakeSystemCol(object):
+        def __init__(self):
+            self.system_one = fake_system(1, 'System One')
+            self.system_two = fake_system(2, 'System Two')
+
+        def get_members(self):
+            return [
+                self.system_one,
+                self.system_two
+            ]
+
+    return FakeSystemCol()
+
+
 def fake_nodes_root():
     return {
         "@odata.context": "/redfish/v1/$metadata#Nodes",

@@ -29,10 +29,9 @@ Response
 
 .. rest_parameters:: parameters.yaml
 
-    - uuid: system_uuid
+    - identity: system_identity
     - name: system_name
     - power_state: system_power_state
-    - links: links
 
 **Example list of Compute System:**
 
@@ -65,56 +64,27 @@ Response
 
 .. rest_parameters:: parameters.yaml
 
-    - uuid: system_uuid
-    - description: node_description
+    - asset_tag: system_asset_tag
+    - bios_version: system_bios_version
+    - boot_enabled: system_boot_enabled
+    - boot_mode: system_boot_mode
+    - boot_target: system_boot_target
+    - description: system_description
+    - hostname: system_hostname
+    - identity: system_identity
+    - indicator_led: system_indicator_led
+    - manufacturer: system_manufacturer
     - name: system_name
+    - part_number: system_part_number
     - power_state: system_power_state
-    - health: system_health
-    - chassis_id : system_chassis_id
-    - assettag: system_assettag
-    - url_id : system_url_id
-    - created_at: created_at
-    - updated_at: updated_at
-    - links: links
+    - serial_number: system_serial_number
+    - sku: system_sku
+    - memory_health: system_memory_health
+    - memory_size_gib: system_memory_size_gib
+    - processor_count: system_processor_count
+    - processor_architecture: system_processor_architecture
 
 **Example JSON representation of a Compute System:**
 
 .. literalinclude:: mockup/compute-system-get-response.json
-   :language: javascript
-
-
-List Compute System Inventory Details
-=====================================
-
-.. rest_method::  GET /v1/systems/{system_ident}/inventory
-
-Shows inventory data for a Compute System.
-This will return the full representation of the resources include processor
-memory, storage objects
-
-Normal response codes: 200
-
-Error response codes: badRequest(400), unauthorized(401), forbidden(403)
-
-Request
--------
-
-.. rest_parameters:: parameters.yaml
-
-    - system_ident: system_ident
-
-Response
---------
-
-.. rest_parameters:: parameters.yaml
-
-    - processor: system_processor_object
-    - memory: system_memory_object
-    - storage: system_storage_object
-    - network: system_network_object
-
-
-**Example JSON representation of a Node:**
-
-.. literalinclude:: mockup/compute-system-inventory-get-response.json
    :language: javascript

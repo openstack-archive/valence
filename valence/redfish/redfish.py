@@ -17,6 +17,7 @@ import logging
 import os
 
 import flask
+from oslo_utils import importutils
 import requests
 from requests import auth
 from six.moves import http_client
@@ -32,6 +33,85 @@ from valence.redfish import tree
 CONF = valence.conf.CONF
 LOG = logging.getLogger(__name__)
 SERVICE_ROOT = None
+
+rsd_lib = importutils.try_import('rsd_lib')
+
+
+def _parse_connection_info():
+    base_url = CONF.podm.url
+    username = CONF.podm.username
+    password = CONF.podm.password
+    root_prefix = CONF.podm.base_ext
+    return {
+        'base_url': base_url,
+        'username': username,
+        'password': password,
+        'root_prefix': root_prefix
+    }
+
+
+def systems_list():
+    """List systems contained by RSD Pod.
+
+    :returns: List of systems in RSD Pod
+    """
+    conn_info = _parse_connection_info()
+    conn = rsd_lib.RSDLib(conn_info['base_url'],
+                          username=conn_info['username'],
+                          password=conn_info['password'],
+                          root_prefix=conn_info['root_prefix'])
+    system_col = conn.get_system_collection()
+    systems = system_col.get_members()
+
+    systems_info = []
+    for system in systems:
+        systems_info.append({
+            'identity': system.identity,
+            'name': system.name,
+            'power_state': system.power_state
+        })
+    return systems_info
+
+
+def get_system(system_id):
+    """Get specific system in RSD Pod.
+
+    :param system_id: The ID for the system to retrieve
+    :returns: Information about the system
+    """
+    conn_info = _parse_connection_info()
+    conn = rsd_lib.RSDLib(conn_info['base_url'],
+                          username=conn_info['username'],
+                          password=conn_info['password'],
+                          root_prefix=conn_info['root_prefix'])
+    system_path = (conn_info['base_url'] +
+                   conn_info['root_prefix'] +
+                   'Systems/' + system_id)
+    system = conn.get_system(system_path)
+
+    system_info = {
+        'asset_tag': system.asset_tag,
+        'bios_version': system.bios_version,
+        'boot_enabled': system.boot.enabled,
+        'boot_mode': system.boot.mode,
+        'boot_target': system.boot.target,
+        'description': system.description,
+        'hostname': system.hostname,
+        'identity': system.identity,
+        'indicator_led': system.indicator_led,
+        'manufacturer': system.manufacturer,
+        'name': system.name,
+        'part_number': system.part_number,
+        'power_state': system.power_state,
+        'serial_number': system.serial_number,
+        'sku': system.sku,
+        'memory_health': system.memory_summary.health,
+        'memory_size_gib': system.memory_summary.size_gib,
+        'processor_count': system.processors.summary.count,
+        'processor_architecture': system.processors.summary.architecture
+    }
+
+    return system_info
 
 
 def update_service_root():
@@ -167,118 +247,6 @@ def urls2list(url):
         return []
 
 
-def system_cpu_details(system_url):
-    cpucnt = 0
-    cpuarch = ""
-    cpumodel = ""
-    cpulist = urls2list(system_url + '/Processors')
-    for lnk in cpulist:
-        LOG.info("Processing CPU %s" % lnk)
-        resp = send_request(lnk)
-        respdata = resp.json()
-        # Check if CPU data is populated. It also may have NULL values
-        cpucnt += utils.extract_val(respdata, "TotalCores", 0)
-        cpuarch = utils.extract_val(respdata, "InstructionSet", "")
-        cpumodel = utils.extract_val(respdata, "Model", "")
-        LOG.debug(" Cpu details %s: %d: %s: %s "
-                  % (system_url, cpucnt, cpuarch, cpumodel))
-    return {"cores": str(cpucnt), "arch": cpuarch, "model": cpumodel}
-
-
-def system_ram_details(system_url):
-    # this extracts the RAM and returns as dictionary
-    resp = send_request(system_url)
-    respjson = resp.json()
-    ram = utils.extract_val(respjson,
-                            "MemorySummary/TotalSystemMemoryGiB", "0")
-    return str(ram)
-
-
-def system_network_details(system_url):
-    # this extracts the total nw interfaces and returns as a string
-    resp = send_request(system_url + "/EthernetInterfaces")
-    respbody = resp.json()
-    nwi = str(utils.extract_val(respbody, "Members@odata.count", "0"))
-    LOG.debug(" Total NW for node %s : %s " % (system_url, nwi))
-    return nwi
-
-
-def system_storage_details(system_url):
-    # this extracts the RAM and returns as dictionary
-    storagecnt = 0
-    hddlist = urls2list(system_url + "/SimpleStorage")
-    for lnk in hddlist:
-        resp = send_request(lnk)
-        respbody = resp.json()
-        devices = utils.extract_val(respbody, "Devices")
-        if not devices:
-            continue
-        for device in devices:
-            if "CapacityBytes" in device:
-                if device["CapacityBytes"] is not None:
-                    storagecnt += device["CapacityBytes"]
-    LOG.debug("Total storage for system %s : %d " % (system_url, storagecnt))
-    # to convert Bytes in to GB. Divide by 1073741824
-    BYTES_PER_GB = 1073741824
-    return str(storagecnt / BYTES_PER_GB).split(".")[0]
-
-
-def systems_list(filters={}):
-    # list of nodes with hardware details needed for flavor creation
-    lst_systems = []
-    systems_url = get_base_resource_url("Systems")
-    systemurllist = urls2list(systems_url)
-    podmtree = build_hierarchy_tree()
-    LOG.info(systemurllist)
-    for lnk in systemurllist:
-        filterPassed = True
-        resp = send_request(lnk)
-        system = resp.json()
-
-        if any(filters):
-            filterPassed = utils.match_conditions(system, filters)
-        if not filterPassed:
-            continue
-
-        system_id = lnk.split("/")[-1]
-        system_uuid = system['UUID']
-        system_name = system['Name']
-        system_description = system['Description']
-        system_health = system['Status']['Health']
-        system_location = podmtree.getPath(lnk)
-        cpu = system_cpu_details(lnk)
-        ram = system_ram_details(lnk)
-        network = system_network_details(lnk)
-        storage = system_storage_details(lnk)
-        system = {"Name": system_name, "id": system_id,
-                  "Description": system_description,
-                  "cpu": cpu, "ram": ram, "storage": storage,
-                  "network": network, "location": system_location,
-                  "uuid": system_uuid, "health": system_health}
-
-        # filter based on RAM, CPU, NETWORK..etc
-        if 'ram' in filters:
-            filterPassed = (True
-                            if int(ram) >= int(filters['ram'])
-                            else False)
-
-        # filter based on RAM, CPU, NETWORK..etc
-        if 'nw' in filters:
-            filterPassed = (True
-                            if int(network) >= int(filters['network'])
-                            else False)
-
-        # filter based on RAM, CPU, NETWORK..etc
-        if 'storage' in filters:
-            filterPassed = (True
-                            if int(storage) >= int(filters['storage'])
-                            else False)
-
-        if filterPassed:
-            lst_systems.append(system)
-    return lst_systems
-
-
 def get_chassis_list():
     chassis_url = get_base_resource_url("Chassis")
     chassis_lnk_lst = urls2list(chassis_url)
@@ -314,93 +282,6 @@ def get_chassis_list():
                  "ComputerSystems": computersystems}
             lst_chassis.append(c)
     return lst_chassis
-
-
-def get_systembyid(systemid):
-    return systems_list({"Id": systemid})
-
-
-def show_cpu_details(cpu_url):
-    """Get processor details .
-
-    :param cpu_url: relative redfish url to processor,
-                    e.g /redfish/v1/Systems/1/Processors/1.
-    :returns: dict of processor detail.
-    """
-    resp = send_request(cpu_url)
-    if resp.status_code != http_client.OK:
-        # Raise exception if don't find processor
-        raise exception.RedfishException(resp.json(),
-                                         status_code=resp.status_code)
-    respdata = resp.json()
-    cpu_details = {
-        "instruction_set": respdata.get("InstructionSet"),
-        "model": respdata.get("Model"),
-        "speed_mhz": respdata.get("MaxSpeedMHz"),
-        "total_core": respdata.get("TotalCores")
-    }
-
-    return cpu_details
-
-
-def show_ram_details(ram_url):
-    """Get memory details .
-
-    :param ram_url: relative redfish url to memory,
-                    e.g /redfish/v1/Systems/1/Memory/1.
-    :returns: dict of memory detail.
-    """
-    resp = send_request(ram_url)
-    if resp.status_code != http_client.OK:
-        # Raise exception if don't find memory
-        raise exception.RedfishException(resp.json(),
-                                         status_code=resp.status_code)
-    respdata = resp.json()
-    ram_details = {
-        "data_width_bit": respdata.get("DataWidthBits"),
-        "speed_mhz": respdata.get("OperatingSpeedMhz"),
-        "total_memory_mb": respdata.get("CapacityMiB")
-    }
-
-    return ram_details
-
-
-def show_network_details(network_url):
-    """Get network interface details .
-
-    :param ram_url: relative redfish url to network interface,
-                    e.g /redfish/v1/Systems/1/EthernetInterfaces/1.
-    :returns: dict of network interface detail.
-    """
-    resp = send_request(network_url)
-    if resp.status_code != http_client.OK:
-        # Raise exception if don't find network interface
-        raise exception.RedfishException(resp.json(),
-                                         status_code=resp.status_code)
-    respdata = resp.json()
-    network_details = {
-        "speed_mbps": respdata.get("SpeedMbps"),
-        "mac": respdata.get("MACAddress"),
-        "status": respdata.get("Status", {}).get("State"),
-        "ipv4": [{
-            "address": ipv4.get("Address"),
-            "subnet_mask": ipv4.get("SubnetMask"),
-            "gateway": ipv4.get("Gateway")
-        } for ipv4 in respdata.get("IPv4Addresses", [])]
-    }
-
-    if respdata.get("VLANs"):
-        # Get vlan info
-        vlan_url_list = urls2list(respdata.get("VLANs", {}).get("@odata.id"))
-        network_details["vlans"] = []
-        for url in vlan_url_list:
-            vlan_info = send_request(url).json()
-            network_details["vlans"].append({
-                "vlanid": vlan_info.get("VLANId"),
-                "status": vlan_info.get("Status", {}).get("State")
-            })
-
-    return network_details
 
 
 def get_node_by_id(node_index, show_detail=True):
@@ -448,15 +329,6 @@ def get_node_by_id(node_index, show_detail=True):
             # resource can be assigned to composed node, which should be
             # supported after PODM API v2.1 released.
             "pooled_group_id": None,
-            "metadata": {
-                "processor": [show_cpu_details(i.get("@odata.id")) for i in
-                              respdata.get("Links", {}).get("Processors", [])],
-                "memory": [show_ram_details(i.get("@odata.id")) for i in
-                           respdata.get("Links", {}).get("Memory", [])],
-                "network": [show_network_details(i.get("@odata.id")) for i in
-                            respdata.get("Links", {}).get(
-                                "EthernetInterfaces", [])]
-            },
             "computer_system": respdata.get("Links").get("ComputerSystem")
         })
 
