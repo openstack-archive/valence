@@ -30,6 +30,86 @@ CONF = valence.conf.CONF
 
 class TestRedfish(TestCase):
 
+    def test__parse_connection_info(self):
+        CONF.podm.url = "https://127.0.0.1:8443"
+        CONF.podm.username = "foo"
+        CONF.podm.password = "bar"
+        CONF.podm.root_prefix = "/redfish/v1"
+        expected = {
+            "base_url": "https://127.0.0.1:8443",
+            "username": "foo",
+            "password": "bar",
+            "root_prefix": "/redfish/v1/"
+        }
+        result = redfish._parse_connection_info()
+        self.assertEqual(expected, result)
+
+    @mock.patch('valence.redfish.redfish._parse_connection_info')
+    @mock.patch('valence.redfish.redfish.rsd_lib')
+    def test_systems_list(self, mock_rsd_lib, mock_connection_info):
+        mock_connection_info.return_value = {
+            "base_url": "https://127.0.0.1:8443",
+            "username": "foo",
+            "password": "bar",
+            "root_prefix": "/redfish/v1/"
+        }
+        fake_system_col = fakes.fake_system_col()
+        fake_conn = mock_rsd_lib.RSDLib.return_value
+        fake_conn.get_system_collection.return_value = fake_system_col
+        expected = [
+            {
+                "identity": 1,
+                "name": "System One",
+                "power_state": "fake_power_state"
+            },
+            {
+                "identity": 2,
+                "name": "System Two",
+                "power_state": "fake_power_state"
+            }
+        ]
+        response = redfish.systems_list()
+        self.assertEqual(expected, response)
+        fake_conn.get_system_collection.assert_called_once()
+
+    @mock.patch('valence.redfish.redfish._parse_connection_info')
+    @mock.patch('valence.redfish.redfish.rsd_lib')
+    def test_get_system(self, mock_rsd_lib, mock_connection_info):
+        mock_connection_info.return_value = {
+            "base_url": "https://127.0.0.1:8443",
+            "username": "foo",
+            "password": "bar",
+            "root_prefix": "/redfish/v1/"
+        }
+        fake_system = fakes.fake_system(1, "System One")
+        fake_conn = mock_rsd_lib.RSDLib.return_value
+        fake_conn.get_system.return_value = fake_system
+        expected = {
+            "asset_tag": "fake_asset_tag",
+            "bios_version": "fake_bios_version",
+            "boot_enabled": "fake_boot_enabled",
+            "boot_mode": "fake_boot_mode",
+            "boot_target": "fake_boot_target",
+            "description": "fake_description",
+            "hostname": "fake_hostname",
+            "identity": 1,
+            "indicator_led": "fake_indicator_led",
+            "manufacturer": "fake_manufacturer",
+            "name": "System One",
+            "part_number": "fake_part_number",
+            "power_state": "fake_power_state",
+            "serial_number": "fake_serial_number",
+            "sku": "fake_sku",
+            "memory_health": "fake_memory_health",
+            "memory_size_gib": "fake_memory_size_gib",
+            "processor_count": "fake_processor_count",
+            "processor_architecture": "fake_processor_architecture"
+        }
+        response = redfish.get_system("1")
+        self.assertEqual(expected, response)
+        fake_conn.get_system.assert_called_once_with(
+            "https://127.0.0.1:8443/redfish/v1/Systems/1")
+
     def test_get_rfs_url(self):
         CONF.podm.url = "https://127.0.0.1:8443"
         expected = urljoin(CONF.podm.url, "redfish/v1/Systems/1")
@@ -154,107 +234,6 @@ class TestRedfish(TestCase):
                                                            http_client.OK)
         expected = ["/redfish/v1/Member/1", "/redfish/v1/Member/2"]
         result = redfish.urls2list('/redfish/v1/test')
-        self.assertEqual(expected, result)
-
-    @mock.patch('valence.redfish.redfish.urls2list')
-    @mock.patch('valence.redfish.redfish.send_request')
-    def test_system_cpu_details(self, mock_request, mock_url_list):
-        fake_processor_list = fakes.fake_processor_list()
-        mock_url_list.return_value = ["/redfish/v1/Systems/1",
-                                      "/redfish/v1/Systems/2"]
-        first_request = fakes.mock_request_get(fake_processor_list[0],
-                                               http_client.OK)
-        second_request = fakes.mock_request_get(fake_processor_list[1],
-                                                http_client.OK)
-        mock_request.side_effect = [first_request, second_request]
-        expected = {"cores": "3", "arch": "x86", "model": "Intel Xeon"}
-        result = redfish.system_cpu_details("/redfish/v1/Systems/test")
-        self.assertEqual(expected, result)
-
-    @mock.patch('valence.redfish.redfish.send_request')
-    def test_system_ram_details(self, mock_request):
-        resp = fakes.fake_detailed_system()
-        mock_request.return_value = fakes.mock_request_get(resp,
-                                                           http_client.OK)
-        expected = '8'
-        result = redfish.system_ram_details("/redfish/v1/Systems/test")
-        self.assertEqual(expected, result)
-
-    @mock.patch('valence.redfish.redfish.send_request')
-    def test_system_network_details(self, mock_request):
-        resp = fakes.fake_system_ethernet_interfaces()
-        mock_request.return_value = fakes.mock_request_get(resp,
-                                                           http_client.OK)
-        expected = '2'
-        result = redfish.system_network_details("/redfish/v1/Systems/test")
-        self.assertEqual(expected, result)
-
-    @mock.patch('valence.redfish.redfish.urls2list')
-    @mock.patch('valence.redfish.redfish.send_request')
-    def test_system_storage_details(self, mock_request, mock_url_list):
-        mock_url_list.return_value = ["/redfish/v1/Systems/1/SimpleStorage/1"]
-        resp = fakes.fake_simple_storage()
-        mock_request.return_value = fakes.mock_request_get(resp,
-                                                           http_client.OK)
-        expected = '600'
-        result = redfish.system_storage_details("/redfish/v1/Systems/test")
-        self.assertEqual(expected, result)
-
-    @mock.patch('valence.redfish.redfish.send_request')
-    def test_show_cpu_details(self, mock_request):
-        mock_request.return_value = fakes.mock_request_get(
-            fakes.fake_processor(), http_client.OK)
-        expected = {
-            "instruction_set": "x86-64",
-            "model": "Intel(R) Core(TM) i7-4790",
-            "speed_mhz": 3700,
-            "total_core": 8,
-        }
-
-        result = redfish.show_cpu_details("/redfish/v1/Systems/1/Processors/1")
-        self.assertEqual(expected, result)
-
-    @mock.patch('valence.redfish.redfish.send_request')
-    def test_show_memory_details(self, mock_request):
-        mock_request.return_value = fakes.mock_request_get(
-            fakes.fake_memory(), http_client.OK)
-        expected = {
-            "data_width_bit": 0,
-            "speed_mhz": 2400,
-            "total_memory_mb": 8192
-        }
-
-        result = redfish.show_ram_details("/redfish/v1/Systems/1/Memory/1")
-        self.assertEqual(expected, result)
-
-    @mock.patch('valence.redfish.redfish.urls2list')
-    @mock.patch('valence.redfish.redfish.send_request')
-    def test_show_network_interface_details(self, mock_request, mock_url2list):
-        mock_request.side_effect = [
-            fakes.mock_request_get(fakes.fake_network_interface(),
-                                   http_client.OK),
-            fakes.mock_request_get(fakes.fake_vlan(),
-                                   http_client.OK)
-        ]
-        mock_url2list.return_value = [
-            "redfish/v1/Systems/1/EthernetInterfaces/2/VLANs/1"]
-        expected = {
-            "mac": "e9:47:d3:60:64:66",
-            "speed_mbps": 100,
-            "status": "Enabled",
-            "ipv4": [{
-                "address": "192.168.0.10",
-                "subnet_mask": "255.255.252.0",
-                "gateway": "192.168.0.1",
-            }],
-            'vlans': [{
-                'status': 'Enabled',
-                'vlanid': 99
-            }]
-        }
-
-        result = redfish.show_network_details(
-            "/redfish/v1/Systems/1/EthernetInterfaces/1")
         self.assertEqual(expected, result)
 
     @mock.patch('valence.redfish.redfish.get_base_resource_url')

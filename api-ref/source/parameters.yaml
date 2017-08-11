@@ -382,67 +382,117 @@ resource_uuid:
   in: body
   required: true
   type: string
-system_assettag:
+system_asset_tag:
   description: |
     Asset Tag value of Compute System
   in: body
   required: true
   type: string
-system_chassis_id:
+system_bios_version:
   description: |
-    The chassis id that contained Compute system can be used to support location id
-    allocation if user want to specific a resource send to redfish service, ex: Sled2, meaning
-    it point to "/redfish/v1/Chassis/Sled2".
+    The system BIOS version
   in: body
   required: true
   type: string
-system_memory_object:
+system_boot_enabled:
   description: |
-    The memory (object) inventory of Compute system
-  in: body
-  required: true
-  type: array
-system_name:
-  description: |
-    Name of Compute System (a human-readable string)
+    Boot source enabled value (Once, Continuous, or Disabled)
   in: body
   required: true
   type: string
-system_network_object:
+system_boot_mode:
   description: |
-    The network (object) inventory of Compute System.
+    Mode for system boot
   in: body
   required: true
-  type: array
-system_power_state:
+  type: string
+system_boot_target:
   description: |
-    The current Compute System power state including "On","Off"
-    "PoweredOn", "PoweredOff"
+    Target for system boot
   in: body
   required: true
-  type: array
-system_processor_object:
+  type: string
+system_description:
   description: |
-    The Processor (object) inventory of a Compute System.
+    The system description
   in: body
   required: true
-  type: array
-system_storage_object:
+  type: string
+system_hostname:
   description: |
-    The Storage (object) inventory of a Compute System.
+    The system hostname
+  in: body
+  required: true
+  type: string
+system_identity:
+  description: |
+    The system identity string
   in: body
   required: string
-  type: array
-system_url_id:
+  type: string
+system_indicator_led:
   description: |
-    The URL id point to  redfish API.
-    For example, while url_id is "system1" ,the full path talk to redfish service should be  "/redfish/v1/Systems/system1"
+    Whether the indicator LED is lit or off
   in: body
   required: true
   type: string
-system_uuid:
+system_manufacturer:
   description: |
-    UUID of Compute System
+    The system manufacturer
+  in: body
+  required: true
+  type: string
+system_name:
+  description: |
+    The system name
+  in: body
+  required: true
+  type: string
+system_part_number:
+  description: |
+    The system part number
+  in: body
+  required: true
+  type: string
+system_power_state:
+  description: |
+    The power state of the system
+  in: body
+  required: true
+  type: string
+system_serial_number:
+  description: |
+    The system serial number
+  in: body
+  required: true
+  type: string
+system_sku:
+  description: |
+    The system stock-keeping unit
+  in: body
+  required: true
+  type: string
+system_memory_health:
+  description: |
+    The health of the system memory
+  in: body
+  required: true
+  type: string
+system_memory_size_gib:
+  description: |
+    The size of system memory in GiB
+  in: body
+  required: true
+  type: string
+system_processor_count:
+  description: |
+    The number of processors contained by a system
+  in: body
+  required: true
+  type: string
+system_processor_architecture:
+  description: |
+    The architecture of the system processors
   in: body
   required: true
   type: string

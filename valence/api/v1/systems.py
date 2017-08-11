@@ -14,7 +14,6 @@
 
 import logging
 
-from flask import request
 from flask_restful import Resource
 from six.moves import http_client
 
@@ -28,11 +27,11 @@ class SystemsList(Resource):
 
     def get(self):
         return utils.make_response(http_client.OK,
-                                   redfish.systems_list(request.args))
+                                   redfish.systems_list())
 
 
 class Systems(Resource):
 
-    def get(self, systemid):
+    def get(self, system_id):
         return utils.make_response(http_client.OK,
-                                   redfish.get_systembyid(systemid))
+                                   redfish.get_system(system_id))

@@ -89,7 +89,7 @@ api.add_resource(v1_nodes.NodeRegister,
 
 # System(s) operations
 api.add_resource(v1_systems.SystemsList, '/v1/systems', endpoint='systems')
-api.add_resource(v1_systems.Systems, '/v1/systems/<string:systemid>',
+api.add_resource(v1_systems.Systems, '/v1/systems/<string:system_id>',
                  endpoint='system')
 
 # Flavor(s) operations
