@@ -17,7 +17,7 @@ podm_connections = {}
 podm_modules = {}
 
 
-def get_podm_connection(podm_id):
+def get_connection(podm_id):
     podm_connection = podm_connections.get(podm_id, None)
     if podm_connection:
         return podm_connection
@@ -25,7 +25,7 @@ def get_podm_connection(podm_id):
     (username, password, _) = utils.get_basic_auth_from_authentication(
         podm_db['authentication'])
     podm_connection = Manager(podm_db['url'], username, password,
-                              podm_db['driver'])
+                              podm_db['driver']).podm
     podm_connections[podm_id] = podm_connection
     return podm_connection
 
