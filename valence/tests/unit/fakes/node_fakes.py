@@ -15,6 +15,7 @@ def get_test_composed_node(**kwargs):
     return {
         'uuid': kwargs.get('uuid', 'ea8e2a25-2901-438d-8157-de7ffd68d051'),
         'name': kwargs.get('name', 'fake_name'),
+        'podm_id': kwargs.get('podm_id', '78e2a25-2901-438d-8157-de7ffd68d05'),
         'description': kwargs.get('description', 'fake_description'),
         'boot_source': kwargs.get('boot_source', 'Hdd'),
         'health_status': kwargs.get('health_status', 'OK'),
