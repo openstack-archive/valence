@@ -133,7 +133,8 @@ class TestPodmanagerApi(TestApiValidation):
 class TestNodeApi(TestApiValidation):
 
     @mock.patch('valence.controller.nodes.Node.compose_node')
-    def test_compose_request_using_properties(self, mock_compose):
+    @mock.patch('valence.podmanagers.manager.get_connection')
+    def test_compose_request_using_properties(self, mock_conn, mock_compose):
         req = {
             "name": "test_request",
             "podm_id": "test-podm",
@@ -152,18 +153,22 @@ class TestNodeApi(TestApiValidation):
         resp = self.app.post('/v1/nodes',
                              content_type='application/json',
                              data=json.dumps(req))
+        mock_conn.assert_called_once_with('test-podm')
         self.assertEqual(http_client.OK, resp.status_code)
 
     @mock.patch('valence.controller.nodes.Node.compose_node')
-    def test_compose_request_using_flavor(self, mock_compose):
+    @mock.patch('valence.podmanagers.manager.get_connection')
+    def test_compose_request_using_flavor(self, mock_connection, mock_compose):
         req = {
             "name": "test_request1",
-            "flavor_id": "test_flavor"
+            "flavor_id": "test_flavor",
+            "podm_id": "test-podm-1"
         }
         mock_compose.return_value = req
         resp = self.app.post('/v1/nodes',
                              content_type='application/json',
                              data=json.dumps(req))
+        mock_connection.assert_called_once_with('test-podm-1')
         self.assertEqual(http_client.OK, resp.status_code)
 
     def test_compose_request_invalid_params(self):
@@ -179,7 +184,8 @@ class TestNodeApi(TestApiValidation):
         self.assertEqual('Validation Error', response['title'])
 
     @mock.patch('valence.controller.nodes.Node.manage_node')
-    def test_node_manage_request(self, mock_manage):
+    @mock.patch('valence.podmanagers.manager.get_connection')
+    def test_node_manage_request(self, mock_connection, mock_manage):
         req = {"node_index": "fake-index",
                "podm_id": "test-podm-id"}
         mock_manage.return_value = {"uuid": "ea8e2a25-2901-438d-8157-de7ffd",
@@ -190,6 +196,7 @@ class TestNodeApi(TestApiValidation):
         resp = self.app.post('/v1/nodes/manage',
                              content_type='application/json',
                              data=json.dumps(req))
+        mock_connection.assert_called_once_with('test-podm-id')
         mock_manage.assert_called_once_with(req)
         self.assertEqual(http_client.OK, resp.status_code)
 
@@ -202,8 +209,10 @@ class TestNodeApi(TestApiValidation):
         self.assertEqual(http_client.BAD_REQUEST, response['status'])
         self.assertEqual('Validation Error', response['title'])
 
+    @mock.patch('valence.db.api.Connection.get_composed_node_by_uuid')
     @mock.patch('valence.controller.nodes.Node.node_action')
-    def test_node_action_request(self, mock_action):
+    @mock.patch('valence.podmanagers.manager.get_connection')
+    def test_node_action_request(self, mock_connection, mock_action, m_node):
         req = {
             "Reset": {
                 "Type": "On"
@@ -217,7 +226,10 @@ class TestNodeApi(TestApiValidation):
         self.assertEqual(http_client.NO_CONTENT, resp.status_code)
 
     @mock.patch('valence.controller.nodes.Node.node_action')
-    def test_node_action_attach_request(self, mock_action):
+    @mock.patch('valence.podmanagers.manager.get_connection')
+    @mock.patch('valence.db.api.Connection.get_composed_node_by_uuid')
+    def test_node_action_attach_request(self, mock_node, mock_connection,
+                                        mock_action):
         req = {
             "attach": {
                 "resource_id": "test-device-1"
@@ -231,7 +243,10 @@ class TestNodeApi(TestApiValidation):
         self.assertEqual(http_client.NO_CONTENT, resp.status_code)
 
     @mock.patch('valence.controller.nodes.Node.node_action')
-    def test_node_action_detach_request(self, mock_action):
+    @mock.patch('valence.podmanagers.manager.get_connection')
+    @mock.patch('valence.db.api.Connection.get_composed_node_by_uuid')
+    def test_node_action_detach_request(self, mock_node, mock_connection,
+                                        mock_action):
         req = {
             "detach": {
                 "resource_id": "test-device-1"
@@ -244,7 +259,9 @@ class TestNodeApi(TestApiValidation):
         mock_action.assert_called_once_with('fake-node', req)
         self.assertEqual(http_client.NO_CONTENT, resp.status_code)
 
-    def test_node_action_request_invalid(self):
+    @mock.patch('valence.podmanagers.manager.get_connection')
+    @mock.patch('valence.db.api.Connection.get_composed_node_by_uuid')
+    def test_node_action_request_invalid(self, mock_node, mock_connection):
         req = {
             "Boot": {
                 "Type": "On"

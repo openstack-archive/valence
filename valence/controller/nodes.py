@@ -18,13 +18,22 @@ from valence.common import exception
 from valence.common import utils
 from valence.controller import flavors
 from valence.db import api as db_api
+from valence.podmanagers import manager
 from valence.provision import driver
-from valence.redfish import redfish
 
 LOG = logging.getLogger(__name__)
 
 
 class Node(object):
+
+    def __init__(self, node_id=None, podm_id=None):
+        self.podm_id = podm_id
+        if node_id:
+            self.node = db_api.Connection.get_composed_node_by_uuid(node_id).\
+                as_dict()
+            self.podm_id = self.node['podm_id']
+
+        self.connection = manager.get_connection(self.podm_id)
 
     @staticmethod
     def _show_node_brief_info(node_info):
@@ -57,8 +66,7 @@ class Node(object):
 
         return request
 
-    @classmethod
-    def compose_node(cls, request_body):
+    def compose_node(self, request_body):
         """Compose new node
 
         param request_body: parameter for node composition
@@ -80,13 +88,10 @@ class Node(object):
         # "description" is optional
         description = request_body.get("description", "")
 
-        compose_request = cls._create_compose_request(name,
-                                                      description,
-                                                      requirements)
+        compose_request = self._create_compose_request(name, description,
+                                                       requirements)
 
-        # Call redfish to compose new node
-        composed_node = redfish.compose_node(compose_request)
-
+        composed_node = self.connection.compose_node(compose_request)
         composed_node["uuid"] = utils.generate_uuid()
 
         # Only store the minimum set of composed node info into backend db,
@@ -98,10 +103,9 @@ class Node(object):
                    "links": composed_node["links"]}
         db_api.Connection.create_composed_node(node_db)
 
-        return cls._show_node_brief_info(composed_node)
+        return self._show_node_brief_info(composed_node)
 
-    @classmethod
-    def manage_node(cls, request_body):
+    def manage_node(self, request_body):
         """Manage existing RSD node.
 
         param request_body: Parameters for node to manage.
@@ -114,28 +118,29 @@ class Node(object):
 
         return: Info on managed node.
         """
-        composed_node = redfish.get_node_by_id(request_body["node_index"])
         # Check to see that the node to manage doesn't already exist in the
         # Valence database.
+        node_index = request_body["node_index"]
         error_msg = ("Node '%s' already managed by Valence")
-        current_nodes = cls.list_composed_nodes()
+        current_nodes = self.list_composed_nodes()
         for node in current_nodes:
-            if node['index'] == composed_node['index']:
-                raise exception.ResourceExists(
-                    error_msg % node['index'])
+            if node['index'] == node_index:
+                raise exception.ResourceExists(error_msg % node_index)
 
+        # Get podm connection with which node should be managed
+        composed_node = self.connection.get_node_info(node_index)
         composed_node["uuid"] = utils.generate_uuid()
 
         node_db = {"uuid": composed_node["uuid"],
                    "name": composed_node["name"],
                    "index": composed_node["index"],
                    "links": composed_node["links"]}
+
         db_api.Connection.create_composed_node(node_db)
 
-        return cls._show_node_brief_info(composed_node)
+        return self._show_node_brief_info(composed_node)
 
-    @classmethod
-    def get_composed_node_by_uuid(cls, node_uuid):
+    def get_composed_node_by_uuid(self, node_uuid):
         """Get composed node details
 
         Get the detail of specific composed node. In some cases db data may be
@@ -147,28 +152,20 @@ class Node(object):
         return: detail of this composed node
         """
 
-        node_db = db_api.Connection.get_composed_node_by_uuid(node_uuid)\
-                        .as_dict()
-        node_hw = redfish.get_node_by_id(node_db["index"])
-
+        # Get podm connection to retrieve details
+        node_hw = self.connection.get_node_info(self.node['index'])
         # Add those fields of composed node from db
-        node_hw.update(node_db)
-
+        node_hw.update(self.node)
         return node_hw
 
-    @classmethod
-    def delete_composed_node(cls, node_uuid):
+    def delete_composed_node(self, node_uuid):
         """Delete a composed node
 
         param node_uuid: uuid of composed node
         return: message of this deletion
         """
-
-        # Get node detail from db, and map node uuid to index
-        index = db_api.Connection.get_composed_node_by_uuid(node_uuid).index
-
-        # Call redfish to delete node, and delete corresponding entry in db
-        message = redfish.delete_composed_node(index)
+        # Call podmanager to delete node, and delete corresponding entry in db
+        message = self.connection.delete_composed_node(self.node['index'])
         db_api.Connection.delete_composed_node(node_uuid)
 
         return message
@@ -182,17 +179,15 @@ class Node(object):
         return [cls._show_node_brief_info(node_info.as_dict())
                 for node_info in db_api.Connection.list_composed_nodes()]
 
-    @classmethod
-    def node_action(cls, node_uuid, request_body):
+    def node_action(self, node_uuid, request_body):
         """Post action to a composed node
 
         param node_uuid: uuid of composed node
         param request_body: parameter of node action
         return: message of this deletion
         """
-        # Get node detail from db, and map node uuid to index
-        index = db_api.Connection.get_composed_node_by_uuid(node_uuid).index
-        return redfish.node_action(index, request_body)
+        node_index = self.node['index']
+        return self.connection.node_action(node_index, request_body)
 
     @classmethod
     def node_register(cls, node_uuid, request_body):
