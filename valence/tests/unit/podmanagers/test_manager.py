@@ -43,7 +43,6 @@ class TestManager(base.BaseTestCase):
     @mock.patch("valence.redfish.sushy.sushy_instance.RedfishInstance")
     def test_get_podm_connection(self, redfish_mock, get_podm_mock):
         get_podm_mock.return_value = podmanager_fakes.fake_podm_object()
-        inst = manager.get_podm_connection("fake-id")
-        self.assertTrue(isinstance(inst, manager.Manager))
-        self.assertTrue(isinstance(inst.podm, podm_base.PodManagerBase))
+        inst = manager.get_connection("fake-id")
+        self.assertTrue(isinstance(inst, podm_base.PodManagerBase))
         self.assertTrue(manager.podm_connections['fake-id'])

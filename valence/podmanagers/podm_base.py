@@ -26,6 +26,18 @@ class PodManagerBase(object):
     def get_podm_info(self):
         return self.get_resource_info_by_url(self.podm_url)
 
+    # TODO(): use rsd_lib here
+    def compose_node(self, request_body):
+        pass
+
+    # TODO(): use rsd_lib here
+    def delete_composed_node(self, node_id):
+        pass
+
+    # TODO(): use rsd_lib here
+    def node_action(self, index, request_body):
+        pass
+
     def get_resource_info_by_url(self, resource_url):
         return self.driver.get_resources_by_url(resource_url)
 
