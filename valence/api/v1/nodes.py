@@ -30,8 +30,12 @@ class Nodes(Resource):
 
     @validator.check_input('compose_node_schema')
     def post(self):
+        # TODO(): podm_id should be passed in request body, if not passed
+        # scheduler will decide on podm_id
+        req = request.get_json()
         return utils.make_response(
-            http_client.OK, nodes.Node.compose_node(request.get_json()))
+            http_client.OK,
+            nodes.Node(podm_id=req['podm_id']).compose_node(req))
 
 
 class Node(Resource):
@@ -39,11 +43,12 @@ class Node(Resource):
     def get(self, node_uuid):
         return utils.make_response(
             http_client.OK,
-            nodes.Node.get_composed_node_by_uuid(node_uuid))
+            nodes.Node(node_id=node_uuid).get_composed_node_by_uuid(node_uuid))
 
     def delete(self, node_uuid):
         return utils.make_response(
-            http_client.OK, nodes.Node.delete_composed_node(node_uuid))
+            http_client.OK,
+            nodes.Node(node_id=node_uuid).delete_composed_node(node_uuid))
 
 
 class NodeAction(Resource):
@@ -52,15 +57,18 @@ class NodeAction(Resource):
     def post(self, node_uuid):
         return utils.make_response(
             http_client.NO_CONTENT,
-            nodes.Node.node_action(node_uuid, request.get_json()))
+            nodes.Node(node_id=node_uuid).node_action(node_uuid,
+                                                      request.get_json()))
 
 
 class NodeManage(Resource):
 
     @validator.check_input('node_manage_schema')
     def post(self):
+        req = request.get_json()
         return utils.make_response(
-            http_client.OK, nodes.Node.manage_node(request.get_json()))
+            http_client.OK,
+            nodes.Node(podm_id=req['podm_id']).manage_node(req))
 
 
 class NodesStorage(Resource):
