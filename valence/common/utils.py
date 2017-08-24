@@ -118,7 +118,7 @@ def get_basic_auth_credentials(authentication):
     """parse out the basic auth from podm's authentication array properties
 
     :param authentication: podm's authentication
-    :return: username, password to connect to the podm
+    :return: username, password to connect to podmanager
     """
     for auth_property in authentication:
         if auth_property['type'] == constants.PODM_AUTH_BASIC_TYPE:
