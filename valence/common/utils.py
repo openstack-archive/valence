@@ -21,7 +21,6 @@ import logging
 
 import flask
 from oslo_utils import uuidutils
-import requests
 
 from valence.common import constants
 
@@ -115,17 +114,15 @@ def generate_uuid():
     return uuidutils.generate_uuid()
 
 
-def get_basic_auth_from_authentication(authentication):
+def get_basic_auth_credentials(authentication):
     """parse out the basic auth from podm's authentication array properties
 
     :param authentication: podm's authentication
 
-    :return: username, password and HTTPBasicAuth of the podm
+    :return: username, password to connect to podmanager
     """
     for auth_property in authentication:
         if auth_property['type'] == constants.PODM_AUTH_BASIC_TYPE:
             username = auth_property['auth_items']['username']
             password = auth_property['auth_items']['password']
-            return (username, password,
-                    requests.auth.HTTPBasicAuth(username, password))
-    return None
+            return username, password

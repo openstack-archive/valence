@@ -22,7 +22,7 @@ def get_podm_connection(podm_id):
     if podm_connection:
         return podm_connection
     podm_db = db_api.Connection.get_podmanager_by_uuid(podm_id).as_dict()
-    (username, password, _) = utils.get_basic_auth_from_authentication(
+    username, password = utils.get_basic_auth_credentials(
         podm_db['authentication'])
     podm_connection = Manager(podm_db['url'], username, password,
                               podm_db['driver'])
