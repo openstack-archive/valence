@@ -15,7 +15,6 @@ import unittest
 
 import mock
 
-from valence.common import constants
 from valence.common.exception import BadRequest
 from valence.controller import podmanagers
 
@@ -23,15 +22,13 @@ from valence.controller import podmanagers
 class TestPodManagers(unittest.TestCase):
 
     @mock.patch('valence.controller.podmanagers.get_podm_list')
-    @mock.patch('valence.controller.podmanagers.get_podm_status')
-    def test_check_creation(self, mock_get_podm_status, mock_get_podm_list):
+    def test_check_creation(self, mock_get_podm_list):
         mock_get_podm_list.return_value = [
             {"name": "test1",
              "url": "https://10.0.0.1"},
             {"name": "test2",
              "url": "https://10.0.0.2"}
         ]
-        mock_get_podm_status.return_value = constants.PODM_STATUS_ONLINE
 
         values = {"name": "podm_name",
                   "url": "https://10.240.212.123",
@@ -46,12 +43,9 @@ class TestPodManagers(unittest.TestCase):
                   ]}
 
         result_values = copy.deepcopy(values)
-        result_values['status'] = constants.PODM_STATUS_ONLINE
         result_values['driver'] = 'redfishv1'
 
         self.assertEqual(podmanagers._check_creation(values), result_values)
-        mock_get_podm_status.assert_called_once_with(values['url'],
-                                                     values['authentication'])
         mock_get_podm_list.assert_called_once_with()
 
     @mock.patch('valence.controller.podmanagers.get_podm_list')
@@ -97,7 +91,8 @@ class TestPodManagers(unittest.TestCase):
                           url_duplicate_values)
         self.assertEqual(mock_get_podm_list.call_count, 2)
 
-    def test_check_updation_ignore_url_uuid(self):
+    @mock.patch('valence.db.api.Connection.update_podmanager')
+    def test_check_updation_ignore_url_uuid(self, mock_db_update):
         values = {
             "uuid": "uuid",
             "url": "url",
@@ -107,39 +102,5 @@ class TestPodManagers(unittest.TestCase):
         result_values.pop('url')
         result_values.pop('uuid')
 
-        self.assertEqual(podmanagers._check_updation(values), result_values)
-
-    @mock.patch('valence.redfish.redfish.pod_status')
-    def test_get_podm_status(self, mock_pod_status):
-        mock_pod_status.return_value = constants.PODM_STATUS_ONLINE
-        authentication = [
-            {
-                "type": "basic",
-                "auth_items": {
-                    "username": "username",
-                    "password": "password"
-                }
-            }
-        ]
-        self.assertEqual(podmanagers.get_podm_status('url', authentication),
-                         constants.PODM_STATUS_ONLINE)
-        mock_pod_status.asset_called_once_with('url', "username", "password")
-
-    def test_get_podm_status_unknown(self):
-        """not basic type authentication podm status set value to be unknown"""
-        authentication = [
-            {
-                "type": "CertificateAuthority",
-                "auth_items": {
-                    "public_key": "xxxxxxx"
-                }
-            },
-            {
-                "type": "DynamicCode",
-                "auth_items": {
-                    "code": "xxxxxxx"
-                }
-            }
-        ]
-        self.assertEqual(podmanagers.get_podm_status('url', authentication),
-                         constants.PODM_STATUS_UNKNOWN)
+        podmanagers.update_podmanager('fake-podm-id', values)
+        mock_db_update.assert_called_once_with('fake-podm-id', result_values)
