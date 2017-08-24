@@ -36,7 +36,7 @@ class PodManagersList(flask_restful.Resource):
     def post(self):
         values = flask.request.get_json()
         return utils.make_response(http_client.OK,
-                                   podmanagers.create_podm(values))
+                                   podmanagers.create_podmanager(values))
 
 
 class PodManager(flask_restful.Resource):
@@ -48,9 +48,10 @@ class PodManager(flask_restful.Resource):
     def patch(self, podm_uuid):
         values = flask.request.get_json()
         return utils.make_response(http_client.OK,
-                                   podmanagers.update_podm(podm_uuid, values))
+                                   podmanagers.update_podmanager(podm_uuid,
+                                                                 values))
 
     def delete(self, podm_uuid):
-        podmanagers.delete_podm_by_uuid(podm_uuid)
+        podmanagers.delete_podmanager(podm_uuid)
         resp_dict = exception.confirmation(confirm_detail="DELETED")
         return utils.make_response(http_client.OK, resp_dict)
