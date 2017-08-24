@@ -23,6 +23,10 @@ class PodManagerBase(object):
                                                      password=password,
                                                      base_url=podm_url)
 
+    # TODO(ramineni): rebase on nate's patch
+    def get_status(self):
+        pass
+
     def get_podm_info(self):
         return self.get_resource_info_by_url(self.podm_url)
 
