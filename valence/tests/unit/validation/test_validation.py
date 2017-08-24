@@ -74,9 +74,9 @@ class TestFlavorApi(TestApiValidation):
 
 class TestPodmanagerApi(TestApiValidation):
 
-    @mock.patch('valence.controller.podmanagers.create_podm')
+    @mock.patch('valence.controller.podmanagers.create_podmanager')
     @mock.patch('valence.controller.podmanagers.get_podm_list')
-    @mock.patch('valence.controller.podmanagers.get_podm_status')
+    @mock.patch('valence.podmanagers.podm_base.PodManagerBase.get_status')
     def test_podmanager_create(self, pstatus_mock, plist_mock, pcreate_mock):
         pstatus_mock.return_value = constants.PODM_STATUS_ONLINE
         plist_mock.return_value = []

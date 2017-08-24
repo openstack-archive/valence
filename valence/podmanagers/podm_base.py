@@ -27,6 +27,10 @@ class PodManagerBase(object):
         return self.get_resource_info_by_url(self.podm_url)
 
     # TODO(): use rsd_lib here
+    def get_status(self):
+        pass
+
+    # TODO(): use rsd_lib here
     def compose_node(self, request_body):
         pass
 
