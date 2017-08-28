@@ -50,3 +50,5 @@ class TestRoute(unittest.TestCase):
         self.assertEqual(self.api.owns_endpoint('storages'), True)
         self.assertEqual(self.api.owns_endpoint('storage'), True)
         self.assertEqual(self.api.owns_endpoint('podmproxy'), True)
+        self.assertEqual(self.api.owns_endpoint('devices'), True)
+        self.assertEqual(self.api.owns_endpoint('device'), True)

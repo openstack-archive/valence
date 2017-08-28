@@ -159,3 +159,47 @@ class Connection(object):
         :returns: A list of all composed node.
         """
         return cls.dbdriver.list_composed_nodes()
+
+    @classmethod
+    def list_devices(cls):
+        """Get a list of all pooled devices.
+
+        :returns: A list of all pooled devices.
+        """
+        return cls.dbdriver.list_devices()
+
+    @classmethod
+    def get_device_by_uuid(cls, device_id):
+        """Get specific device by its uuid.
+
+        :param device_id: The uuid of pod manager.
+        :returns: A device with this uuid.
+        """
+        return cls.dbdriver.get_device_by_uuid(device_id)
+
+    @classmethod
+    def delete_device(cls, device_uuid):
+        """Delete specific device by its uuid
+
+        :param device_uuid: The uuid of device.
+        """
+        cls.dbdriver.delete_device(device_uuid)
+
+    @classmethod
+    def update_device(cls, device_uuid, values):
+        """Update properties of a device.
+
+        :param device_uuid: The uuid of device.
+        :values: The properties to be updated.
+        :returns: A device after updated.
+        """
+        return cls.dbdriver.update_device(device_uuid, values)
+
+    @classmethod
+    def create_device(cls, values):
+        """Create a new pod manager.
+
+        :values: The properties for this new pod manager.
+        :returns: A pod manager created.
+        """
+        return cls.dbdriver.create_device(values)
