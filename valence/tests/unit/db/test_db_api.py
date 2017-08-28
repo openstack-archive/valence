@@ -259,3 +259,103 @@ class TestDBAPI(unittest.TestCase):
         mock_etcd_write.assert_called_with(
             '/nodes/' + node['uuid'],
             json.dumps(result.as_dict()))
+
+    @mock.patch('etcd.Client.read')
+    def test_get_device_by_uuid(self, mock_etcd_read):
+        devices = utils.get_test_device_db_list()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            devices[0]['uuid'], json.dumps(devices[0]))
+        result = db_api.Connection.get_device_by_uuid(devices[0]['uuid'])
+
+        self.assertEqual(devices[0], result.as_dict())
+        mock_etcd_read.assert_called_once_with('/devices/' +
+                                               devices[0]['uuid'])
+
+    @mock.patch('etcd.Client.read')
+    def test_get_device_not_found(self, mock_etcd_read):
+        mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
+
+        with self.assertRaises(exception.NotFound) as context:
+            db_api.Connection.get_device_by_uuid('fake_uuid')
+
+        self.assertTrue('Device {0} not found in database.'.format(
+            'fake_uuid') in str(context.exception))
+        mock_etcd_read.assert_called_with('/devices/' + 'fake_uuid')
+
+    @mock.patch('etcd.Client.delete')
+    @mock.patch('etcd.Client.read')
+    def test_delete_device(self, mock_etcd_read, mock_etcd_delete):
+        devices = utils.get_test_device_db_list()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            devices[0]['uuid'], json.dumps(devices[0]))
+        db_api.Connection.delete_device(devices[0]['uuid'])
+
+        mock_etcd_delete.assert_called_with('/devices/' + devices[0]['uuid'])
+
+    @freezegun.freeze_time("2017-01-01")
+    @mock.patch('etcd.Client.write')
+    @mock.patch('etcd.Client.read')
+    def test_update_device(self, mock_etcd_read, mock_etcd_write):
+        devices = utils.get_test_device_db_list()
+
+        mock_etcd_read.return_value = utils.get_etcd_read_result(
+            devices[0]['uuid'], json.dumps(devices[0]))
+
+        fake_utcnow = '2017-01-01 00:00:00 UTC'
+        devices[0]['updated_at'] = fake_utcnow
+        devices[0].update({'resource_uri': 'new_uri'})
+
+        result = db_api.Connection.update_device(
+            devices[0]['uuid'], {'resource_uri': 'new_uri'})
+
+        self.assertEqual(devices[0], result.as_dict())
+        mock_etcd_read.assert_called_with('/devices/' + devices[0]['uuid'])
+        mock_etcd_write.assert_called_with('/devices/' + devices[0]['uuid'],
+                                           json.dumps(result.as_dict()))
+
+    @freezegun.freeze_time("2017-01-01")
+    @mock.patch('etcd.Client.write')
+    @mock.patch('etcd.Client.read')
+    def test_add_device(self, mock_etcd_read, mock_etcd_write):
+        devices = utils.get_test_device_db_list()
+        fake_utcnow = '2017-01-01 00:00:00 UTC'
+        devices[0]['created_at'] = fake_utcnow
+        devices[0]['updated_at'] = fake_utcnow
+
+        # Mark this uuid don't exist in etcd db
+        mock_etcd_read.side_effect = etcd.EtcdKeyNotFound
+
+        result = db_api.Connection.add_device(devices[0])
+        self.assertEqual(devices[0], result.as_dict())
+        mock_etcd_read.assert_called_once_with('/devices/' +
+                                               devices[0]['uuid'])
+        mock_etcd_write.assert_called_once_with('/devices/' +
+                                                devices[0]['uuid'],
+                                                json.dumps(result.as_dict()))
+
+    @mock.patch('etcd.Client.read')
+    def test_list_devices(self, mock_etcd_read):
+        devices = utils.get_test_device_db_list()
+        for device in devices:
+            mock_etcd_read.return_value = utils.get_etcd_read_result(
+                None, json.dumps(device))
+            result = db_api.Connection.list_devices()
+            result = [dev.as_dict() for dev in result]
+            self.assertEqual([device], result)
+
+    @mock.patch('etcd.Client.read')
+    def test_list_devices_with_filters(self, mock_etcd_read):
+        device_list = utils.get_test_device_db_list()
+        req = []
+        for dev in device_list:
+            req.append('/devices/' + dev['uuid'])
+            req.append(json.dumps(dev))
+        mock_etcd_read.return_value = utils.get_etcd_read_result_list(
+            '/devices', req)
+        result = db_api.Connection.list_devices(
+            filters={'podm_id': 'fa8e2a25-2901-438d-8157-de7ffd68d045'})
+        result = [dev.as_dict() for dev in result]
+        self.assertEqual([device_list[1]], result)
+        mock_etcd_read.assert_called_once_with('/devices')
