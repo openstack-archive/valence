@@ -159,3 +159,19 @@ class Connection(object):
         :returns: A list of all composed node.
         """
         return cls.dbdriver.list_composed_nodes()
+
+    @classmethod
+    def list_devices(cls):
+        """Get a list of all pooled devices.
+
+        :returns: A list of all pooled devices.
+        """
+        return cls.dbdriver.list_devices()
+
+    @classmethod
+    def get_device_by_id(cls):
+        """Get a list of all composed nodes.
+
+        :returns: A list of all composed node.
+        """
+        return cls.dbdriver.get_device_by_id()

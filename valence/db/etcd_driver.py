@@ -199,3 +199,30 @@ class EtcdDriver(object):
                     node, models.ComposedNode.path))
 
         return composed_nodes
+
+    def list_devices(self):
+        try:
+            resp = getattr(self.client.read(models.Device.path),
+                           'children', None)
+        except etcd.EtcdKeyNotFound:
+            msg = ("Path '/devices' does not exist, the etcd server may "
+                   "not have been initialized appropriately.")
+            LOG.error(msg)
+            raise exception.ServiceUnavailable(msg)
+
+        devices = []
+        for dev in resp:
+            if dev.value is not None:
+                devices.append(translate_to_models(dev, models.Device.path))
+
+        return devices
+
+    def get_device_by_id(self, device_id):
+        try:
+            resp = self.client.read(models.Device.etcd_path(device_id))
+        except etcd.EtcdKeyNotFound:
+            msg = 'Device {0} not found in database.'.format(device_id)
+            LOG.exception(msg)
+            raise exception.NotFound(msg)
+
+        return translate_to_models(resp, models.Device.path)
