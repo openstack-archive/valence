@@ -44,6 +44,8 @@ def translate_to_models(etcd_resp, model_type):
         ret = models.Flavor(**data)
     elif model_type == models.ComposedNode.path:
         ret = models.ComposedNode(**data)
+    elif model_type == models.Device.path:
+        ret = models.Device(**data)
     else:
         raise exception.ValenceException("Invalid model path '%s' specified.",
                                          model_type)
@@ -199,3 +201,50 @@ class EtcdDriver(object):
                     node, models.ComposedNode.path))
 
         return composed_nodes
+
+    def list_devices(self, filters={}):
+        try:
+            resp = getattr(self.client.read(models.Device.path),
+                           'children', None)
+        except etcd.EtcdKeyNotFound:
+            msg = ("Path '/devices' does not exist, the etcd server may "
+                   "not have been initialized appropriately.")
+            LOG.error(msg)
+            raise exception.ServiceUnavailable(msg)
+
+        devices = []
+        for dev in resp:
+            if dev.value is not None:
+                devices.append(translate_to_models(dev, models.Device.path))
+
+        if filters:
+            for key, value in filters.items():
+                devices = [dev for dev in devices if dev[key] == value]
+        return devices
+
+    def get_device_by_uuid(self, device_id):
+        try:
+            resp = self.client.read(models.Device.etcd_path(device_id))
+        except etcd.EtcdKeyNotFound:
+            msg = 'Device {0} not found in database.'.format(device_id)
+            LOG.exception(msg)
+            raise exception.NotFound(msg)
+
+        return translate_to_models(resp, models.Device.path)
+
+    def delete_device(self, device_uuid):
+        device = self.get_device_by_uuid(device_uuid)
+        device.delete()
+
+    def update_device(self, device_uuid, values):
+        device = self.get_device_by_uuid(device_uuid)
+        device.update(values)
+        return device
+
+    def add_device(self, values):
+        if not values.get('uuid'):
+            values['uuid'] = uuidutils.generate_uuid()
+        device = models.Device(**values)
+        device.save()
+
+        return device
