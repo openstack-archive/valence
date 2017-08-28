@@ -113,3 +113,26 @@ def get_test_composed_node_db_info(**kwargs):
         'created_at': kwargs.get('created_at', '2016-01-01 00:00:00 UTC'),
         'updated_at': kwargs.get('updated_at', '2016-01-01 00:00:00 UTC')
     }
+
+
+def get_test_device_db_info(**kwargs):
+    return {
+        'uuid': kwargs.get('uuid', 'ea8e2a25-2901-438d-8157-de7ffd68d051'),
+        'podm_id': kwargs.get('podm_id',
+                              'fa8e2a25-2901-438d-8157-de7ffd68d052'),
+        'node_id': kwargs.get('node_id',
+                              'ga8e2a25-2901-438d-8157-de7ffd68d053'),
+        'type': kwargs.get('type', 'SSD'),
+        'pooled_group_id': kwargs.get('pooled_group_id', '2001'),
+        'state': kwargs.get('state', 'allocated'),
+        'properties': kwargs.get(
+            'properties',
+            [{'disk_size': '20'},
+             {'bandwidth': '100Mbps'}]),
+        'extra': kwargs.get(
+            'extra',
+            [{'mac': '11:11:11:11:11'}]),
+        'resource_uri': kwargs.get('resource_uri', '/device/11'),
+        'created_at': kwargs.get('created_at', '2016-01-01 00:00:00 UTC'),
+        'updated_at': kwargs.get('updated_at', '2016-01-01 00:00:00 UTC')
+        }
