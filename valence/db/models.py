@@ -189,6 +189,15 @@ class Flavor(ModelBaseWithTimeStamp):
                 },
                 'validate': types.Dict.validate
             },
+            'storage': {
+                'size_gib': {
+                    'validate': types.Text.validate
+                },
+                'type': {
+                    'validate': types.Text.validate
+                },
+                'validate': types.Dict.validate
+            },
             'validate': types.Dict.validate
         }
     }
