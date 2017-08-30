@@ -13,7 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+
 from valence.common import clients
+from valence.common import exception
+
+LOG = logging.getLogger(__name__)
 
 
 def create_ironicclient():
@@ -21,5 +26,10 @@ def create_ironicclient():
 
         :returns: Ironic client object
     """
-    osc = clients.OpenStackClients()
-    return osc.ironic()
+    try:
+        osc = clients.OpenStackClients()
+        return osc.ironic()
+    except Exception:
+        message = ('Error occurred while communicating to Ironic')
+        LOG.exception(message)
+        raise exception.ValenceException(message)
