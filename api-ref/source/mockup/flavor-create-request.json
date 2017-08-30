@@ -8,6 +8,10 @@
     "processor": {
       "total_cores": "10",
       "model": "Intel"
+    },
+    "storage": {
+      "capacity_gib": "20",
+      "type": "SSD"
     }
   }
 }

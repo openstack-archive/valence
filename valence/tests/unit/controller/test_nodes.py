@@ -53,6 +53,10 @@ class TestAPINodes(unittest.TestCase):
             "processor": {
                 "model": "Intel",
                 "total_cores": "4"
+            },
+            "storage": {
+                "size_gib": "10",
+                "type": "SSD"
             }
         }
 
@@ -66,6 +70,10 @@ class TestAPINodes(unittest.TestCase):
             "Processors": [{
                 "Model": "Intel",
                 "TotalCores": "4"
+            }],
+            "Storage": [{
+                "SizeGiB": "10",
+                "Type": "SSD"
             }]
         }
         result = nodes.Node._create_compose_request(name,
