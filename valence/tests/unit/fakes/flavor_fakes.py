@@ -25,6 +25,10 @@ def fake_flavor():
             "processor": {
                 "total_cores": "2",
                 "model": "Intel"
+            },
+            "storage": {
+                "size_gib": "10",
+                "type": "SSD"
             }
         }
     }
@@ -47,6 +51,10 @@ def fake_flavor_list():
                 "processor": {
                     "total_cores": "10",
                     "model": "Intel"
+                },
+                "storage": {
+                    "size_gib": "10",
+                    "type": "SSD"
                 }
             }
         },
@@ -61,6 +69,10 @@ def fake_flavor_list():
                 "processor": {
                     "total_cores": "20",
                     "model": "Intel"
+                },
+                "storage": {
+                    "size_gib": "5",
+                    "type": "HDD"
                 }
             }
         },
@@ -75,6 +87,10 @@ def fake_flavor_list():
                 "processor": {
                     "total_cores": "30",
                     "model": "Intel"
+                },
+                "storage": {
+                    "size_gib": "20",
+                    "type": "SSD"
                 }
             }
         }

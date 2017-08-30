@@ -9,6 +9,10 @@
     "processor": {
       "total_cores": "10",
       "model": "Intel"
+    },
+    "storage": {
+      "size_gib": "20",
+      "type": "SSD"
     }
   },
   "updated_at": "2017-03-29 01:50:06 UTC",

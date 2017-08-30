@@ -38,6 +38,14 @@ flavor_schema = {
                     },
                     'additionalProperties': False,
                 },
+                'storage': {
+                    'type': 'object',
+                    'properties': {
+                        'size_gib': {'type': 'string'},
+                        'type': {'type': 'string'}
+                    },
+                    'additionalProperties': False,
+                },
             },
             'additionalProperties': False,
         },
@@ -119,6 +127,14 @@ compose_node_with_properties = {
                     'properties': {
                         'total_cores': {'type': 'string'},
                         'model': {'type': 'string'},
+                    },
+                    'additionalProperties': False,
+                },
+                'storage': {
+                    'type': 'object',
+                    'properties': {
+                        'size_gib': {'type': 'string'},
+                        'type': {'type': 'string'}
                     },
                     'additionalProperties': False,
                 },
