@@ -33,48 +33,38 @@ class IronicDriver(driver.ProvisioningDriver):
 
     def __init__(self):
         super(IronicDriver, self).__init__()
+        self.ironic = utils.create_ironicclient()
 
     def node_register(self, node_uuid, param):
         LOG.debug('Registering node %s with ironic' % node_uuid)
-        node_info = nodes.Node.get_composed_node_by_uuid(node_uuid)
+        node_controller = nodes.Node(node_id=node_uuid)
         try:
-            ironic = utils.create_ironicclient()
-        except Exception as e:
-            message = ('Error occurred while communicating to '
-                       'Ironic: %s' % six.text_type(e))
-            LOG.error(message)
-            raise exception.ValenceException(message)
-        try:
-            # NOTE(mkrai): Below implementation will be changed in future to
-            # support the multiple pod manager in which we access pod managers'
-            # detail from podm object associated with a node.
-            driver_info = {
-                'redfish_address': CONF.podm.url,
-                'redfish_username': CONF.podm.username,
-                'redfish_password': CONF.podm.password,
-                'redfish_verify_ca': CONF.podm.verify_ca,
-                'redfish_system_id': node_info['computer_system']}
-            node_args = {}
-            if param:
-                if param.get('driver_info', None):
-                    driver_info.update(param.get('driver_info'))
-                    del param['driver_info']
-            node_args.update({'driver': 'redfish', 'name': node_info['name'],
-                              'driver_info': driver_info})
-            if param:
-                node_args.update(param)
-            ironic_node = ironic.node.create(**node_args)
-            port_args = {'node_uuid': ironic_node.uuid,
-                         'address': node_info['metadata']['network'][0]['mac']}
-            ironic.port.create(**port_args)
-            db_api.Connection.update_composed_node(node_uuid,
-                                                   {'managed_by': 'ironic'})
-            return exception.confirmation(
-                confirm_code="Node Registered",
-                confirm_detail="The composed node {0} has been registered "
-                               "with Ironic successfully.".format(node_uuid))
+            n_info = node_controller.get_composed_node_by_uuid()
+            n_args, p_args = node_controller.connection.get_ironic_node_params(
+                n_info, **param)
+            ironic_node = self.ironic.node.create(**n_args)
+
         except Exception as e:
             message = ('Unexpected error while registering node with '
                        'Ironic: %s' % six.text_type(e))
             LOG.error(message)
             raise exception.ValenceException(message)
+
+        db_api.Connection.update_composed_node(node_uuid,
+                                               {'managed_by': 'ironic'})
+        if p_args:
+            # If MAC provided, create ports, else skip
+            p_args['node_uuid'] = ironic_node.uuid
+            self.ironic_port_create(**p_args)
+
+        return exception.confirmation(
+            confirm_code="Node Registered",
+            confirm_detail="The composed node {0} has been registered "
+                           "with Ironic successfully.".format(node_uuid))
+
+    def ironic_port_create(self, **port):
+        try:
+            self.ironic.port.create(**port)
+            LOG.debug('Successfully created ironic ports %s', port)
+        except Exception as e:
+            LOG.debug("Ironic port creation failed with error %s", str(e))

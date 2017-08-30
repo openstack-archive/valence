@@ -21,52 +21,49 @@ from valence.provision.ironic import driver
 
 
 class TestDriver(base.BaseTestCase):
-    def setUp(self):
+
+    @mock.patch("valence.provision.ironic.utils.create_ironicclient")
+    def setUp(self, mock_ironic_client):
         super(TestDriver, self).setUp()
-        self.ironic = driver.IronicDriver()
+        self.driver = driver.IronicDriver()
+        self.driver.ironic = mock.MagicMock()
 
     def tearDown(self):
         super(TestDriver, self).tearDown()
 
-    @mock.patch("valence.controller.nodes.Node.get_composed_node_by_uuid")
+    @mock.patch("valence.db.api.Connection.get_composed_node_by_uuid")
     def test_node_register_node_not_found(self, mock_db):
-        mock_db.side_effect = exception.NotFound
+        mock_db.side_effect = exception.NotFound("node not found")
         self.assertRaises(exception.NotFound,
-                          self.ironic.node_register,
+                          self.driver.node_register,
                           'fake-uuid', {})
 
-    @mock.patch("valence.controller.nodes.Node.get_composed_node_by_uuid")
-    @mock.patch("valence.provision.ironic.utils.create_ironicclient")
-    def test_node_register_ironic_client_failure(self, mock_client,
-                                                 mock_db):
-        mock_client.side_effect = Exception()
-        self.assertRaises(exception.ValenceException,
-                          self.ironic.node_register,
-                          'fake-uuid', {})
-
+    @mock.patch('valence.redfish.sushy.sushy_instance.RedfishInstance')
     @mock.patch("valence.db.api.Connection.update_composed_node")
-    @mock.patch("valence.controller.nodes.Node.get_composed_node_by_uuid")
-    @mock.patch("valence.provision.ironic.utils.create_ironicclient")
-    def test_node_register(self, mock_client,
-                           mock_node_get, mock_node_update):
-        ironic = mock.MagicMock()
-        mock_client.return_value = ironic
-        mock_node_get.return_value = {
+    @mock.patch('valence.controller.nodes.Node')
+    def test_node_register(self, node_mock, mock_node_update, mock_sushy):
+        ironic = self.driver.ironic
+        node_mock.return_value = mock.MagicMock()
+        node_info = {
+            'id': 'fake-uuid', 'podm_id': 'fake-podm_id',
+            'index': '1',
             'name': 'test', 'metadata':
             {'network': [{'mac': 'fake-mac'}]},
             'computer_system': '/redfish/v1/Systems/437XR1138R2'}
+        node_controller = node_mock.return_value
+        node_controller.get_composed_node_by_uuid.return_value = node_info
+        node_controller.connection = mock.MagicMock()
         ironic.node.create.return_value = mock.MagicMock(uuid='ironic-uuid')
-        port_arg = {'node_uuid': 'ironic-uuid', 'address': 'fake-mac'}
-        resp = self.ironic.node_register('fake-uuid',
+        n_args = ({'driver_info': {'username': 'fake1'}}, {})
+        node_controller.connection.get_ironic_node_params.return_value = n_args
+        resp = self.driver.node_register('fake-uuid',
                                          {"extra": {"foo": "bar"}})
         self.assertEqual({
             'code': 'Node Registered',
             'detail': 'The composed node fake-uuid has been '
                       'registered with Ironic successfully.',
             'request_id': '00000000-0000-0000-0000-000000000000'}, resp)
-        mock_client.assert_called_once()
-        mock_node_get.assert_called_once_with('fake-uuid')
+        node_mock.assert_called_once_with(node_id='fake-uuid')
         mock_node_update.assert_called_once_with('fake-uuid',
                                                  {'managed_by': 'ironic'})
         ironic.node.create.assert_called_once()
-        ironic.port.create.assert_called_once_with(**port_arg)

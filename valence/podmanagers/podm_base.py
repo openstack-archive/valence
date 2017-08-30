@@ -17,13 +17,15 @@ from valence.redfish.sushy import sushy_instance
 
 class PodManagerBase(object):
 
-    def __init__(self, username, password, podm_url):
+    def __init__(self, username, password, podm_url, **kwargs):
         self.podm_url = podm_url
+        self.username = username
+        self.password = password
         self.driver = sushy_instance.RedfishInstance(username=username,
                                                      password=password,
                                                      base_url=podm_url)
 
-    # TODO(ramineni): rebase on nate's patch
+    # TODO(): use rsd_lib here
     def get_status(self):
         pass
 
@@ -57,6 +59,28 @@ class PodManagerBase(object):
     # TODO(): use rsd_lib here
     def get_system_by_id(self, system_id):
         pass
+
+    def get_ironic_node_params(self, node_info, **param):
+        # TODO(): change to 'rsd' once ironic driver is implemented.
+        driver_info = {
+            'redfish_address': self.podm_url,
+            'redfish_username': self.username,
+            'redfish_password': self.password,
+            'redfish_system_id': node_info['computer_system']
+        }
+        node_args = {}
+        if param and param.get('driver_info', None):
+            driver_info.update(param.pop('driver_info'))
+
+        node_args.update({'driver': 'redfish', 'name': node_info['name'],
+                          'driver_info': driver_info})
+        port_args = {'address': node_info['metadata']['network'][0]['mac']}
+
+        # update any remaining params passed
+        if param:
+            node_args.update(param)
+
+        return node_args, port_args
 
     def get_resource_info_by_url(self, resource_url):
         return self.driver.get_resources_by_url(resource_url)
