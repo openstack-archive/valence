@@ -219,7 +219,7 @@ class TestNodeApi(TestApiValidation):
         resp = self.app.post('/v1/nodes/fake-node/action',
                              content_type='application/json',
                              data=json.dumps(req))
-        mock_action.assert_called_once_with('fake-node', req)
+        mock_action.assert_called_once_with(req)
         self.assertEqual(http_client.NO_CONTENT, resp.status_code)
 
     @mock.patch('valence.controller.nodes.Node.node_action')
@@ -235,7 +235,7 @@ class TestNodeApi(TestApiValidation):
         resp = self.app.post('/v1/nodes/fake-node/action',
                              content_type='application/json',
                              data=json.dumps(req))
-        mock_action.assert_called_once_with('fake-node', req)
+        mock_action.assert_called_once_with(req)
         self.assertEqual(http_client.NO_CONTENT, resp.status_code)
 
     @mock.patch('valence.controller.nodes.Node.node_action')
@@ -251,7 +251,7 @@ class TestNodeApi(TestApiValidation):
         resp = self.app.post('/v1/nodes/fake-node/action',
                              content_type='application/json',
                              data=json.dumps(req))
-        mock_action.assert_called_once_with('fake-node', req)
+        mock_action.assert_called_once_with(req)
         self.assertEqual(http_client.NO_CONTENT, resp.status_code)
 
     @mock.patch('valence.db.api.Connection.get_composed_node_by_uuid')

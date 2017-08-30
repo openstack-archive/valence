@@ -21,6 +21,7 @@ from valence.common import exception
 import valence.conf
 from valence.controller import nodes
 from valence.db import api as db_api
+from valence.podmanagers import manager
 from valence.provision import driver
 from valence.provision.ironic import utils
 
@@ -36,7 +37,6 @@ class IronicDriver(driver.ProvisioningDriver):
 
     def node_register(self, node_uuid, param):
         LOG.debug('Registering node %s with ironic' % node_uuid)
-        node_info = nodes.Node.get_composed_node_by_uuid(node_uuid)
         try:
             ironic = utils.create_ironicclient()
         except Exception as e:
@@ -45,28 +45,13 @@ class IronicDriver(driver.ProvisioningDriver):
             LOG.error(message)
             raise exception.ValenceException(message)
         try:
-            # NOTE(mkrai): Below implementation will be changed in future to
-            # support the multiple pod manager in which we access pod managers'
-            # detail from podm object associated with a node.
-            driver_info = {
-                'redfish_address': CONF.podm.url,
-                'redfish_username': CONF.podm.username,
-                'redfish_password': CONF.podm.password,
-                'redfish_verify_ca': CONF.podm.verify_ca,
-                'redfish_system_id': node_info['computer_system']}
-            node_args = {}
-            if param:
-                if param.get('driver_info', None):
-                    driver_info.update(param.get('driver_info'))
-                    del param['driver_info']
-            node_args.update({'driver': 'redfish', 'name': node_info['name'],
-                              'driver_info': driver_info})
-            if param:
-                node_args.update(param)
-            ironic_node = ironic.node.create(**node_args)
-            port_args = {'node_uuid': ironic_node.uuid,
-                         'address': node_info['metadata']['network'][0]['mac']}
-            ironic.port.create(**port_args)
+            n_info = nodes.Node(node_id=node_uuid).get_composed_node_by_uuid()
+            podm_connection = manager.get_connection(n_info['podm_id'])
+            n_args, p_args = podm_connection.get_ironic_node_params(n_info,
+                                                                    **param)
+            ironic_node = ironic.node.create(**n_args)
+            p_args['node_uuid'] = ironic_node.uuid
+            ironic.port.create(**p_args)
             db_api.Connection.update_composed_node(node_uuid,
                                                    {'managed_by': 'ironic'})
             return exception.confirmation(

@@ -151,7 +151,7 @@ class Node(object):
 
         return self._show_node_brief_info(composed_node)
 
-    def get_composed_node_by_uuid(self, node_uuid):
+    def get_composed_node_by_uuid(self):
         """Get composed node details
 
         Get the detail of specific composed node. In some cases db data may be
@@ -169,7 +169,7 @@ class Node(object):
         node_hw.update(self.node)
         return node_hw
 
-    def delete_composed_node(self, node_uuid):
+    def delete_composed_node(self):
         """Delete a composed node
 
         param node_uuid: uuid of composed node
@@ -177,7 +177,7 @@ class Node(object):
         """
         # Call podmanager to delete node, and delete corresponding entry in db
         message = self.connection.delete_composed_node(self.node['index'])
-        db_api.Connection.delete_composed_node(node_uuid)
+        db_api.Connection.delete_composed_node(self.node['uuid'])
 
         return message
 
@@ -190,7 +190,7 @@ class Node(object):
         return [cls._show_node_brief_info(node_info.as_dict())
                 for node_info in db_api.Connection.list_composed_nodes()]
 
-    def node_action(self, node_uuid, request_body):
+    def node_action(self, request_body):
         """Post action to a composed node
 
         param node_uuid: uuid of composed node
