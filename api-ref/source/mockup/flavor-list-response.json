@@ -1,36 +1,40 @@
 [
   {
-    "created_at": "2017-01-19 18:46:30 UTC", 
-    "name": "test", 
+    "created_at": "2017-08-30 05:31:33 UTC", 
+    "name": "flavor3", 
     "properties": {
-      "memory": [
-        {
-          "capacity_mib": "3000",
-          "type": "DDR3"
-        }
-      ], 
-      "processor": [
-        {
-          "total_cores": "10"
-        }
-      ]
+      "memory": {
+        "capacity_mib": "3000", 
+        "type": "DDR3"
+      }, 
+      "processor": {
+        "total_cores": "10"
+      }, 
+      "storage": {
+        "capacity_gib": "20", 
+        "type": "SSD"
+      }
     }, 
-    "updated_at": "2017-01-19 18:46:30 UTC", 
-    "uuid": "33d07db6-82c1-48ac-abca-2761433b79f9"
+    "updated_at": "2017-08-30 05:31:33 UTC", 
+    "uuid": "6565d366-5eb2-4637-8068-858c4d62ccf0"
   }, 
   {
-    "created_at": "2017-01-19 18:49:45 UTC", 
-    "name": "test 2", 
+    "created_at": "2017-08-30 05:33:32 UTC", 
+    "name": "flavor3", 
     "properties": {
       "memory": {
         "capacity_mib": "1000"
       }, 
       "processor": {
         "model": "Intel", 
-        "total_cores": "2"
+        "total_cores": "1"
+      }, 
+      "storage": {
+        "capacity_gib": "40"
       }
     }, 
-    "updated_at": "2017-01-19 18:49:45 UTC", 
-    "uuid": "dd561046-4372-40df-ad34-8f8c65d50e02"
+    "updated_at": "2017-08-30 05:33:32 UTC", 
+    "uuid": "0f58df3a-8b95-44da-8e9a-c249fe66052d"
   }
 ]
+

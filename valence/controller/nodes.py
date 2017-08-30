@@ -55,6 +55,14 @@ class Node(object):
                     requirements["processor"]["total_cores"])
         request["Processors"] = [processor]
 
+        storage = {}
+        if "storage" in requirements:
+            if "capacity_gib" in requirements["storage"]:
+                storage["CapacityGiB"] = requirements["storage"]["capacity_Gib"]
+            if "type" in requirements["storage"]:
+                storage["Type"] = requirements["storage"]["type"]
+        request["Storage"] = [storage]
+
         return request
 
     @classmethod

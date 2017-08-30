@@ -38,6 +38,14 @@ flavor_schema = {
                     },
                     'additionalProperties': False,
                 },
+                'storage': {
+                    'type': 'object',
+                    'properties': {
+                        'capacity_gib': {'type': 'string'},
+                        'type': {'type': 'string'}
+                    },
+                    'additionalProperties': False,
+                },
             },
             'additionalProperties': False,
         },

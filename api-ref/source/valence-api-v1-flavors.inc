@@ -47,6 +47,7 @@ Request
     - ram: flavor_ram
     - processor_model: flavor_processor_model
     - cores: flavor_cores
+    - storage: flavor_storage
 
 **Example generate flavor :**
 
@@ -89,6 +90,7 @@ Response
    - ram: flavor_ram
    - processor_model: flavor_processor_model
    - cores: flavor_cores
+   - storage: flavor_storage
 
 Delete Flavor
 =============
