@@ -15,6 +15,7 @@ import mock
 
 from oslotest import base
 
+from valence.common import exception
 from valence.provision.ironic import utils
 
 
@@ -27,3 +28,9 @@ class TestUtils(base.BaseTestCase):
         ironic = utils.create_ironicclient()
         self.assertTrue(ironic)
         mock_ironic.assert_called_once_with()
+
+    @mock.patch('valence.common.clients.OpenStackClients.ironic')
+    def test_create_ironic_client_failure(self, mock_client):
+        mock_client.side_effect = Exception()
+        self.assertRaises(exception.ValenceException,
+                          utils.create_ironicclient)
