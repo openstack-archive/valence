@@ -23,14 +23,9 @@ def get_test_composed_node(**kwargs):
         'node_state': kwargs.get('node_state', 'Assembling'),
         'pooled_group_id': kwargs.get('bookmark_link', 'None'),
         'target_boot_source': kwargs.get('target_boot_source', 'Hdd'),
-        'links': kwargs.get(
-            'links',
-            [{'href': 'http://127.0.0.1:8181/v1/nodes/'
-                      '7be5bc10-dcdf-11e6-bd86-934bc6947c55/',
-              'rel': 'self'},
-             {'href': 'http://127.0.0.1:8181/nodes/'
-                      '7be5bc10-dcdf-11e6-bd86-934bc6947c55/',
-              'rel': 'bookmark'}]),
+        'resource_uri': kwargs.get(
+            'resource_uri',
+            'nodes/7be5bc10-dcdf-11e6-bd86-934bc6947c55/'),
         'metadata': kwargs.get(
             'metadata',
             {'memory': [{'data_width_bit': 0,

@@ -29,7 +29,7 @@ class Node(object):
     @staticmethod
     def _show_node_brief_info(node_info):
         return {key: node_info[key] for key in node_info.keys()
-                if key in ["uuid", "name", "index", "links"]}
+                if key in ["uuid", "name", "index", "uri"]}
 
     @staticmethod
     def _create_compose_request(name, description, requirements):
@@ -95,7 +95,7 @@ class Node(object):
         node_db = {"uuid": composed_node["uuid"],
                    "name": composed_node["name"],
                    "index": composed_node["index"],
-                   "links": composed_node["links"]}
+                   "uri": composed_node["resource_uri"]}
         db_api.Connection.create_composed_node(node_db)
 
         return cls._show_node_brief_info(composed_node)
@@ -129,7 +129,7 @@ class Node(object):
         node_db = {"uuid": composed_node["uuid"],
                    "name": composed_node["name"],
                    "index": composed_node["index"],
-                   "links": composed_node["links"]}
+                   "uri": composed_node["resource_uri"]}
         db_api.Connection.create_composed_node(node_db)
 
         return cls._show_node_brief_info(composed_node)

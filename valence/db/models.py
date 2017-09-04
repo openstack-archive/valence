@@ -150,12 +150,9 @@ class PodManager(ModelBaseWithTimeStamp):
         'location': {
             'validate': types.Text.validate
         },
-        'redfish_link': {
+        'resource_uri': {
             'validate': types.Text.validate
         },
-        'bookmark_link': {
-            'validate': types.Text.validate
-        }
     }
 
 
@@ -211,8 +208,8 @@ class ComposedNode(ModelBaseWithTimeStamp):
         'index': {
             'validate': types.Text.validate
         },
-        'links': {
-            'validate': types.List(types.Dict).validate
+        'resource_uri': {
+            'validate': types.Text.validate
         },
         'managed_by': {
             'validate': types.Text.validate

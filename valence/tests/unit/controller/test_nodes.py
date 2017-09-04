@@ -28,16 +28,12 @@ class TestAPINodes(unittest.TestCase):
     def test_show_node_brief_info(self):
         """Test only show node brief info"""
         node_info = node_fakes.get_test_composed_node()
+        node_info['uri'] = 'nodes/7be5bc10-dcdf-11e6-bd86-934bc6947c55/'
         expected = {
             "index": "1",
             "name": "fake_name",
             "uuid": "ea8e2a25-2901-438d-8157-de7ffd68d051",
-            "links": [{'href': 'http://127.0.0.1:8181/v1/nodes/'
-                               '7be5bc10-dcdf-11e6-bd86-934bc6947c55/',
-                       'rel': 'self'},
-                      {'href': 'http://127.0.0.1:8181/nodes/'
-                               '7be5bc10-dcdf-11e6-bd86-934bc6947c55/',
-                       'rel': 'bookmark'}]
+            "uri": 'nodes/7be5bc10-dcdf-11e6-bd86-934bc6947c55/',
         }
         self.assertEqual(expected,
                          nodes.Node._show_node_brief_info(node_info))
@@ -93,7 +89,7 @@ class TestAPINodes(unittest.TestCase):
         node_db = {"uuid": manage_node["uuid"],
                    "index": manage_node["index"],
                    "name": manage_node["name"],
-                   "links": manage_node["links"]}
+                   "uri": manage_node["resource_uri"]}
 
         nodes.Node.manage_node({"node_index": "1"})
         mock_db_create_composed_node.assert_called_once_with(node_db)
@@ -123,7 +119,7 @@ class TestAPINodes(unittest.TestCase):
         node_db = {"uuid": node_hw["uuid"],
                    "index": node_hw["index"],
                    "name": node_hw["name"],
-                   "links": node_hw["links"]}
+                   "uri": node_hw["resource_uri"]}
 
         mock_redfish_compose_node.return_value = node_hw
         uuid = 'ea8e2a25-2901-438d-8157-de7ffd68d051'
@@ -150,7 +146,7 @@ class TestAPINodes(unittest.TestCase):
         node_db = {"uuid": node_hw["uuid"],
                    "index": node_hw["index"],
                    "name": node_hw["name"],
-                   "links": node_hw["links"]}
+                   "uri": node_hw["resource_uri"]}
 
         mock_redfish_compose_node.return_value = node_hw
         uuid = 'ea8e2a25-2901-438d-8157-de7ffd68d051'
