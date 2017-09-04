@@ -153,9 +153,9 @@ class Connection(object):
         return cls.dbdriver.update_composed_node(composed_node_uuid, values)
 
     @classmethod
-    def list_composed_nodes(cls):
+    def list_composed_nodes(cls, filters={}):
         """Get a list of all composed nodes.
 
         :returns: A list of all composed node.
         """
-        return cls.dbdriver.list_composed_nodes()
+        return cls.dbdriver.list_composed_nodes(filters)

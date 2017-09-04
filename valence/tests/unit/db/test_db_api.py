@@ -11,6 +11,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import copy
 import json
 import unittest
 
@@ -224,6 +225,27 @@ class TestDBAPI(unittest.TestCase):
             node['uuid']) in str(context.exception))
         mock_etcd_read.assert_called_once_with(
             '/nodes/' + node['uuid'])
+
+    @mock.patch('etcd.Client.read')
+    def test_list_composed_nodes(self, mock_etcd_read):
+        node = utils.get_test_composed_node_db_info()
+        node2 = copy.deepcopy(node)
+        node2['uuid'] = '5a8e2a25-2901-438d-8157-de7ffd68d05'
+        node2['podm_id'] = 'da8e2a25-2901-438d-8157-de7ffd685'
+
+        mock_etcd_read.return_value = utils.get_etcd_read_list(
+            '/nodes', json.dumps(node), json.dumps(node2))
+
+        # check without filters
+        result = db_api.Connection.list_composed_nodes()
+        result = [val.as_dict() for val in result]
+        self.assertEqual(result, [node, node2])
+
+        # check with filters
+        filters = {'podm_id': 'da8e2a25-2901-438d-8157-de7ffd685'}
+        result = db_api.Connection.list_composed_nodes(filters)
+        result = [val.as_dict() for val in result]
+        self.assertEqual(result, [node2])
 
     @mock.patch('etcd.Client.delete')
     @mock.patch('etcd.Client.read')

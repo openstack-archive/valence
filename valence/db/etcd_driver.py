@@ -180,9 +180,13 @@ class EtcdDriver(object):
 
         return composed_node
 
-    def list_composed_nodes(self):
-        # TODO(lin.a.yang): support filter for listing composed_node
+    def list_composed_nodes(self, filters={}):
+        """List composed nodes from DB
 
+        :param filters: filters to be applied on results.
+            Eg: Filter results based on podm_id {'podm_id': 'xxxx'}
+        :returns: List of composed nodes after filters applied if any
+        """
         try:
             resp = getattr(self.client.read(models.ComposedNode.path),
                            'children', None)
@@ -197,5 +201,9 @@ class EtcdDriver(object):
             if node.value is not None:
                 composed_nodes.append(translate_to_models(
                     node, models.ComposedNode.path))
-
+        if filters:
+            # Filter nodes having value specified w.r.t key
+            for key, value in filters.items():
+                composed_nodes = [node for node in composed_nodes
+                                  if node[key] == value]
         return composed_nodes
