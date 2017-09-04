@@ -25,8 +25,10 @@ from valence.validation import validator
 class Nodes(Resource):
 
     def get(self):
+        filter_args = request.args
         return utils.make_response(
-            http_client.OK, nodes.Node.list_composed_nodes())
+            http_client.OK,
+            nodes.Node.list_composed_nodes(filter_args.to_dict()))
 
     @validator.check_input('compose_node_schema')
     def post(self):
