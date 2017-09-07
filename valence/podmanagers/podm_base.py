@@ -38,6 +38,22 @@ class PodManagerBase(object):
     def node_action(self, index, request_body):
         pass
 
+    # TODO(): use rsd_lib here
+    def list_racks(self, filters={}, show_detail=False):
+        pass
+
+    # TODO(): use rsd_lib here
+    def show_rack(self, rack_id):
+        pass
+
+    # TODO(): use rsd_lib here
+    def systems_list(self, filters={}):
+        pass
+
+    # TODO(): use rsd_lib here
+    def get_system_by_id(self, system_id):
+        pass
+
     def get_resource_info_by_url(self, resource_url):
         return self.driver.get_resources_by_url(resource_url)
 

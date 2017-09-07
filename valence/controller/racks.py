@@ -14,31 +14,29 @@
 
 import logging
 
-from flask import request
-import flask_restful
-from six.moves import http_client
-
-from valence.common import utils
-from valence.controller import racks
+from valence.podmanagers import manager
 
 LOG = logging.getLogger(__name__)
 
 
-class RackList(flask_restful.Resource):
+class Rack(object):
 
-    def get(self):
-        req = request.get_json()
-        filters = request.args.to_dict()
+    def __init__(self, podm_id):
+        self.connection = manager.get_connection(podm_id)
 
-        return utils.make_response(
-            http_client.OK,
-            racks.Rack(req['podm_id']).list_racks(req, filters))
+    def list_racks(self, request_body, filters={}):
+        """List racks
 
+        :param filters: filter params
+        :param show_detail: True, to show detail info
+        :return: rack list
+        """
+        return self.connection.list_racks(filters, request_body['show_detail'])
 
-class Rack(flask_restful.Resource):
+    def show_rack(self, rack_id):
+        """Show rack
 
-    def get(self, rack_id):
-        req = request.get_json()
-        return utils.make_response(
-            http_client.OK,
-            racks.Rack(req['podm_id']).show_rack(rack_id))
+        :param rack_id: Rack ID
+        :return: rack info
+        """
+        return self.connection.show_rack(rack_id)
