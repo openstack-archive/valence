@@ -19,7 +19,7 @@ from flask_restful import Resource
 from six.moves import http_client
 
 from valence.common import utils
-from valence.redfish import redfish
+from valence.controller import systems
 
 LOG = logging.getLogger(__name__)
 
@@ -27,12 +27,17 @@ LOG = logging.getLogger(__name__)
 class SystemsList(Resource):
 
     def get(self):
-        return utils.make_response(http_client.OK,
-                                   redfish.systems_list(request.args))
+        req = request.get_json()
+        filters = request.args.to_dict()
+        return utils.make_response(
+            http_client.OK,
+            systems.System(req['podm_id']).list_systems(filters))
 
 
 class Systems(Resource):
 
     def get(self, systemid):
-        return utils.make_response(http_client.OK,
-                                   redfish.get_systembyid(systemid))
+        req = request.get_json()
+        return utils.make_response(
+            http_client.OK,
+            systems.System(req['podm_id']).get_system_by_id(systemid))
