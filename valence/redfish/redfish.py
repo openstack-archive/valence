@@ -464,7 +464,7 @@ def get_node_by_id(node_index, show_detail=True):
 
 
 def build_hierarchy_tree():
-    # builds the tree sturcture of the PODM data to get the location hierarchy
+    # builds the tree structure of the PODM data to get the location hierarchy
     lst_chassis = get_chassis_list()
     podmtree = tree.Tree()
     podmtree.add_node("0")  # Add root node
