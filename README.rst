@@ -9,7 +9,7 @@ as one of the management protocols.
 :Free software: Apache license
 :Wiki: https://wiki.openstack.org/wiki/Valence
 :Source: http://git.openstack.org/cgit/openstack/valence
-:Bugs: http://bugs.launchpad.net/openstack-valence
+:Bugs: https://bugs.launchpad.net/openstack-valence
 
 
 =========================

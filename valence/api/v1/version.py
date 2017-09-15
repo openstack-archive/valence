@@ -73,7 +73,7 @@ class V1Base(base.ObjectBase):
         v1.links = [link.Link.make_link('self', request.url_root,
                                         'v1', '', bookmark=True),
                     link.Link.make_link('describedby',
-                                        'http://docs.openstack.org',
+                                        'https://docs.openstack.org',
                                         'developer/valence/dev',
                                         'api-spec-v1.html',
                                         bookmark=True, type='text/html')]
