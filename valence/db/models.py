@@ -215,3 +215,38 @@ class ComposedNode(ModelBaseWithTimeStamp):
             'validate': types.Text.validate
         }
     }
+
+
+class Device(ModelBaseWithTimeStamp):
+
+    path = "/devices"
+
+    fields = {
+        'uuid': {
+            'validate': types.Text.validate
+        },
+        'podm_id': {
+            'validate': types.Text.validate
+        },
+        'node_id': {
+            'validate': types.Text.validate
+        },
+        'type': {
+            'validate': types.Text.validate
+        },
+        'pooled_group_id': {
+            'validate': types.Text.validate
+        },
+        'state': {
+            'validate': types.Text.validate
+        },
+        'properties': {
+            'validate': types.List(types.Dict).validate
+        },
+        'extra': {
+            'validate': types.List(types.Dict).validate
+        },
+        'resource_uri': {
+            'validate': types.Text.validate
+        }
+    }
