@@ -14,16 +14,35 @@
 import etcd
 
 
-def get_etcd_read_result(key, value):
-    """Return EtcdResult object for read regular key"""
+def _get_etcd_data(key):
     data = {
         u'action': u'get',
         u'node': {
             u'modifiedIndex': 190,
             u'key': key,
-            u'value': value
         }
     }
+    return data
+
+
+def get_etcd_read_result(key, value):
+    """Return EtcdResult object for read regular key"""
+    data = _get_etcd_data(key)
+    data['node']['value'] = value
+    return etcd.EtcdResult(**data)
+
+
+def get_etcd_read_list(path, *args):
+    """Return EtcdResult object for read list"""
+    values = []
+    for val in args:
+        node = {u'key': None, u'value': val}
+        values.append(node)
+
+    data = _get_etcd_data(path)
+    data['node']['dir'] = 'true'
+    data['node']['nodes'] = values
+
     return etcd.EtcdResult(**data)
 
 
@@ -85,6 +104,7 @@ def get_test_flavor(**kwargs):
 def get_test_composed_node_db_info(**kwargs):
     return {
         'uuid': kwargs.get('uuid', 'ea8e2a25-2901-438d-8157-de7ffd68d051'),
+        'podm_id': kwargs.get('podm_id', 'fa8e2a25-2901-438d-8157-de7ffd68d'),
         'name': kwargs.get('name', 'fake_name'),
         'index': kwargs.get('index', '1'),
         'resource_uri': kwargs.get(

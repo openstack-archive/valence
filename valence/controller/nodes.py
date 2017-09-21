@@ -182,13 +182,13 @@ class Node(object):
         return message
 
     @classmethod
-    def list_composed_nodes(cls):
+    def list_composed_nodes(cls, filters={}):
         """List all composed node
 
         return: brief info of all composed node
         """
-        return [cls._show_node_brief_info(node_info.as_dict())
-                for node_info in db_api.Connection.list_composed_nodes()]
+        return [cls._show_node_brief_info(node.as_dict())
+                for node in db_api.Connection.list_composed_nodes(filters)]
 
     def node_action(self, node_uuid, request_body):
         """Post action to a composed node
