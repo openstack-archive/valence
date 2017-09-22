@@ -14,10 +14,11 @@
 
 import logging
 
-from valence.common import constants
 from valence.common import exception
+from valence.common import utils
+from valence.controller import nodes
 from valence.db import api as db_api
-from valence.redfish import redfish
+from valence.podmanagers import manager
 
 LOG = logging.getLogger(__name__)
 
@@ -25,7 +26,6 @@ LOG = logging.getLogger(__name__)
 def _check_creation(values):
     """Checking args when creating a new pod manager
 
-        authentication: should follow the format
         name: can not be duplicated
         url: can not be duplicated
 
@@ -38,30 +38,10 @@ def _check_creation(values):
     urls = [podm['url'] for podm in pod_manager_list]
     if values['name'] in names or values['url'] in urls:
         raise exception.BadRequest('duplicated name or url !')
-
     # If podmanager 'driver' is None, update as "redfishv1" which is default
     # driver used to manage resources.
     # 'driver' can take values like "redfishv1", "redfishv2" etc.
     values['driver'] = values.get('driver', 'redfishv1')
-
-    # input status
-    values['status'] = get_podm_status(values['url'], values['authentication'])
-
-    return values
-
-
-def _check_updation(values):
-    """Checking args when updating a exist pod manager
-
-    :values: The properties of pod manager to be updated
-    :returns: improved values that could be updated
-    """
-
-    # uuid, url can not be modified
-    if 'uuid' in values:
-        values.pop('uuid')
-    if 'url' in values:
-        values.pop('url')
     return values
 
 
@@ -73,35 +53,28 @@ def get_podm_by_uuid(uuid):
     return db_api.Connection.get_podmanager_by_uuid(uuid).as_dict()
 
 
-def create_podm(values):
+def create_podmanager(values):
     values = _check_creation(values)
+    username, password = utils.get_basic_auth_credentials(
+        values['authentication'])
+    # Retreive podm connection to get the status of podmanager
+    mng = manager.Manager(values['url'], username, password, values['driver'])
+    values['status'] = mng.podm.get_status()
     return db_api.Connection.create_podmanager(values).as_dict()
 
 
-def update_podm(uuid, values):
-    values = _check_updation(values)
+def update_podmanager(uuid, values):
+    # Remove uuid and url from values as they can't be updated
+    for key in ['uuid', 'url']:
+        values.pop(key, None)
     return db_api.Connection.update_podmanager(uuid, values).as_dict()
 
 
-def delete_podm_by_uuid(uuid):
-    # TODO(hubian) this need to break the links between podm and its Nodes
+def delete_podmanager(uuid):
+    # For any cleanup driver needs to do (nodes cleanup), before deleting podm
+    p_nodes = db_api.Connection.list_composed_nodes({'podm_id': uuid})
+    # Delete the nodes w.r.t podmanager from valence DB
+    for node in p_nodes:
+        nodes.Node(node['uuid']).delete_composed_node(node['uuid'])
+
     return db_api.Connection.delete_podmanager(uuid)
-
-
-def get_podm_status(url, authentication):
-    """get pod manager running status by its url and auth
-
-    :param url: The url of pod manager.
-    :param authentication: array, The auth(s) info of pod manager.
-
-    :returns: status of the pod manager
-    """
-    for auth in authentication:
-        # TODO(Hubian) Only consider and support basic auth type here.
-        # After decided to support other auth type this would be improved.
-        if auth['type'] == constants.PODM_AUTH_BASIC_TYPE:
-            username = auth['auth_items']['username']
-            password = auth['auth_items']['password']
-            return redfish.pod_status(url, username, password)
-
-    return constants.PODM_STATUS_UNKNOWN
