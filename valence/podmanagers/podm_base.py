@@ -12,75 +12,64 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from valence.redfish.sushy import sushy_instance
+
+import rsd_lib
+
+from rsd_lib.resources.node import constants as node_cons
 
 
 class PodManagerBase(object):
 
     def __init__(self, username, password, podm_url):
         self.podm_url = podm_url
-        self.driver = sushy_instance.RedfishInstance(username=username,
-                                                     password=password,
-                                                     base_url=podm_url)
+        self.driver = rsd_lib.RSDLib(podm_url,
+                                     username=username,
+                                     password=password)
 
     # TODO(ramineni): rebase on nate's patch
     def get_status(self):
         pass
 
     def get_podm_info(self):
-        return self.get_resource_info_by_url(self.podm_url)
+        return self.driver.base
 
-    # TODO(): use rsd_lib here
     def compose_node(self, request_body):
-        pass
+        return self.driver.compose_node(request_body)
 
-    # TODO(): use rsd_lib here
+    def get_node_list(self):
+        return self.driver.get_node_collection()
+
+    def get_node_info(self, node_id):
+        return self.driver.get_node(node_id)
+
     def delete_composed_node(self, node_id):
-        pass
+        return self.driver.delete_compose_node(node_id)
 
-    # TODO(): use rsd_lib here
-    def node_action(self, index, request_body):
-        pass
+    def reset_node(self, node_id, target_value):
+        node = self.driver.get_node(node_id)
+        if node:
+            return node.reset_node(target_value)
+
+    def set_node_boot_source(self, node_id, target_source,
+                             enabled=node_cons.BOOT_SOURCE_ENABLED_ONCE,
+                             mode=None):
+        node = self.driver.get_node(node_id)
+        if node:
+            return node.set_node_boot_source(target_source, enabled, mode)
 
     # TODO(): use rsd_lib here
     def list_racks(self, filters={}, show_detail=False):
         pass
 
-    # TODO(): use rsd_lib here
     def show_rack(self, rack_id):
-        pass
+        return self.driver.get_chassis(rack_id)
 
     # TODO(): use rsd_lib here
     def systems_list(self, filters={}):
-        pass
+        return self.driver.get_system_collection()
 
-    # TODO(): use rsd_lib here
     def get_system_by_id(self, system_id):
-        pass
+        return self.driver.get_system(system_id)
 
-    def get_resource_info_by_url(self, resource_url):
-        return self.driver.get_resources_by_url(resource_url)
-
-    def get_chassis_collection(self):
-        chassis_collection_url = self.podm_url + '/Chassis'
-        return self.driver.get_resources_by_url(chassis_collection_url)
-
-    def get_chassis_info(self, chassis_id):
-        chassis_url = self.podm_url + '/Chassis/' + chassis_id
-        return self.driver.get_resources_by_url(chassis_url)
-
-    def get_system_collection(self):
-        system_collection_url = self.podm_url + '/Systems'
-        return self.driver.get_resources_by_url(system_collection_url)
-
-    def get_system_info(self, system_id):
-        system_url = self.podm_url + '/Systems/' + system_id
-        return self.driver.get_resources_by_url(system_url)
-
-    def get_node_collection(self):
-        node_collection_url = self.podm_url + '/Nodes'
-        return self.driver.get_resources_by_url(node_collection_url)
-
-    def get_node_info(self, node_id):
-        node_url = self.podm_url + '/Nodes/' + node_id
-        return self.driver.get_resources_by_url(node_url)
+    def get_storage_list(self):
+        return self.driver.get_storage_service_collection()
