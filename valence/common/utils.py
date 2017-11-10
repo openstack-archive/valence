@@ -77,7 +77,7 @@ def match_conditions(json_content, filter_conditions):
                 is_conditions_passed = False
             break
         else:
-            LOG.warn(" Filter string mismatch ")
+            LOG.warning(" Filter string mismatch ")
     LOG.debug(" JSON CONTENT " + str(is_conditions_passed))
     return is_conditions_passed
 
