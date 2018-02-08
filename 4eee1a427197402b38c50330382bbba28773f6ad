@@ -1,0 +1,10 @@
+Code-Review+2: Anusha Ramineni <anusha.ramineni@nectechnologies.in>
+Code-Review+1: guozj <guozj@awcloud.com>
+Code-Review+2: Lin Yang <lin.a.yang@intel.com>
+Workflow+1: Lin Yang <lin.a.yang@intel.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Thu, 08 Feb 2018 06:33:56 +0000
+Reviewed-on: https://review.openstack.org/539452
+Project: openstack/valence
+Branch: refs/heads/master
