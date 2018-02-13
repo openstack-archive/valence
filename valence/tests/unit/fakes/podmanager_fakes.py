@@ -32,3 +32,41 @@ def fake_podmanager():
 
 def fake_podm_object():
     return models.PodManager(**fake_podmanager())
+
+
+def fake_podmanager_list():
+    return [
+        {
+            "authentication": [
+                {
+                    "auth_items": {
+                        "password": "***",
+                        "username": "admin"
+                    },
+                    "type": "basic"
+                }],
+            "created_at": "2018-02-21 09:40:41 UTC",
+            "driver": "redfishv1",
+            "name": "podm1",
+            "status": "Online",
+            "updated_at": "2018-02-21 09:40:41 UTC",
+            "url": "http://127.0.0.1:0101",
+            "uuid": "0e7957c3-a28a-442d-b61c-0dd0dcb228d7"
+        },
+        {
+            "authentication": [
+                {
+                    "auth_items": {
+                        "password": "***",
+                        "username": "admin"
+                    },
+                    "type": "basic"
+                }],
+            "created_at": "2018-02-21 09:40:41 UTC",
+            "driver": "redfishv1",
+            "name": "podm2",
+            "status": "Online",
+            "updated_at": "2018-02-21 09:40:41 UTC",
+            "url": "http://127.0.0.1:0000",
+            "uuid": "0e7957c3-a28a-442d-b61c-0dd0dcb228d6"
+        }]

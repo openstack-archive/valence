@@ -58,6 +58,10 @@ class PodManagerBase(object):
     def get_system_by_id(self, system_id):
         pass
 
+    # TODO(): to be implemented in rsb_lib
+    def get_all_devices(self):
+        pass
+
     def get_resource_info_by_url(self, resource_url):
         return self.driver.get_resources_by_url(resource_url)
 

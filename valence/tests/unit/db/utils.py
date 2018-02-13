@@ -126,12 +126,8 @@ def get_test_device_db_info(**kwargs):
         'pooled_group_id': kwargs.get('pooled_group_id', '2001'),
         'state': kwargs.get('state', 'allocated'),
         'properties': kwargs.get(
-            'properties',
-            [{'disk_size': '20'},
-             {'bandwidth': '100Mbps'}]),
-        'extra': kwargs.get(
-            'extra',
-            [{'mac': '11:11:11:11:11'}]),
+            'properties', {'disk_size': '20', 'bandwidth': '100Mbps'}),
+        'extra': kwargs.get('extra', {'mac': '11:11:11:11:11'}),
         'resource_uri': kwargs.get('resource_uri', '/device/11'),
         'created_at': kwargs.get('created_at', '2016-01-01 00:00:00 UTC'),
         'updated_at': kwargs.get('updated_at', '2016-01-01 00:00:00 UTC')
