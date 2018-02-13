@@ -182,7 +182,7 @@ class TestAPINodes(unittest.TestCase):
         self.node_controller.node = node_db
         mock_redfish_get_node.return_value = node_hw
 
-        result = self.node_controller.get_composed_node_by_uuid("fake_uuid")
+        result = self.node_controller.get_composed_node_by_uuid()
         expected = copy.deepcopy(node_hw)
         expected.update(node_db)
         self.assertEqual(expected, result)
@@ -192,7 +192,7 @@ class TestAPINodes(unittest.TestCase):
         """Test delete composed node"""
         node_db = test_utils.get_test_composed_node_db_info()
         self.node_controller.node = node_db
-        self.node_controller.delete_composed_node(node_db["uuid"])
+        self.node_controller.delete_composed_node()
         mock_db_delete_composed_node.assert_called_once_with(
             node_db["uuid"])
 
@@ -216,10 +216,11 @@ class TestAPINodes(unittest.TestCase):
         """Test reset composed node status"""
         action = {"Reset": {"Type": "On"}}
         self.node_controller.node = {'index': '1', 'name': 'test-node'}
-        self.node_controller.node_action("fake_uuid", action)
+        self.node_controller.node_action(action)
         mock_node_action.assert_called_once_with("1", action)
 
     @mock.patch("valence.provision.driver.node_register")
     def test_node_register(self, mock_node_register):
-        nodes.Node.node_register("fake_uuid", {"foo": "bar"})
+        self.node_controller.node = {'uuid': 'fake_uuid', 'name': 'test-node'}
+        self.node_controller.node_register({"foo": "bar"})
         mock_node_register.assert_called_once_with("fake_uuid", {"foo": "bar"})

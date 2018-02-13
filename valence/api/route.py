@@ -21,6 +21,7 @@ from six.moves import http_client
 
 from valence.api import app as flaskapp
 import valence.api.root as api_root
+import valence.api.v1.devices as v1_devices
 import valence.api.v1.flavors as v1_flavors
 import valence.api.v1.nodes as v1_nodes
 import valence.api.v1.podmanagers as v1_podmanagers
@@ -107,6 +108,14 @@ api.add_resource(v1_podmanagers.PodManager,
                  '/v1/pod_managers/<string:podm_uuid>', endpoint='podmanager')
 api.add_resource(v1_podmanagers.PodManagersList,
                  '/v1/pod_managers', endpoint='podmanagers')
+
+# Device(s) operations
+api.add_resource(v1_devices.PooledDevicesList, '/v1/devices',
+                 endpoint='devices')
+api.add_resource(v1_devices.PooledDevices,
+                 '/v1/devices/<string:resource_id>',
+                 endpoint='device')
+api.add_resource(v1_devices.SyncResources, '/v1/devices/sync', endpoint='sync')
 
 # Proxy to PODM
 api.add_resource(api_root.PODMProxy, '/<path:url>', endpoint='podmproxy')

@@ -45,12 +45,12 @@ class Node(Resource):
     def get(self, node_uuid):
         return utils.make_response(
             http_client.OK,
-            nodes.Node(node_id=node_uuid).get_composed_node_by_uuid(node_uuid))
+            nodes.Node(node_id=node_uuid).get_composed_node_by_uuid())
 
     def delete(self, node_uuid):
         return utils.make_response(
             http_client.OK,
-            nodes.Node(node_id=node_uuid).delete_composed_node(node_uuid))
+            nodes.Node(node_id=node_uuid).delete_composed_node())
 
 
 class NodeAction(Resource):
@@ -59,8 +59,7 @@ class NodeAction(Resource):
     def post(self, node_uuid):
         return utils.make_response(
             http_client.NO_CONTENT,
-            nodes.Node(node_id=node_uuid).node_action(node_uuid,
-                                                      request.get_json()))
+            nodes.Node(node_id=node_uuid).node_action(request.get_json()))
 
 
 class NodeManage(Resource):
@@ -82,5 +81,7 @@ class NodesStorage(Resource):
 class NodeRegister(Resource):
 
     def post(self, node_uuid):
-        return utils.make_response(http_client.OK, nodes.Node.node_register(
-                                   node_uuid, request.get_json()))
+        return utils.make_response(http_client.OK,
+                                   nodes.Node(
+                                       node_id=node_uuid).node_register(
+                                       request.get_json()).as_dict())
