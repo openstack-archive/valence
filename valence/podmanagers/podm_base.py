@@ -60,6 +60,10 @@ class PodManagerBase(object):
     def get_system_by_id(self, system_id):
         pass
 
+    # TODO(): to be implemented in rsb_lib
+    def get_all_devices(self):
+        pass
+
     def get_ironic_node_params(self, node_info, **param):
         # TODO(): change to 'rsd' once ironic driver is implemented.
         driver_info = {
