@@ -49,4 +49,7 @@ class TestRoute(unittest.TestCase):
         self.assertEqual(self.api.owns_endpoint('flavor'), True)
         self.assertEqual(self.api.owns_endpoint('storages'), True)
         self.assertEqual(self.api.owns_endpoint('storage'), True)
+        self.assertEqual(self.api.owns_endpoint('devices'), True)
+        self.assertEqual(self.api.owns_endpoint('device'), True)
+        self.assertEqual(self.api.owns_endpoint('sync'), True)
         self.assertEqual(self.api.owns_endpoint('podmproxy'), True)

@@ -241,10 +241,10 @@ class Device(ModelBaseWithTimeStamp):
             'validate': types.Text.validate
         },
         'properties': {
-            'validate': types.List(types.Dict).validate
+            'validate': types.Dict.validate
         },
         'extra': {
-            'validate': types.List(types.Dict).validate
+            'validate': types.Dict.validate
         },
         'resource_uri': {
             'validate': types.Text.validate
