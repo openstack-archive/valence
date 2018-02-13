@@ -17,6 +17,7 @@ import logging
 from valence.common import exception
 from valence.common import utils
 from valence.controller import nodes
+from valence.controller import pooled_devices
 from valence.db import api as db_api
 from valence.podmanagers import manager
 
@@ -60,7 +61,10 @@ def create_podmanager(values):
     # Retreive podm connection to get the status of podmanager
     mng = manager.Manager(values['url'], username, password, values['driver'])
     values['status'] = mng.podm.get_status()
-    return db_api.Connection.create_podmanager(values).as_dict()
+    podm = db_api.Connection.create_podmanager(values).as_dict()
+    # updates all devices corresponding to this podm in DB
+    pooled_devices.PooledDevices.update_device_info(podm['uuid'])
+    return podm
 
 
 def update_podmanager(uuid, values):
