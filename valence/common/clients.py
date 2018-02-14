@@ -49,7 +49,8 @@ class OpenStackClients(object):
             'os_cacert': self._get_client_option('ironic', 'os_cacert'),
             'os_cert': self._get_client_option('ironic', 'os_cert'),
             'os_key': self._get_client_option('ironic', 'os_key'),
-            'insecure': self._get_client_option('ironic', 'insecure')
+            'insecure': self._get_client_option('ironic', 'insecure'),
+            'os_ironic_api_version': '1.21'
         }
         self._ironic = ironicclient.get_client(ironicclient_version, **args)
 
