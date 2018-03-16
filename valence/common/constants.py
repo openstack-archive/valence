@@ -17,3 +17,7 @@ PODM_AUTH_BASIC_TYPE = 'basic'
 PODM_STATUS_ONLINE = 'Online'
 PODM_STATUS_OFFLINE = 'Offline'
 PODM_STATUS_UNKNOWN = "Unknown"
+
+HTTP_HEADERS = {"Content-type": "application/json"}
+
+DEVICE_STATES = {'ALLOCATED': 'allocated', 'FREE': 'free'}

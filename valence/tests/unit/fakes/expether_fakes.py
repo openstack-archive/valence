@@ -1,0 +1,40 @@
+def fake_eesv_list():
+    return {"devices": [{"id": "0x1111111111",
+                         "status": "eesv",
+                         "update_time": "1518999910510",
+                         "mac_address": "11:11:11:11:11:11",
+                         "group_id": "1234",
+                         "type": "40g",
+                         "power_status": "on",
+                         "ee_version": "v1.0",
+                         "device_id": "0x00000",
+                         "serial_number": "abcd 01234",
+                         "model": "ExpEther Board (40G)",
+                         "max_eeio_count": "16",
+                         "host_serial_number": "",
+                         "host_model": "",
+                         "notification_status0": ["up", "down"],
+                         "notification_status1": ["down", "down"]},
+                        {"id": "0x2222222222",
+                         "status": "eesv",
+                         "update_time": "1518999910510",
+                         "mac_address": "22:22:22:22:22:22",
+                         "group_id": "5678",
+                         "type": "10g",
+                         "power_status": "on",
+                         "ee_version": "v1.0",
+                         "device_id": "0x00000",
+                         "serial_number": "abcd 01234",
+                         "model": "ExpEther Board (10G)",
+                         "max_eeio_count": "8",
+                         "host_serial_number": "",
+                         "host_model": "",
+                         "notification_status0": ["up", "down"],
+                         "notification_status1": ["down", "down"]}
+                        ],
+            "timestamp": "1521089295162"}
+
+
+def fake_eesv():
+    return {"device": fake_eesv_list()['devices'][0],
+            "timestamp": "1521089295162"}

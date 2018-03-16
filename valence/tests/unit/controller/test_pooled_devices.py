@@ -184,7 +184,7 @@ class TestPooledDevices(unittest.TestCase):
                                                mock_device_list,
                                                mock_pod_conn):
         mock_device_list.return_value = [fakes.fake_device()]
-        mock_pod_conn.side_effect = exception.ValenceException('fake_detail')
+        mock_pod_conn.side_effect = exception.ValenceError('fake_detail')
         result = pooled_devices.PooledDevices.update_device_info('podm_id')
         expected = {'podm_id': 'podm_id', 'status': 'FAILED'}
         self.assertEqual(result, expected)
