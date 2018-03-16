@@ -110,6 +110,10 @@ class RedfishException(ValenceError):
                                                request_id)
 
 
+class ExpEtherException(ValenceError):
+    _msg_fmt = "ExpEther Exception Occurred"
+
+
 class ResourceExists(ValenceError):
     status = http_client.CONFLICT
     _msg_fmt = "Resource Already Exists"

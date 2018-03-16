@@ -57,6 +57,9 @@ class TestAPINodes(unittest.TestCase):
             "processor": {
                 "model": "Intel",
                 "total_cores": "4"
+            },
+            "pci_device": {
+                "type": "SSD"
             }
         }
 
@@ -70,6 +73,9 @@ class TestAPINodes(unittest.TestCase):
             "Processors": [{
                 "Model": "Intel",
                 "TotalCores": "4"
+            }],
+            "PCIDevice": [{
+                "Type": "SSD"
             }]
         }
         result = nodes.Node._create_compose_request(name,

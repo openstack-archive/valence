@@ -25,6 +25,9 @@ def fake_flavor():
             "processor": {
                 "total_cores": "2",
                 "model": "Intel"
+            },
+            "pci_device": {
+                "type": "SSD"
             }
         }
     }
@@ -47,6 +50,9 @@ def fake_flavor_list():
                 "processor": {
                     "total_cores": "10",
                     "model": "Intel"
+                },
+                "pci_device": {
+                    "type": "SSD"
                 }
             }
         },
@@ -61,6 +67,9 @@ def fake_flavor_list():
                 "processor": {
                     "total_cores": "20",
                     "model": "Intel"
+                },
+                "pci_device": {
+                    "type": "NIC"
                 }
             }
         },
@@ -75,6 +84,9 @@ def fake_flavor_list():
                 "processor": {
                     "total_cores": "30",
                     "model": "Intel"
+                },
+                "pci_device": {
+                    "type": "SSD"
                 }
             }
         }

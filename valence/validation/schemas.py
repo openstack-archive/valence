@@ -38,6 +38,13 @@ flavor_schema = {
                     },
                     'additionalProperties': False,
                 },
+                'pci_device': {
+                    'type': 'object',
+                    'properties': {
+                        'type': {'type': 'string'},
+                    },
+                    'additionalProperties': False,
+                },
             },
             'additionalProperties': False,
         },
@@ -122,6 +129,13 @@ compose_node_with_properties = {
                     },
                     'additionalProperties': False,
                 },
+                'pci_device': {
+                    'type': 'object',
+                    'properties': {
+                        'type': {'type': 'string'},
+                    },
+                    'additionalProperties': False,
+                },
             },
             'additionalProperties': False,
         },
@@ -181,16 +195,28 @@ node_action_schema = {
             'type': 'object',
             'properties': {
                 'resource_id': {'type': 'string'},
+                'mac_id': {'type': 'string'},
+                'device_id': {'type': 'string'},
             },
-            'required': ['resource_id'],
+            'oneOf': [
+                {'required': ['resource_id']},
+                {'required': ['mac_id']},
+                {'required': ['device_id']},
+            ],
             'additionalProperties': False,
         },
         'detach': {
             'type': 'object',
             'properties': {
                 'resource_id': {'type': 'string'},
+                'mac_id': {'type': 'string'},
+                'device_id': {'type': 'string'},
             },
-            'required': ['resource_id'],
+            'oneOf': [
+                {'required': ['resource_id']},
+                {'required': ['mac_id']},
+                {'required': ['device_id']},
+            ],
             'additionalProperties': False,
         },
     },

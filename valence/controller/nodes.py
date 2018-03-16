@@ -73,6 +73,12 @@ class Node(object):
                     requirements["processor"]["total_cores"])
         request["Processors"] = [processor]
 
+        pci = {}
+        if "pci_device" in requirements:
+            if "type" in requirements["pci_device"]:
+                pci["Type"] = requirements["pci_device"]["type"]
+        request["PCIDevice"] = [pci]
+
         return request
 
     def compose_node(self, request_body):
