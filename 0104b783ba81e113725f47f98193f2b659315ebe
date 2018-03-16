@@ -1,0 +1,8 @@
+Code-Review+2: Anusha Ramineni <anusha.ramineni@india.nec.com>
+Workflow+1: Anusha Ramineni <anusha.ramineni@india.nec.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Fri, 16 Mar 2018 04:14:03 +0000
+Reviewed-on: https://review.openstack.org/543914
+Project: openstack/valence
+Branch: refs/heads/master
