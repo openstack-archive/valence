@@ -49,32 +49,6 @@ class Node(object):
         return {key: node_info[key] for key in node_info.keys()
                 if key in ["uuid", "name", "podm_id", "index", "resource_uri"]}
 
-    @staticmethod
-    def _create_compose_request(name, description, requirements):
-        request = {}
-
-        request["Name"] = name
-        request["Description"] = description
-
-        memory = {}
-        if "memory" in requirements:
-            if "capacity_mib" in requirements["memory"]:
-                memory["CapacityMiB"] = requirements["memory"]["capacity_mib"]
-            if "type" in requirements["memory"]:
-                memory["DimmDeviceType"] = requirements["memory"]["type"]
-        request["Memory"] = [memory]
-
-        processor = {}
-        if "processor" in requirements:
-            if "model" in requirements["processor"]:
-                processor["Model"] = requirements["processor"]["model"]
-            if "total_cores" in requirements["processor"]:
-                processor["TotalCores"] = (
-                    requirements["processor"]["total_cores"])
-        request["Processors"] = [processor]
-
-        return request
-
     def compose_node(self, request_body):
         """Compose new node
 
@@ -97,10 +71,10 @@ class Node(object):
         # "description" is optional
         description = request_body.get("description", "")
 
-        compose_request = self._create_compose_request(name, description,
-                                                       requirements)
-
-        composed_node = self.connection.compose_node(compose_request)
+        # Moving _create_compose_request to drivers as this can be
+        # vendor specific request
+        composed_node = self.connection.compose_node(name, description,
+                                                     requirements)
         composed_node["uuid"] = utils.generate_uuid()
 
         # Only store the minimum set of composed node info into backend db,

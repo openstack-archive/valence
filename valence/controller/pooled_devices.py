@@ -119,7 +119,7 @@ class PooledDevices(object):
                 db_api.Connection.add_device(dev)
             response['status'] = 'SUCCESS'
 
-        except exception.ValenceException as e:
+        except exception.ValenceError as e:
             LOG.exception("Update devices failed with exception %s", str(e))
             response['status'] = 'FAILED'
         return response
