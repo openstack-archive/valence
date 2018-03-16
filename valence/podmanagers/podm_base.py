@@ -34,6 +34,9 @@ class PodManagerBase(object):
     def compose_node(self, request_body):
         pass
 
+    def create_compose_request(self, name, description, requirements):
+        pass
+
     # TODO(): use rsd_lib here
     def delete_composed_node(self, node_id):
         pass

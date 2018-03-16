@@ -186,6 +186,12 @@ class Flavor(ModelBaseWithTimeStamp):
                 },
                 'validate': types.Dict.validate
             },
+            'pci_device': {
+                'type': {
+                    'validate': types.List.validate
+                },
+                'validate': types.Dict.validate
+            },
             'validate': types.Dict.validate
         }
     }
