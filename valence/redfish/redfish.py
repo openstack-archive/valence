@@ -26,6 +26,7 @@ from valence.common import constants
 from valence.common import exception
 from valence.common import utils
 import valence.conf
+from valence.controller import flavors
 from valence.redfish import tree
 
 
@@ -481,6 +482,32 @@ def build_hierarchy_tree():
     return podmtree
 
 
+def _create_compose_request(name, description, requirements):
+    request = {}
+
+    request["Name"] = name
+    request["Description"] = description
+
+    memory = {}
+    if "memory" in requirements:
+        if "capacity_mib" in requirements["memory"]:
+            memory["CapacityMiB"] = requirements["memory"]["capacity_mib"]
+        if "type" in requirements["memory"]:
+            memory["DimmDeviceType"] = requirements["memory"]["type"]
+    request["Memory"] = [memory]
+
+    processor = {}
+    if "processor" in requirements:
+        if "model" in requirements["processor"]:
+            processor["Model"] = requirements["processor"]["model"]
+        if "total_cores" in requirements["processor"]:
+            processor["TotalCores"] = (
+                requirements["processor"]["total_cores"])
+    request["Processors"] = [processor]
+
+    return request
+
+
 def compose_node(request_body):
     """Compose new node through podm api.
 
@@ -489,6 +516,24 @@ def compose_node(request_body):
                          podm right now.
     :returns: The numeric index of new composed node.
     """
+
+    if "flavor_id" in request_body:
+        flavor = flavors.get_flavor(request_body["flavor_id"])
+        requirements = flavor["properties"]
+    elif "properties" in request_body:
+        requirements = request_body["properties"]
+    else:
+        requirements = {
+            "memory": {},
+            "processor": {}
+        }
+
+    name = request_body["name"]
+    # "description" is optional
+    description = request_body.get("description", "")
+
+    request_body = _create_compose_request(name, description,
+                                           requirements)
 
     # Get url of allocating resource to node
     nodes_url = get_base_resource_url('Nodes')

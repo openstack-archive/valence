@@ -666,3 +666,34 @@ class TestRedfish(TestCase):
         ]
         result = redfish.show_rack("2")
         self.assertEqual(expected, result)
+
+    def test_create_compose_request(self):
+        name = "test_request"
+        description = "request for testing purposes"
+        requirements = {
+            "memory": {
+                "capacity_mib": "4000",
+                "type": "DDR3"
+            },
+            "processor": {
+                "model": "Intel",
+                "total_cores": "4"
+            }
+        }
+
+        expected = {
+            "Name": "test_request",
+            "Description": "request for testing purposes",
+            "Memory": [{
+                "CapacityMiB": "4000",
+                "DimmDeviceType": "DDR3"
+            }],
+            "Processors": [{
+                "Model": "Intel",
+                "TotalCores": "4"
+            }]
+        }
+        result = redfish._create_compose_request(name,
+                                                 description,
+                                                 requirements)
+        self.assertEqual(expected, result)

@@ -16,7 +16,6 @@ import logging
 
 from valence.common import exception
 from valence.common import utils
-from valence.controller import flavors
 from valence.db import api as db_api
 from valence.podmanagers import manager
 from valence.provision import driver
@@ -49,32 +48,6 @@ class Node(object):
         return {key: node_info[key] for key in node_info.keys()
                 if key in ["uuid", "name", "podm_id", "index", "resource_uri"]}
 
-    @staticmethod
-    def _create_compose_request(name, description, requirements):
-        request = {}
-
-        request["Name"] = name
-        request["Description"] = description
-
-        memory = {}
-        if "memory" in requirements:
-            if "capacity_mib" in requirements["memory"]:
-                memory["CapacityMiB"] = requirements["memory"]["capacity_mib"]
-            if "type" in requirements["memory"]:
-                memory["DimmDeviceType"] = requirements["memory"]["type"]
-        request["Memory"] = [memory]
-
-        processor = {}
-        if "processor" in requirements:
-            if "model" in requirements["processor"]:
-                processor["Model"] = requirements["processor"]["model"]
-            if "total_cores" in requirements["processor"]:
-                processor["TotalCores"] = (
-                    requirements["processor"]["total_cores"])
-        request["Processors"] = [processor]
-
-        return request
-
     def compose_node(self, request_body):
         """Compose new node
 
@@ -82,25 +55,9 @@ class Node(object):
         return: brief info of this new composed node
         """
 
-        if "flavor_id" in request_body:
-            flavor = flavors.get_flavor(request_body["flavor_id"])
-            requirements = flavor["properties"]
-        elif "properties" in request_body:
-            requirements = request_body["properties"]
-        else:
-            requirements = {
-                "memory": {},
-                "processor": {}
-            }
-
-        name = request_body["name"]
-        # "description" is optional
-        description = request_body.get("description", "")
-
-        compose_request = self._create_compose_request(name, description,
-                                                       requirements)
-
-        composed_node = self.connection.compose_node(compose_request)
+        # Moving _create_compose_request to drivers as this can be
+        # vendor specific request
+        composed_node = self.connection.compose_node(request_body)
         composed_node["uuid"] = utils.generate_uuid()
 
         # Only store the minimum set of composed node info into backend db,
