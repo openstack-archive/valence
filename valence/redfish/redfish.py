@@ -481,15 +481,49 @@ def build_hierarchy_tree():
     return podmtree
 
 
-def compose_node(request_body):
+def _create_compose_request(name, description, requirements):
+    """Generate compose node request following podm format
+
+    :param name: name of node
+    :param description: description of node if any
+    :param requirements: additional requirements of node if any
+    :return: request body to compose node
+    """
+    request = {}
+
+    request["Name"] = name
+    request["Description"] = description
+
+    memory = {}
+    if "memory" in requirements:
+        if "capacity_mib" in requirements["memory"]:
+            memory["CapacityMiB"] = requirements["memory"]["capacity_mib"]
+        if "type" in requirements["memory"]:
+            memory["DimmDeviceType"] = requirements["memory"]["type"]
+    request["Memory"] = [memory]
+
+    processor = {}
+    if "processor" in requirements:
+        if "model" in requirements["processor"]:
+            processor["Model"] = requirements["processor"]["model"]
+        if "total_cores" in requirements["processor"]:
+            processor["TotalCores"] = (
+                requirements["processor"]["total_cores"])
+    request["Processors"] = [processor]
+
+    return request
+
+
+def compose_node(name, description, requirements):
     """Compose new node through podm api.
 
-    :param request_body: The request content to compose new node, which should
-                         follow podm format. Valence api directly pass it to
-                         podm right now.
+    :param name: name of node
+    :param description: description of node if any
+    :param requirements: additional requirements of node if any
     :returns: The numeric index of new composed node.
     """
 
+    request_body = _create_compose_request(name, description, requirements)
     # Get url of allocating resource to node
     nodes_url = get_base_resource_url('Nodes')
     resp = send_request(nodes_url, 'GET')

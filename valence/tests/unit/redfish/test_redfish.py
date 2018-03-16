@@ -345,7 +345,7 @@ class TestRedfish(TestCase):
                                     fake_node_allocation_conflict]
 
         with self.assertRaises(exception.RedfishException) as context:
-            redfish.compose_node({"name": "test_node"})
+            redfish.compose_node('test_node', '', {})
 
         self.assertTrue("There are no computer systems available for this "
                         "allocation request." in str(context.exception.detail))
@@ -381,7 +381,7 @@ class TestRedfish(TestCase):
                                     fake_node_assemble_failed]
 
         with self.assertRaises(exception.RedfishException):
-            redfish.compose_node({"name": "test_node"})
+            redfish.compose_node('test_node', '', {})
 
         mock_delete_node.assert_called_once()
 
@@ -416,7 +416,7 @@ class TestRedfish(TestCase):
                                     fake_node_detail,
                                     fake_node_assemble_failed]
 
-        redfish.compose_node({"name": "test_node"})
+        redfish.compose_node('test_node', '', {})
 
         mock_delete_node.assert_not_called()
         mock_get_node_by_id.assert_called_once()
@@ -665,4 +665,34 @@ class TestRedfish(TestCase):
             }
         ]
         result = redfish.show_rack("2")
+        self.assertEqual(expected, result)
+
+    def test__create_compose_request(self):
+        name = "test_request"
+        description = "request for testing purposes"
+        requirements = {
+            "memory": {
+                "capacity_mib": "4000",
+                "type": "DDR3"
+            },
+            "processor": {
+                "model": "Intel",
+                "total_cores": "4"
+            }
+        }
+
+        expected = {
+            "Name": "test_request",
+            "Description": "request for testing purposes",
+            "Memory": [{
+                "CapacityMiB": "4000",
+                "DimmDeviceType": "DDR3"
+            }],
+            "Processors": [{
+                "Model": "Intel",
+                "TotalCores": "4"
+            }]
+        }
+        result = redfish._create_compose_request(name, description,
+                                                 requirements)
         self.assertEqual(expected, result)
