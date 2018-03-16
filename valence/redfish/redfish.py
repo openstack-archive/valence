@@ -481,6 +481,32 @@ def build_hierarchy_tree():
     return podmtree
 
 
+def create_compose_request(name, description, requirements):
+    request = {}
+
+    request["Name"] = name
+    request["Description"] = description
+
+    memory = {}
+    if "memory" in requirements:
+        if "capacity_mib" in requirements["memory"]:
+            memory["CapacityMiB"] = requirements["memory"]["capacity_mib"]
+        if "type" in requirements["memory"]:
+            memory["DimmDeviceType"] = requirements["memory"]["type"]
+    request["Memory"] = [memory]
+
+    processor = {}
+    if "processor" in requirements:
+        if "model" in requirements["processor"]:
+            processor["Model"] = requirements["processor"]["model"]
+        if "total_cores" in requirements["processor"]:
+            processor["TotalCores"] = (
+                requirements["processor"]["total_cores"])
+    request["Processors"] = [processor]
+
+    return request
+
+
 def compose_node(request_body):
     """Compose new node through podm api.
 

@@ -46,37 +46,6 @@ class TestAPINodes(unittest.TestCase):
         self.assertEqual(expected,
                          nodes.Node._show_node_brief_info(node_info))
 
-    def test_create_compose_request(self):
-        name = "test_request"
-        description = "request for testing purposes"
-        requirements = {
-            "memory": {
-                "capacity_mib": "4000",
-                "type": "DDR3"
-            },
-            "processor": {
-                "model": "Intel",
-                "total_cores": "4"
-            }
-        }
-
-        expected = {
-            "Name": "test_request",
-            "Description": "request for testing purposes",
-            "Memory": [{
-                "CapacityMiB": "4000",
-                "DimmDeviceType": "DDR3"
-            }],
-            "Processors": [{
-                "Model": "Intel",
-                "TotalCores": "4"
-            }]
-        }
-        result = nodes.Node._create_compose_request(name,
-                                                    description,
-                                                    requirements)
-        self.assertEqual(expected, result)
-
     @mock.patch("valence.db.api.Connection.create_composed_node")
     @mock.patch("valence.common.utils.generate_uuid")
     @mock.patch("valence.controller.nodes.Node.list_composed_nodes")
@@ -118,7 +87,11 @@ class TestAPINodes(unittest.TestCase):
     @mock.patch("valence.db.api.Connection.create_composed_node")
     @mock.patch("valence.common.utils.generate_uuid")
     @mock.patch("valence.podmanagers.podm_base.PodManagerBase.compose_node")
-    def test_compose_node(self, mock_redfish_compose_node, mock_generate_uuid,
+    @mock.patch("valence.podmanagers.podm_base.PodManagerBase"
+                ".create_compose_request")
+    def test_compose_node(self, mock_create_compose_request,
+                          mock_redfish_compose_node,
+                          mock_generate_uuid,
                           mock_db_create_composed_node):
         """Test compose node successfully"""
         node_hw = node_fakes.get_test_composed_node()
@@ -128,6 +101,9 @@ class TestAPINodes(unittest.TestCase):
                    "name": node_hw["name"],
                    "resource_uri": node_hw["resource_uri"]}
 
+        compose_request = {'Name': 'fake_name',
+                           'Description': 'fake_description'}
+        mock_create_compose_request.return_value = compose_request
         mock_redfish_compose_node.return_value = node_hw
         uuid = 'ea8e2a25-2901-438d-8157-de7ffd68d051'
         mock_generate_uuid.return_value = uuid
