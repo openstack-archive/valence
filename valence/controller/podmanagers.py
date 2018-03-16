@@ -84,6 +84,12 @@ def delete_podmanager(uuid):
     for node in p_nodes:
         nodes.Node(node['uuid']).delete_composed_node(node['uuid'])
 
+    # Delete the devices w.r.t podmanager from valence DB
+    devices_list = db_api.Connection.list_devices(
+        filters={'podm_id': uuid})
+    for device in devices_list:
+        db_api.Connection.delete_device(device['uuid'])
+
     return db_api.Connection.delete_podmanager(uuid)
 
 
