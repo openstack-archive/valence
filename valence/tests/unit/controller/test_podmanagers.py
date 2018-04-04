@@ -17,6 +17,7 @@ import mock
 
 from valence.common.exception import BadRequest
 from valence.controller import podmanagers
+from valence.podmanagers import podm_base
 
 
 class TestPodManagers(unittest.TestCase):
@@ -104,3 +105,29 @@ class TestPodManagers(unittest.TestCase):
 
         podmanagers.update_podmanager('fake-podm-id', values)
         mock_db_update.assert_called_once_with('fake-podm-id', result_values)
+
+    @mock.patch('valence.redfish.sushy.sushy_instance.RedfishInstance')
+    @mock.patch('valence.controller.podmanagers.update_podm_resources_to_db')
+    @mock.patch('valence.db.api.Connection.create_podmanager')
+    @mock.patch('valence.podmanagers.manager.Manager')
+    @mock.patch('valence.controller.podmanagers._check_creation')
+    def test_create_podmanager(self, mock_creation, mock_mng, mock_db_create,
+                               mock_resource_update, mock_sushy):
+        values = {"name": "podm_name", "url": "https://10.240.212.123",
+                  "driver": "redfishv1", "status": None,
+                  "authentication": [{
+                      "type": "basic",
+                      "auth_items": {"username": "xxxxxxx",
+                                     "password": "xxxxxxx"}}]}
+        mock_creation.return_value = values
+        mock_mng.podm.return_value = podm_base.PodManagerBase(
+            'fake', 'fake-pass', 'http://fake-url')
+        podmanagers.create_podmanager('fake-values')
+        mock_db_create.assert_called_once_with(values)
+        mock_resource_update.assert_called()
+
+    @mock.patch('valence.common.async._spawn_worker')
+    def test_update_podm_resources_to_db(self, mock_worker):
+        mock_worker.return_value = mock.MagicMock()
+        podmanagers.update_podm_resources_to_db('fake-podm-id')
+        mock_worker.assert_called()
