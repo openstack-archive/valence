@@ -38,6 +38,13 @@ flavor_schema = {
                     },
                     'additionalProperties': False,
                 },
+                'pci_device': {
+                    'type': 'object',
+                    'properties': {
+                        'type': {'type': 'array'}
+                    },
+                    'additionalProperties': False,
+                },
             },
             'additionalProperties': False,
         },
@@ -119,6 +126,13 @@ compose_node_with_properties = {
                     'properties': {
                         'total_cores': {'type': 'string'},
                         'model': {'type': 'string'},
+                    },
+                    'additionalProperties': False,
+                },
+                'pci_device': {
+                    'type': 'object',
+                    'properties': {
+                        'type': {'type': 'array'}
                     },
                     'additionalProperties': False,
                 },
