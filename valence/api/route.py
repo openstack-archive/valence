@@ -22,7 +22,7 @@ from six.moves import http_client
 # Note: setup app needs to be called before the valence imports
 # for config options initialization to take place.
 from valence.api import app as flaskapp
-app = flaskapp.get_app()
+app = flaskapp.get_app()  # noqa
 
 import valence.api.root as api_root
 import valence.api.v1.devices as v1_devices

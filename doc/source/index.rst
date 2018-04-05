@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to valence's documentation!
-========================================================
+===================================
 
 Contents:
 
@@ -15,6 +15,7 @@ Contents:
    installation
    usage
    contributing
+   configuration
 
 Developers Documentation
 ========================
@@ -22,6 +23,13 @@ Developers Documentation
    :glob:
 
    developer-guide/*
+
+Drivers Documentation
+=====================
+.. toctree::
+   :glob:
+
+   drivers/*
 
 Indices and tables
 ==================

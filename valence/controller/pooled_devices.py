@@ -38,7 +38,9 @@ class PooledDevices(object):
         """List all registered devices
 
         :param filters: filter by key, value arguments
+
         Eg: {'podm_id': 'xxxx', 'type': 'SSD'}
+
         :return: List of devices
         """
         devices = db_api.Connection.list_devices(filters)
