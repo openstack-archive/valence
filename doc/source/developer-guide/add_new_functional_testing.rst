@@ -1,4 +1,4 @@
-.. _valence_functional_testcase:
+..
       Copyright 2016 Intel Corporation
       All Rights Reserved.
 
@@ -13,6 +13,8 @@
       WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
       License for the specific language governing permissions and limitations
       under the License.
+
+.. _valence_functional_testcase:
 
 ==========================
 Add a Functional Test case
@@ -34,10 +36,10 @@ Tests scripts are located in `<valence_root>/valence/tests
 Implementing a Test Case
 ------------------------
 
-Consider implementing an functional testcase for our /example(add_new_api_) API
+Consider implementing an functional testcase for our /example(:ref:`add-new-api`) API
 
 
-The characteristics of /example(add_new_api_) API
+The characteristics of /example(:ref:`add-new-api`) API
 
 * REST Method : GET
 * Parameters  : Nil
@@ -81,3 +83,4 @@ running the below command from the valence root directory(where tox.ini is prese
         .. code-block:: bash
 
            $ tox -e pep8,py27
+

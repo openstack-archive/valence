@@ -3,25 +3,51 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to valence's documentation!
-========================================================
+===================================
+Welcome to Valence's Documentation!
+===================================
 
-Contents:
-
+Introduction to Valence
+=======================
 .. toctree::
    :maxdepth: 2
 
    readme
-   installation
-   usage
-   contributing
 
-Developers Documentation
-========================
+Operators Guide
+===============
 .. toctree::
    :glob:
 
-   developer-guide/*
+   operators-guide/index
+
+End User Guide
+==============
+.. toctree::
+   :glob:
+
+   end-user-guide/index
+
+Developers Guide
+================
+.. toctree::
+   :glob:
+
+   developer-guide/index
+
+Contributors Guide
+==================
+.. toctree::
+   :glob:
+
+   contributors-guide/*
+
+Release Notes
+=============
+.. toctree::
+   :glob:
+
+   releasenotes
 
 Indices and tables
 ==================
