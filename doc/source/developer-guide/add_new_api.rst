@@ -1,4 +1,4 @@
-.. _add_new_api:
+..
       Copyright 2016 Intel Corporation
       All Rights Reserved.
 
@@ -14,6 +14,8 @@
       License for the specific language governing permissions and limitations
       under the License.
 
+.. _add-new-api:
+
 =================================
 Add a new API endpoint in Valence
 =================================
@@ -24,7 +26,7 @@ through the `readme.rst`).
 
 
 Interacting with Valence
--------------------------
+------------------------
 
 Before starting modification/adding a new functionality in Valence, it is suggested
 to check that the valence has been setup properly. This could be done by making some
