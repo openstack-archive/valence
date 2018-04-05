@@ -35,13 +35,12 @@ def start_periodic_worker(callables):
     """Starts periodic execution of function passed in callables
 
     To enable this:
-    1. Pass callables in following format
-       [(func, (arg1, arg2), {}),
-        (func2, (arg1, arg2), {}),]
-    2. Decorate func as follow:
-       @periodics.periodic(spacing=2, enabled=True)
-       def func():
-          pass
+     1. Pass callables in following format:
+         [(func, (arg1, arg2), {}), (func2, (arg1, arg2), {}),]
+
+     2. Decorate func as follow:
+        @periodics.periodic(spacing=2, enabled=True)
+        def func(): pass
 
     :param callables: pass functions in this to execute periodically
     :returns: Future object
@@ -93,10 +92,8 @@ def async(func):
     """Start a job in new background thread.
 
     To start a async job, decorate the function as follows:
-    Example:
         @async.async
-        def test():
-            pass
+        def test(): pass
     """
     def wrapper(*args, **kwargs):
         LOG.info("starting async thread for function %s", func.__name__)

@@ -1,5 +1,5 @@
 ..
-      Copyright 2016 Intel Corporation
+      Copyright (c) 2017 NEC, Corp.
       All Rights Reserved.
 
       Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -14,20 +14,16 @@
       License for the specific language governing permissions and limitations
       under the License.
 
-.. _valence_deploy:
+.. _developer-guide:
 
-======================
-Deploy Valence Project
-======================
+.. toctree::
+   :maxdepth: 2
 
-This document describes how to update the code base of Valence after installation.
-Whenever valence code has been updated, either through git or modifying it locally,
-it needs to be deployed to standard python path. The below steps describes them.
-
-Execute the below bash commands in the valence root directory
-(where the setup.py file exists)
-
- .. code-block:: bash
-
-    $ python setup.py install
-    $ sudo service valence restart
+   components.rst
+   drivers/index
+   add_new_api.rst
+   add_new_developer_guide.rst
+   add_new_functional_testing.rst
+   add_new_unit_test.rst
+   db_development.rst
+   deploy.rst
