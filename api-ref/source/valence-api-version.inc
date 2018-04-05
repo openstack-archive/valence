@@ -8,7 +8,7 @@ Concepts
 ========
 
 In order to bring new features to users over time, the Valence API
-supports versioning. There are two kinds of versions in Ironic.
+supports versioning. There are two kinds of versions in Valence.
 
 - ''major versions'', which have dedicated urls.
 - ''microversions'', which can be requested through the use of the
@@ -16,7 +16,7 @@ supports versioning. There are two kinds of versions in Ironic.
 
 The Version APIs work differently from other APIs as they do not require authentication.
 
-Alll API requests support the ``OpenStack-API-Version`` header.
+All API requests support the ``OpenStack-API-Version`` header.
 This header SHALL be supplied with every request.
 This help to provide backwards compatibility as we introduced new features in the server.
 
