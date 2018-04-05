@@ -15,3 +15,4 @@ This is a reference for the Openstack Valence API
 .. include:: valence-api-v1-system.inc
 .. include:: valence-api-v1-nodes.inc
 .. include:: valence-api-v1-pods.inc
+.. include:: valence-api-v1-devices.inc

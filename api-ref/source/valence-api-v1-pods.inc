@@ -4,8 +4,58 @@
 Pod managers
 ==============
 
-Listing, searching of Pod Manager resources is done through the ``/v1/pod_managers``
+Creating, Listing, searching of Pod Manager resources is done through the
+``/v1/pod_managers``
 Send feedback to Valence team or [chester.kuo@gmail.com]
+
+Create Pod manager
+==================
+
+.. rest_method:: POST /v1/pod_manager
+
+Creates a new Pod Manager with specific URL, name, authentication credentials
+and driver(default driver: ``redfishv1``).
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403)
+
+Request
+-------
+
+.. rest_parameters:: parameters.yaml
+
+   - name: podmanager_name
+   - url: pod_conn_url
+   - driver: podm_driver
+   - authentication: auth_details
+
+**Example Pod Manager creation request:**
+
+.. literalinclude:: mockup/pod-manager-create-request.json
+   :language: javascript
+
+Response
+--------
+
+The response will contain the complete pod uuid and name record
+
+The list and example below are representative of the response as of API
+
+.. rest_parameters:: parameters.yaml
+
+    - name: podmanager_name
+    - url: pod_conn_url
+    - driver: podm_driver
+    - authentication: auth_details
+    - created_at: created_at
+    - updated_at: updated_at
+    - uuid: pod_uuid
+
+**Example JSON representation of a Pod Manager:**
+
+.. literalinclude:: mockup/pod-manager-create-response.json
+   :language: javascript
 
 List Pod Manager
 =================
@@ -97,4 +147,3 @@ Request
 .. rest_parameters:: parameters.yaml
 
    - pod_uuid: pod_uuid
-

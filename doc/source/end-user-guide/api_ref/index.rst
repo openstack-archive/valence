@@ -1,5 +1,5 @@
 ..
-      Copyright 2016 Intel Corporation
+      Copyright (c) 2018 NEC, Corp.
       All Rights Reserved.
 
       Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -14,20 +14,19 @@
       License for the specific language governing permissions and limitations
       under the License.
 
-.. _valence_deploy:
+.. _api-ref:
 
-======================
-Deploy Valence Project
-======================
+===========
+Valence API
+===========
 
-This document describes how to update the code base of Valence after installation.
-Whenever valence code has been updated, either through git or modifying it locally,
-it needs to be deployed to standard python path. The below steps describes them.
+.. toctree::
+   :maxdepth: 1
 
-Execute the below bash commands in the valence root directory
-(where the setup.py file exists)
-
- .. code-block:: bash
-
-    $ python setup.py install
-    $ sudo service valence restart
+   valence-api-version.rst
+   valence-api-v1-pooled.rst
+   valence-api-v1-flavors.rst
+   valence-api-v1-system.rst
+   valence-api-v1-nodes.rst
+   valence-api-v1-pods.rst
+   valence-api-v1-devices.rst

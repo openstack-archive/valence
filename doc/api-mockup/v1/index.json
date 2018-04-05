@@ -8,7 +8,7 @@
       {
          "rel" : "describedby",
          "type" : "text/html",
-         "href" : "http://docs.openstack.org/developer/plasma/dev/api-spec-v1.html"
+         "href" : "http://docs.openstack.org/developer/valence/dev/api-spec-v1.html"
       }
    ],
    "nodes" : [
@@ -43,7 +43,7 @@
    ],
    "media_types" : [
       {
-         "type" : "application/vnd.openstack.plasma.v1+json",
+         "type" : "application/vnd.openstack.valence.v1+json",
          "base" : "application/json"
       }
    ]
