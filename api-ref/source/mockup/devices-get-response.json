@@ -1,0 +1,20 @@
+{
+  "created_at": "2018-04-09 05:57:55 UTC",
+  "extra": {
+    "device_name": "PCIe Data Center SSD",
+    "vendor_name": "Intel Corporation"
+  },
+  "node_id": null,
+  "podm_id": "64420559-0f44-4ca1-82c2-ac9a26f6788b",
+  "pooled_group_id": "4093",
+  "properties": {
+    "device_id": "0x000000000000",
+    "mac_address": "00:11:22:33:44:55",
+    "model": "Generation-X"
+  },
+  "resource_uri": "devices/0x000000000000",
+  "state": "free",
+  "type": "SSD",
+  "updated_at": "2018-04-09 05:57:55 UTC",
+  "uuid": "95a6b68f-9c3a-47f8-b93b-c160c940d7b7"
+}
