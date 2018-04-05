@@ -96,10 +96,8 @@ class Node(object):
 
         Required JSON body:
 
-        {
-          'node_index': <Redfish index of node to manage>
-          'podm_id': <podmanager id with which node is managed>
-        }
+        {'node_index': <Redfish index of node to manage>,
+         'podm_id': <podmanager id with which node is managed>}
 
         return: Info on managed node.
         """

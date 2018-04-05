@@ -3,8 +3,10 @@ Openstack Valence Project
 =========================
 
 Valence is a service for lifecycle management of pooled bare-metal hardware
-infrastructure such as Intel(R) Rack Scale architecture which uses Redfish(TM)
-as one of the management protocols.
+infrastructure which uses vendor specific drivers to interact with the
+dis-aggregated resources from respective vendors such as Intel(R) Rack Scale
+architecture which uses Redfish(TM), NEC developed Express Ether hardware
+which uses expether driver as management protocols.
 
 :Free software: Apache license
 :Wiki: https://wiki.openstack.org/wiki/Valence
@@ -92,10 +94,97 @@ valence-ui
 valence-ui provides a Web-based GUI interface that can be used to explore
 Rack Scale Design (RSD) artifacts and compose/disassemble nodes.
 valence-ui is implemented using Node.js runtime environment and hosted through apache.
-valence-ui makes us of React.js javascript libaray and invoke Valence REST APIs through ajax REST calls.
+valence-ui makes us of React.js javascript library and invoke Valence REST APIs through ajax REST calls.
 
-========
+*************
+Configuration
+*************
+
+The Valence service is configured via its configuration file. This file
+is typically located at ``/etc/valence/valence.conf``.
+Refer :ref:`valence-conf` for various options.
+
+********
 Features
-========
-Please refer the Valence blueprints for supported and in-the-pipeline features.
-``https://blueprints.launchpad.net/openstack-valence``
+********
+
+Major features supported by valence are as following:
+
+Multiple Podmanager Support
+---------------------------
+
+This feature helps in integrating all podmanagers from different vendors
+i.e user doesn't need to deploy multiple valence for every podmanager.
+It fills gap of switching between multiple podmanagers which is never easy
+to manage different podmanager from every vendor. So, valence provide
+convenient way to manage all podmanagers.
+
+Vendor Extensible framework
+---------------------------
+
+This feature provides multiple vendors to manage their dis-aggregated
+resources via valence. Vendors using drivers other than redfish can simply
+add their driver in valence and manage their hardware.
+
+Concepts
+~~~~~~~~
+
+A new field ``driver`` is added to podmanager, which user need to mention
+while creating a podmanager. The mentioned driver will load respective
+podmanager that will be vendor specific.
+
+.. NOTE::
+    By default it will select ``redfishv1`` driver
+
+Device Orchestration framework
+------------------------------
+
+This feature provides efficient way of managing pooled resources, being able
+to dynamically assign or remove resources from the composed node on th fly
+(based on the workload). The result of this is providing optimal usage of the
+resources.
+
+Concepts
+~~~~~~~~
+
+#. Added devices table in DB
+
+   A new table named ``devices`` added to valence DB, which stores all the
+   information regarding all devices connected to podmanagers.
+
+#. Device Synchronization
+
+   Synchronize devices of podmanager with the valence DB. This is done in
+   following ways.
+
+   - ``Periodic sync`` Sync devices periodically in background on application
+     startup.
+   - ``One time sync`` User can make this request using simple API request.
+   - Also, while podmanager creation sync of connected devices happens in
+     background
+
+.. _ironic-provision-driver:
+
+Ironic provision driver
+-----------------------
+
+This feature provides user an ability to register node in Ironic_
+i.e composed node in valence having required configuration can be registered
+to Openstack-Ironic from valence. Further provisioning of node can be done using:
+`Ironic API guide <https://developer.openstack.org/api-ref/baremetal/>`_.
+
+Added new apis in Valence
+-------------------------
+
+This feature has implemented new apis in valence as follows:
+
+#. List Devices
+#. Show Device
+#. Sync Devices
+#. Node action attach/detach
+
+For more features please refer the Valence blueprints_ for supported and
+in-the-pipeline features.
+
+.. _blueprints: https://blueprints.launchpad.net/openstack-valence
+.. _Ironic: https://docs.openstack.org/ironic/latest/
