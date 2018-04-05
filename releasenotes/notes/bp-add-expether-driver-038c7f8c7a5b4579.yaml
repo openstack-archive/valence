@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    Added ExpEther driver support inside valence to be able to manage
+    NEC ExpEther hardware.
+    This would fit into valence support of multi-podm architecture.

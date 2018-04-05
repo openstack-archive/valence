@@ -1,0 +1,9 @@
+---
+features:
+  - |
+    Added extensibe framework inside valence to provide provision for the
+    vendors who would like to manage the dis-aggregated hardware through
+    valence , but does not support redfish. Basically, it redirect all
+    conductor requests to respective podmanagers based on driver passed
+    by vendors. Vendors have to write their own driver that involves
+    mapping between valence apis and their hardware.

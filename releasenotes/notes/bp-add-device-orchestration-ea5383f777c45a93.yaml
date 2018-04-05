@@ -1,0 +1,9 @@
+---
+features:
+  - |
+    Added functionality in Valence to manage the pool of devices,
+    (pci devices) and also attaching/detaching them dynamically to
+    nodes as per workload demand. It adds DB table - devices where
+    all devices can be stored and accessed using their unique
+    id. Also added functionality for periodic sync of devices in
+    background. New API added - list, show and sync devices.
