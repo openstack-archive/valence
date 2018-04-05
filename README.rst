@@ -92,7 +92,7 @@ valence-ui
 valence-ui provides a Web-based GUI interface that can be used to explore
 Rack Scale Design (RSD) artifacts and compose/disassemble nodes.
 valence-ui is implemented using Node.js runtime environment and hosted through apache.
-valence-ui makes us of React.js javascript libaray and invoke Valence REST APIs through ajax REST calls.
+valence-ui makes us of React.js javascript library and invoke Valence REST APIs through ajax REST calls.
 
 ========
 Features

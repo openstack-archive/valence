@@ -1,0 +1,10 @@
+---
+features:
+  - |
+    Device Orchestration:
+
+    Valence supports management of pooled resources and adds
+    ability to attach/detach dynamically to nodes according
+    to workload demand. New config option 'enable_periodic_sync'
+    supported to sync resources from podmanager periodically.
+    By default, periodic sync is disabled.

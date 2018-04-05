@@ -1,4 +1,4 @@
-.. _valence_functional_testcase:
+..
       Copyright 2016 Intel Corporation
       All Rights Reserved.
 
@@ -13,6 +13,8 @@
       WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
       License for the specific language governing permissions and limitations
       under the License.
+
+.. _valence_functional_testcase:
 
 ==========================
 Add a Functional Test case
@@ -81,3 +83,5 @@ running the below command from the valence root directory(where tox.ini is prese
         .. code-block:: bash
 
            $ tox -e pep8,py27
+
+.. _add_new_api: add_new_api.html
