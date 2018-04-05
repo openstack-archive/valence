@@ -15,7 +15,7 @@ import unittest
 import mock
 
 from valence.common import config
-config.parse_args = mock.Mock()
+config.parse_args = mock.Mock()  # noqa
 
 from valence.api import route
 

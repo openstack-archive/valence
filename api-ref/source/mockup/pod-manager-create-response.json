@@ -1,0 +1,18 @@
+{
+  "authentication": [
+    {
+      "auth_items": {
+        "password": "***",
+        "username": "admin"
+      },
+      "type": "basic"
+    }
+  ],
+  "created_at": "2018-04-16 10:01:27 UTC",
+  "driver": "driver_name",
+  "name": "podm1",
+  "status": "Online",
+  "updated_at": "2018-04-16 10:01:27 UTC",
+  "url": "http://0.0.0.0:00000/server",
+  "uuid": "776a4f7b-195d-49c9-9b52-b25760d85158"
+}
