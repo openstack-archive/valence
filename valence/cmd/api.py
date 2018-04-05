@@ -16,7 +16,7 @@
 import logging
 
 import eventlet
-eventlet.monkey_patch(os=False)
+eventlet.monkey_patch(os=False)  # noqa
 import gunicorn.app.base
 
 from valence.api.route import app as application
