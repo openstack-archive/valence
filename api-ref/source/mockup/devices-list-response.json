@@ -1,0 +1,20 @@
+[
+  {
+    "node_id": "0x000000000000",
+    "podm_id": "11111111-1111-1111-1111-111111111111",
+    "pooled_group_id": "2223",
+    "resource_uri": "devices/2x222222222222",
+    "state": "allocated",
+    "type": "SSD",
+    "uuid": "95a6b68f-9c3a-47f8-b93b-c160c940d7b7"
+  },
+  {
+    "node_id": null,
+    "podm_id": "64420559-0f44-4ca1-82c2-ac9a26f6788b",
+    "pooled_group_id": "4093",
+    "resource_uri": "devices/3x333333333333",
+    "state": "free",
+    "type": "NIC",
+    "uuid": "603ba114-574e-48d3-afa2-9fd8d98fe0d2"
+  }
+]
