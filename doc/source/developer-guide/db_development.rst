@@ -1,4 +1,4 @@
-.. _valence_db_development:
+..
       Copyright 2016 Intel Corporation
       All Rights Reserved.
 
@@ -13,6 +13,8 @@
       WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
       License for the specific language governing permissions and limitations
       under the License.
+
+.. _valence_db_development:
 
 ==============
 DB Development

@@ -1,4 +1,4 @@
-.. _valence_unit_testcase:
+..
       Copyright 2016 Intel Corporation
       All Rights Reserved.
 
@@ -14,9 +14,11 @@
       License for the specific language governing permissions and limitations
       under the License.
 
-======================
+.. _valence_unit_testcase:
+
+====================
 Add a Unit Test case
-======================
+====================
 
 Getting used to writing testing code and running this code in parallel is considered
 a good workflow.

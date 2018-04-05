@@ -155,6 +155,7 @@ class ExpEtherManager(object):
         (updates group id of device in valence db and EEM to 4093)
 
         :param node_id: index of the node
+
         :raises ExpEtherException if detaching devices fails
         """
         try:
@@ -171,9 +172,8 @@ class ExpEtherManager(object):
         :param request: Contains type_of_action(attach or detach) and
                         resource_id
                Sample request:
-               {"detach":
-                   {"resource_id": "660a95b3-adaa-42d3-ac3f-dfe7ce6c9986"}
-               }
+                {"detach":
+                   {"resource_id": "660a95b3-adaa-42d3-ac3f-dfe7ce6c9986"}}
         """
         # NOTE: type_of_action can be attach or detach
         action = list(request.keys())[0]
@@ -194,6 +194,7 @@ class ExpEtherManager(object):
         """Retrieves list of all connected eesv systems
 
         :return: List of connected eesv's
+
         :raises ExpEtherException if unable to fetch system details
         """
         query = "devices/detail?status=eesv"
@@ -214,6 +215,7 @@ class ExpEtherManager(object):
 
         :param system_id: User provided system_id
         :return: eesv node info
+
         :raises ExpEtherException if unable to fetch details
         """
         query = 'devices/' + system_id
@@ -392,6 +394,7 @@ class ExpEtherManager(object):
 
         Issues command to check version of EEM.
         :return: on or off status of pod_manager
+
         :raises AuthorizationFailure: if wrong credentials are passed
                 ExpEtherException: if any HTTPError
         """
@@ -506,8 +509,9 @@ class ExpEtherManager(object):
                 {"ipmi_address": "xxx.xxx.xx.xx",
                  "ipmi_username": "xxxxx",
                  "ipmi_password": "xxxxx"},
-             "mac": "11:11:11:11:11:11",
-             "driver": "agent_ipmitool"}
+
+               "mac": "11:11:11:11:11:11",
+               "driver": "agent_ipmitool"}
         :return: node and port arguments
         """
         driver = param.pop('driver', 'pxe_ipmitool')
