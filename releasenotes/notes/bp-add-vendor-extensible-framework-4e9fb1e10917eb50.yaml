@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    Added framework in valence for different vendors to plugin their
+    driver to manage the dis-aggregated hardware. By default valence
+    provides redfish driver to manage the hardware.
