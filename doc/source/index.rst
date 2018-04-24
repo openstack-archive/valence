@@ -42,6 +42,13 @@ Contributors Guide
 
    contributors-guide/*
 
+Release Notes
+=============
+.. toctree::
+   :maxdepth: 1
+
+   releasenotes/valence-0.9
+
 Indices and tables
 ==================
 
