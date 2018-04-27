@@ -14,6 +14,13 @@ Introduction to Valence
 
    readme
 
+Features
+========
+.. toctree::
+   :glob:
+
+   features
+
 Operators Guide
 ===============
 .. toctree::
