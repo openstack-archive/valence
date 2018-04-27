@@ -13,6 +13,7 @@ Introduction to Valence
    :maxdepth: 2
 
    readme
+   features
 
 Operators Guide
 ===============
