@@ -42,8 +42,8 @@ Each podmanager can be configured to use different driver. By default,
 ``redfishv1`` driver is used.
 
 Currently supported drivers in Valence are:
- #. :ref:`redfishv1-driver`
- #. :ref:`expether-driver`
+ #. `Redfish Driver <https://github.com/openstack/valence/blob/master/doc/source/developer-guide/drivers/redfishv1.rst>`_.
+ #. `ExpEther Driver <https://github.com/openstack/valence/blob/master/doc/source/developer-guide/drivers/expether.rst>`_.
 
 Future work include redfish v2 driver support. Other vendors also could implement
 their own driver to manage their hardware.
