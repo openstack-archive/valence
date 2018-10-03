@@ -1,0 +1,10 @@
+Code-Review+2: Lin Yang <lin.a.yang@intel.com>
+Code-Review+1: Andriy Shevchenko <huang.zhiping@99cloud.net>
+Code-Review+2: Akhil jain <akhil.jain@india.nec.com>
+Workflow+1: Akhil jain <akhil.jain@india.nec.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Wed, 03 Oct 2018 06:15:23 +0000
+Reviewed-on: https://review.openstack.org/606742
+Project: openstack/valence
+Branch: refs/heads/master
